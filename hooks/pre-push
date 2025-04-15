@@ -1,0 +1,23 @@
+deno task test
+testStatus=$?
+if [ $testStatus -ne 0 ]; then
+   echo 'TESTS ARE FAILING...'
+   exit 1
+fi
+
+deno task lint
+lintStatus=$?
+if [ $lintStatus -ne 0 ]; then
+   echo 'LINT ERRORS FOUND...'
+   exit 1
+fi
+
+deno fmt
+fmtStatus=$?
+if [ $fmtStatus -ne 0 ]; then
+   echo 'CODE IS NOT FORMATTED CORRECTLY...'
+   exit 1
+fi
+
+rm -rf coverage/ &&
+deno task coverage

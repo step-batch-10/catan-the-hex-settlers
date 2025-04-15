@@ -1,0 +1,61 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow will install Deno then run `deno lint` and `deno test`.
+# For more information see: https://github.com/denoland/setup-deno
+
+name: Test and Lint
+
+on:
+  push:
+    branches: ['main']
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        # uses: denoland/setup-deno@v1
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Verify formatting
+        run: deno fmt --check
+
+      - name: Run linter
+        run: deno lint
+
+      - name: Run tests
+        run: deno test -A
+
+      - name: Upload to Deno Deploy (dev machine)
+        uses: denoland/deployctl@v1
+        with:
+          project: 'hex-settlers-of-catan-dev'
+          entrypoint: 'server.js'
+          root: '.'
+
+      - name: Upload to Deno Deploy (QA machine)
+        uses: denoland/deployctl@v1
+        with:
+          project: 'hex-settlers-of-catan-qa'
+          entrypoint: 'server.js'
+          root: '.'
+
+      - name: Upload to Deno Deploy (Production)
+        uses: denoland/deployctl@v1
+        with:
+          project: 'hex-settlers-of-catan'
+          entrypoint: 'server.js'
+          root: '.'
