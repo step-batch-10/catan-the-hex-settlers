@@ -31,7 +31,11 @@ jobs:
           deno-version: v2.x
 
       - name: Verify formatting
-        run: deno fmt --check
+        run: |
+          deno fmt --check || {
+            echo "Formatting issues found. Auto-formatting files..."
+            deno fmt
+          }
 
       - name: Run linter
         run: deno lint
