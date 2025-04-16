@@ -1,6 +1,6 @@
 import { assertEquals } from 'assert';
 import { describe, it } from 'testing/bdd';
-import { Hex } from '../src/models/hex.js';
+import { Hex } from '../src/models/hex.ts';
 
 describe('Hex', () => {
   it('should place the robber', () => {

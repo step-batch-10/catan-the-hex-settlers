@@ -1,15 +1,15 @@
 import { assert, assertEquals, assertFalse } from 'assert';
 import { describe, it } from 'testing/bdd';
-import { Vertex } from '../src/models/vertex.js';
+import { Vertex } from '../src/models/vertex.ts';
 
 describe('Vertex', () => {
   it('should give if the vertex is occuped or not', () => {
-    const vertex = new Vertex('v1');
+    const vertex = new Vertex('v1', null);
     assertFalse(vertex.isOccupied());
   });
 
   it('should give ocuupy the vertex with playerId', () => {
-    const vertex = new Vertex('v1');
+    const vertex = new Vertex('v1', null);
 
     assert(vertex.occupy('p1'));
     assert(vertex.isOccupied());
