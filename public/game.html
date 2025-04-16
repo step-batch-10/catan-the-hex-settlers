@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .dice-container {
+      width: 720px;
+      display: flex;
+      gap: 30px;
+      border: 1px solid black;
+      padding: 40px;
+    }
+    .dice1 > *,
+    .dice2 > * {
+      background-color: aqua;
+      border-radius: 50%;
+      border: 1px solid black;
+      visibility: hidden;
+    }
+    .dice1,
+    .dice2 {
+      width: 340px;
+      aspect-ratio: 1px;
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      border: 2px solid palegreen;
+      gap: 10px 10px;
+      padding: 10px;
+    }
+  </style>
+  <script src="./dice.js"></script>
+  <body>
+    <div class="dice-container">
+      <div class="dice1">
+        <div class="1"></div>
+        <div class="2"></div>
+        <div class="3"></div>
+        <div class="4"></div>
+        <div class="5"></div>
+        <div class="6"></div>
+        <div class="7"></div>
+        <div class="8"></div>
+        <div class="9"></div>
+      </div>
+      <div class="dice2">
+        <div class="1"></div>
+        <div class="2"></div>
+        <div class="3"></div>
+        <div class="4"></div>
+        <div class="5"></div>
+        <div class="6"></div>
+        <div class="7"></div>
+        <div class="8"></div>
+        <div class="9"></div>
+      </div>
+    </div>
+  </body>
+</html>
