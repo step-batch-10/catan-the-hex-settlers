@@ -13,9 +13,10 @@
     "test-watch": "deno test --watch -A",
     "lint": "deno lint",
     "test-coverage": "deno test -A --coverage=coverage",
+    "delete-coverage": "rm -rf coverage",
     "coverage": {
       "command": "deno run -A jsr:@ashishkujoy/deno-coverage-checker --lines=90 --functions=50 --branches=80",
-      "dependencies": ["test-coverage"]
+      "dependencies": ["delete-coverage", "test-coverage"]
     }
   },
   "imports": {
