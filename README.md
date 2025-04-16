@@ -1,3 +1,4 @@
+[![master](https://github.com/step-batch-10/catan-the-hex-settlers/actions/workflows/deno.yml/badge.svg)](https://github.com/step-batch-10/catan-the-hex-settlers/actions/workflows/deno.yml)
 # 🌄 Catan – Digital Board Game
 
 ## 1. 📝 THE SETTLERS OF CATAN
