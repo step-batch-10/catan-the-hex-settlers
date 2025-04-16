@@ -1,12 +1,16 @@
 export class Edge {
   id: string;
-  vertices: [string, string]; 
+  vertices: [string, string];
   owner: string | null;
 
   constructor(id: string, vertices: [string, string]) {
     this.id = id;
     this.vertices = vertices;
     this.owner = null;
+  }
+
+  static getEdgeKey(v1: string, v2: string): string {
+    return [v1, v2].sort().join('_');
   }
 
   isOccupied(): boolean {
