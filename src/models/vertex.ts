@@ -1,4 +1,9 @@
-import { Edge } from './edge.ts';
+interface VertexData {
+  id: string;
+  owner: string | null;
+  harbor: string | null;
+  adjacentHexes: string[];
+}
 
 export class Vertex {
   static readonly CORNER_OFFSETS: [number, number][] = [
@@ -7,29 +12,29 @@ export class Vertex {
     [0, -1],
     [-1, 0],
     [-1, 1],
-    [0, 1]
+    [0, 1],
   ];
   id: string;
   harbor: string | null;
   owner: string | null;
   adjacentHexes: string[];
-  connectedVertices: Vertex[];
-  connectedEdges: Edge[];
+  connectedVertices: Set<string>;
+  connectedEdges: Set<string>;
 
   constructor(id: string, harbor: string | null) {
     this.id = id;
     this.harbor = harbor;
     this.owner = null;
     this.adjacentHexes = [];
-    this.connectedVertices = [];
-    this.connectedEdges = [];
+    this.connectedVertices = new Set<string>();
+    this.connectedEdges = new Set<string>();
   }
 
   static getVertexKey(q: number, r: number, cornerIndex: number): string {
     const directions: [number, number][] = [
       [0, 0],
       this.CORNER_OFFSETS[cornerIndex],
-      this.CORNER_OFFSETS[(cornerIndex + 5) % 6]
+      this.CORNER_OFFSETS[(cornerIndex + 5) % 6],
     ];
 
     const hexesTouchingVertex = directions.map(([dq, dr]) => [q + dq, r + dr]);
@@ -52,5 +57,10 @@ export class Vertex {
 
   occupiedBy(): string | null {
     return this.owner;
+  }
+
+  toJSON(): VertexData {
+    const { id, owner, harbor, adjacentHexes } = this;
+    return { id, owner, harbor, adjacentHexes };
   }
 }
