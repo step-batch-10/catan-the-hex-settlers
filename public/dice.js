@@ -2,19 +2,32 @@ const markDice = (dots, diceContainer) => {
   const dice = document.getElementsByClassName(diceContainer)[0];
   dots.forEach((num) => {
     const dot = dice.getElementsByClassName(num)[0];
-    dot.style.visibility = "visible";
+    dot.style.visibility = 'visible';
   });
 };
 
-const diceHandler = (gameDots) => {
-  const dice1 = gameDots["6"];
-  const dice2 = gameDots["4"];
-  markDice(dice1, "dice1");
-  markDice(dice2, "dice2");
+const resetDice = () => {
+  document.querySelectorAll('.dot').forEach((dot) => {
+    dot.style.visibility = 'hidden';
+  });
+};
+
+
+const diceHandler = async (gameDots) => {
+  const dices = await fetch('/dice');
+  const { dice1, dice2 } = await dices.json();
+
+  resetDice();
+
+  const d1 = gameDots[dice1];
+  markDice(d1, 'dice1');
+
+  const d2 = gameDots[dice2];
+  markDice(d2, 'dice2');
 };
 
 const main = () => {
-  const gameDots = {
+  const diceDots = {
     1: [5],
     2: [1, 9],
     3: [4, 5, 6],
@@ -23,12 +36,12 @@ const main = () => {
     6: [1, 3, 4, 6, 7, 9],
   };
 
-  const dots = gameDots["2"];
-  markDice(dots, "dice1");
-  markDice(dots, "dice2");
+  const dots = diceDots['2'];
+  markDice(dots, 'dice1');
+  markDice(dots, 'dice2');
 
-  const container = document.getElementsByClassName("dice-container")[0];
-  container.addEventListener("click", () => diceHandler(gameDots));
+  const container = document.getElementsByClassName('dice-container')[0];
+  container.addEventListener('click', () => diceHandler(diceDots));
 };
-  
+
 globalThis.onload = main;
