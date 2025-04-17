@@ -22,8 +22,8 @@ describe('Board', () => {
 
   it('should serialize the board correctly', () => {
     const result = board.getBoard();
-    assertEquals(Object.keys(result), ['board']);
-    assertEquals(result.board.hexes.length, 19);
+    assertEquals(Object.keys(result), ['hexes', 'vertices', 'edges']);
+    assertEquals(result.hexes.length, 19);
   });
 
   it('should link vertices to each other and to edges', () => {
