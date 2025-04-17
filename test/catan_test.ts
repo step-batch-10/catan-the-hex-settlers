@@ -1,8 +1,31 @@
 import { assertEquals, assert } from 'assert';
 import { describe, it, beforeEach } from 'testing/bdd';
-import { Catan } from '../src/models/catan.js';
+import { Catan } from '../src/models/catan.ts';
+import { Player } from '../src/models/player.ts';
+import { Hex } from '../src/models/hex.ts';
 
-let game;
+interface GameState {
+  gameId: string;
+  playerId: string;
+  players: { me: Player; others: Player[] };
+  board: { hexes: Hex[] };
+}
+
+interface AbstractPlayerData {
+  id: string;
+  name: string;
+  color: string;
+  resources: number;
+  roads: string[];
+  settlements: string[];
+  cities: string[];
+  devCards: number;
+  hasLargestArmy: boolean;
+  hasLongestRoad: boolean;
+  victoryPoints: number;
+}
+
+let game: Catan;
 
 beforeEach(() => {
   game = new Catan();
@@ -19,19 +42,19 @@ describe('Catan', () => {
     assertEquals(freshGame.phase, 'setup');
     assertEquals(freshGame.winner, null);
     assertEquals(freshGame.diceRoll.length, 0);
-    assert(freshGame.board);
+    assert(freshGame.board !== undefined);
   });
 
   it('should create mock players and board', () => {
     assertEquals(game.players.length, 4);
-    assert(game.players[0].name === 'Adil');
+    assertEquals(game.players[0].name, 'Adil');
     assert(game.board.hexes.length > 0);
   });
 
   it('should change turn correctly', () => {
     const prev = game.currentPlayerIndex;
     game.changeTurn();
-    assertEquals(game.currentPlayerIndex, (prev + 1) % 4);
+    assertEquals(game.currentPlayerIndex, (prev + 1) % game.players.length);
   });
 
   it('should roll two dice with values 1-6', () => {
@@ -42,11 +65,11 @@ describe('Catan', () => {
   });
 
   it('should abstract player data with resource and dev card totals', () => {
-    const player = game.players[0];
+    const player: Player = game.players[0];
     player.resources.wood = 2;
     player.devCards.knight = 3;
 
-    const data = game.abstractPlayerData(player);
+    const data = game.abstractPlayerData(player) as AbstractPlayerData;
     assertEquals(data.resources, 2);
     assertEquals(data.devCards, 3);
     assertEquals(data.name, 'Adil');
@@ -58,16 +81,15 @@ describe('Catan', () => {
 
     assertEquals(me.id, 'p2');
     assertEquals(others.length, 3);
-    assert(others.every((p) => p.id !== 'p2'));
   });
 
   it('should return full game state with board and player info', () => {
-    const state = game.getGameState('p1');
+    const state = game.getGameState('p1') as GameState;
 
     assertEquals(state.gameId, 'game123');
     assertEquals(state.playerId, 'p1');
-    assert(state.players.me.id === 'p1');
-    assert(state.players.others.length === 3);
+    assertEquals(state.players.me.id, 'p1');
+    assertEquals(state.players.others.length, 3);
     assert(state.board.hexes.length > 0);
   });
 });

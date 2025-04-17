@@ -2,7 +2,17 @@ import { Board } from './board.ts';
 import { Player } from './player.ts';
 import _ from 'lodash';
 
+type GamePhase = 'setup' | 'main' | 'end';
+
 export class Catan {
+  gameId: string;
+  players: Player[];
+  currentPlayerIndex: number;
+  phase: GamePhase;
+  winner: string | null;
+  diceRoll: [number, number] | [];
+  board: Board;
+
   constructor() {
     this.gameId = 'game123';
     this.players = [];
@@ -13,7 +23,7 @@ export class Catan {
     this.board = new Board();
   }
 
-  mockGame() {
+  mockGame(): this {
     this.players.push(new Player('p1', 'Adil', 'red'));
     this.players.push(new Player('p2', 'Aman', 'blue'));
     this.players.push(new Player('p3', 'Vineet', 'orange'));
@@ -22,18 +32,19 @@ export class Catan {
     return this;
   }
 
-  changeTurn() {
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 4;
+  changeTurn(): void {
+    this.currentPlayerIndex =
+      (this.currentPlayerIndex + 1) % this.players.length;
   }
 
-  rollDice() {
+  rollDice(): [number, number] {
     const dice1 = Math.floor(Math.random() * 6) + 1;
     const dice2 = Math.floor(Math.random() * 6) + 1;
     this.diceRoll = [dice1, dice2];
     return this.diceRoll;
   }
 
-  abstractPlayerData(player) {
+  abstractPlayerData(player: Player): object {
     const data = player.getPlayerData();
     const resources = _.sum(_.values(data.resources));
     const devCards = _.sum(_.values(data.devCards));
@@ -41,18 +52,23 @@ export class Catan {
     return { ...data, resources, devCards };
   }
 
-  getPlayersInfo(playerId) {
+  getPlayersInfo(playerId: string): {
+    me: ReturnType<Player['getPlayerData']>;
+    others: object[];
+  } {
     const [[player], others] = _.partition(
       this.players,
-      (player) => player.id === playerId,
+      (p: Player) => p.id === playerId
     );
 
     const me = player.getPlayerData();
-    const othersData = others.map((other) => this.abstractPlayerData(other));
+    const othersData = others.map((other: Player) =>
+      this.abstractPlayerData(other)
+    );
     return { me, others: othersData };
   }
 
-  getGameState(playerId) {
+  getGameState(playerId: string): object {
     const players = this.getPlayersInfo(playerId);
     const board = this.board.getBoard();
     const currentPlayerId = this.players[this.currentPlayerIndex].id;
