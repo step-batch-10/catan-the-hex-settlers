@@ -7,6 +7,10 @@
     "singleQuote": true,
     "include": ["src/"]
   },
+  "test": {
+    "include": ["**/*.ts", "**/*.js"],
+    "exclude": ["server.js", "public/**"]
+  },
   "tasks": {
     "start": "deno run -A --watch server.js 3000",
     "test": "deno test -A",
@@ -15,7 +19,7 @@
     "test-coverage": "deno test -A --coverage=coverage",
     "delete-coverage": "rm -rf coverage",
     "coverage": {
-      "command": "deno run -A jsr:@ashishkujoy/deno-coverage-checker --lines=90 --functions=50 --branches=80",
+      "command": "deno run -A jsr:@ashishkujoy/deno-coverage-checker --lines=100 --functions=100 --branches=100",
       "dependencies": ["delete-coverage", "test-coverage"]
     }
   },
