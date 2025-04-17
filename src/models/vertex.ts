@@ -1,19 +1,20 @@
-const CORNER_OFFSETS: [number, number][] = [
-  [1, 0], 
-  [1, -1],
-  [0, -1],
-  [-1, 0],
-  [-1, 1],
-  [0, 1]
-];
+import { Edge } from './edge.ts';
 
 export class Vertex {
+  static readonly CORNER_OFFSETS: [number, number][] = [
+    [1, 0],
+    [1, -1],
+    [0, -1],
+    [-1, 0],
+    [-1, 1],
+    [0, 1]
+  ];
   id: string;
   harbor: string | null;
   owner: string | null;
   adjacentHexes: string[];
-  connectedVertices: string[];
-  connectedEdges: string[];
+  connectedVertices: Vertex[];
+  connectedEdges: Edge[];
 
   constructor(id: string, harbor: string | null) {
     this.id = id;
@@ -27,17 +28,13 @@ export class Vertex {
   static getVertexKey(q: number, r: number, cornerIndex: number): string {
     const directions: [number, number][] = [
       [0, 0],
-      CORNER_OFFSETS[cornerIndex],
-      CORNER_OFFSETS[(cornerIndex + 5) % 6],
+      this.CORNER_OFFSETS[cornerIndex],
+      this.CORNER_OFFSETS[(cornerIndex + 5) % 6]
     ];
 
-    const hexesTouchingVertex = directions.map(
-      ([dq, dr]) => [q + dq, r + dr]
-    );
+    const hexesTouchingVertex = directions.map(([dq, dr]) => [q + dq, r + dr]);
 
-    const keyParts = hexesTouchingVertex.map(
-      ([q, r]) => `${q},${r}`
-    );
+    const keyParts = hexesTouchingVertex.map(([q, r]) => `${q},${r}`);
 
     keyParts.sort();
 

@@ -28,7 +28,7 @@ describe('Vertex', () => {
   });
 });
 
-describe('Vertex', () => {
+describe('getVertexKey', () => {
   it('should return correct vertex key from getVertexKey', () => {
     const key = Vertex.getVertexKey(0, 0, 5);
     const expectedHexCoords = [
