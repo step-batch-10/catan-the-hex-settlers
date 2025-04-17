@@ -35,4 +35,16 @@ describe('Edge', () => {
     assertEquals(key1, 'v1_v2');
     assertEquals(key2, 'v1_v2');
   });
+
+  it("should serialize to JSON correctly", () => {
+    const edge = new Edge("e4", ["v7", "v8"]);
+    edge.occupy("player2");
+
+    const json = edge.toJSON();
+
+    assertEquals(json, {
+      id: "e4",
+      owner: "player2"
+    });
+  });
 });

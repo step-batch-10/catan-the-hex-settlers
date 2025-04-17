@@ -1,3 +1,8 @@
+interface EdgeData {
+  id: string;
+  owner: string | null;
+}
+
 export class Edge {
   id: string;
   vertices: [string, string];
@@ -24,5 +29,10 @@ export class Edge {
 
   occupiedBy(): string | null {
     return this.owner;
+  }
+
+  toJSON(): EdgeData {
+    const { id, owner } = this;
+    return { id, owner };
   }
 }
