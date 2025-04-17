@@ -6,7 +6,7 @@ const main = (port) => {
     playerId: 'p1',
     currentPlayerId: 'p2',
     phase: 'main',
-    diceRoll: 8,
+    diceRoll: [1, 2],
     winner: null,
     players: {
       me: {

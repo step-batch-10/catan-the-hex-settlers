@@ -1,7 +1,11 @@
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
-import { rollDice, servePlayersList } from './handlers/dynamicHandlers.ts';
+import {
+  canRoll,
+  rollDice,
+  servePlayersList
+} from './handlers/dynamicHandlers.ts';
 
 const inject = (gameData) => async (c, next) => {
   c.set('gameData', gameData);
@@ -16,6 +20,7 @@ export const createApp = (gameData) => {
   app.use(inject(gameData));
   app.get('/players', servePlayersList);
   app.get('/dice', rollDice);
+  app.get(`/canRoll/:playerId`, canRoll);
   app.get('*', serveStatic({ root: './public' }));
 
   return app;
