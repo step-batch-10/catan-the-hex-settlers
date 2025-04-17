@@ -3,23 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
     <script src="./playersList.js"></script>
-    <style>
-      body {
-        background-color: rgb(13, 177, 242);
-      }
-    </style>
-    <!-- <link rel="stylesheet" href="./playersList.css" /> -->
-    <title>Opponent Player's List</title>
+
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <h1>Opponent Players List</h1>
-    <div id="player-list"></div>
+    <div class="game-container">
+      <header>
+        <nav>
+          <div class="turn"></div>
+          <div class="rules"></div>
+        </nav>
+      </header>
+      <main>
+        <div class="map"></div>
+        <div class="dice"></div>
+        <div class="player-panel"></div>
+      </main>
+      <aside>
+        <div id="player-list"></div>
+        <div class="logs"></div>
+      </aside>
+    </div>
 
     <template id="info-box-template">
       <div id="player-info">
         <div>
-          <div id="color">color</div>
+          <div id="color"></div>
           <p id="player-name"></p>
         </div>
         <div>

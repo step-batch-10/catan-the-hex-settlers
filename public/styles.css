@@ -1,0 +1,131 @@
+/* General Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #e0f0ff;
+}
+
+/* Main Game Layout */
+.game-container {
+  display: grid;
+  grid-template-areas:
+    'header header'
+    'main aside';
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  gap: 10px;
+  padding: 10px;
+}
+
+/* Header (Turn + Rules) */
+header {
+  grid-area: header;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #d0d0d0;
+  border-radius: 8px;
+}
+
+.turn {
+  width: 200px;
+  height: 40px;
+  background-color: #fff;
+  border-radius: 6px;
+}
+
+.rules {
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
+  border-radius: 50%;
+}
+
+/* Main Area (Map, Dice, Player Panel) */
+main {
+  grid-area: main;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.map {
+  flex: 1;
+  background-color: #d6ebff;
+  border-radius: 10px;
+}
+
+.dice {
+  position: absolute;
+  right: 20px;
+  bottom: 100px;
+  width: 100px;
+  height: 50px;
+  background-color: #eee;
+  text-align: center;
+  line-height: 50px;
+  border-radius: 6px;
+}
+
+.player-panel {
+  background-color: #fff;
+  height: 180px;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* Sidebar (Player List + Logs) */
+aside {
+  grid-area: aside;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#player-list {
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.logs {
+  height: 180px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* Template Styling (Optional) */
+#player-info {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+#player-info div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: grey;
+}
