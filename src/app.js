@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
-import { servePlayersList } from './handlers/dynamicHandlers.js';
+import { servePlayersList } from './handlers/dynamicHandlers.ts';
 
 const inject = (gameData) => async (c, next) => {
   c.set('gameData', gameData);

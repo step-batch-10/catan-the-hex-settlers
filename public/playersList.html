@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./playersList.js"></script>
+    <style>
+      body {
+        background-color: rgb(13, 177, 242);
+      }
+    </style>
+    <!-- <link rel="stylesheet" href="./playersList.css" /> -->
+    <title>Opponent Player's List</title>
+  </head>
+  <body>
+    <h1>Opponent Players List</h1>
+    <div id="player-list"></div>
+
+    <template id="info-box-template">
+      <div id="player-info">
+        <div>
+          <div id="color">color</div>
+          <p id="player-name"></p>
+        </div>
+        <div>
+          <p id="vp">VP:</p>
+          <p id="resources">Resources:</p>
+          <p id="dev-cards">Dev Cards:</p>
+          <div>
+            <div><p id="longest-army">LongestArmy</p></div>
+            <div><p id="longest-road">LongestRoad</p></div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </body>
+</html>
