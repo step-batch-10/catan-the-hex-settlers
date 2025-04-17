@@ -43,7 +43,7 @@ export class Vertex {
 
     keyParts.sort();
 
-    return keyParts.join('|');
+    return 'v' + keyParts.join('|');
   }
 
   isOccupied(): boolean {

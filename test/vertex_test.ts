@@ -41,7 +41,7 @@ describe('getVertexKey and toJSON', () => {
       .sort()
       .join('|');
 
-    assertEquals(key, expectedHexCoords);
+    assertEquals(key, 'v' + expectedHexCoords);
   });
 
   it('should return correct vertex key for different cornerIndex', () => {
@@ -55,7 +55,7 @@ describe('getVertexKey and toJSON', () => {
       .sort()
       .join('|');
 
-    assertEquals(key, expectedHexCoords);
+    assertEquals(key, 'v' + expectedHexCoords);
   });
 
   it('should return correct vertex key for cornerIndex 0', () => {
@@ -69,7 +69,7 @@ describe('getVertexKey and toJSON', () => {
       .sort()
       .join('|');
 
-    assertEquals(key, expectedHexCoords);
+    assertEquals(key, 'v' + expectedHexCoords);
   });
 
   it('should return correct vertex key for cornerIndex 1', () => {
@@ -83,7 +83,7 @@ describe('getVertexKey and toJSON', () => {
       .sort()
       .join('|');
 
-    assertEquals(key, expectedHexCoords);
+    assertEquals(key, 'v' + expectedHexCoords);
   });
 
   it('should return correct vertex key for cornerIndex 2', () => {
@@ -97,7 +97,7 @@ describe('getVertexKey and toJSON', () => {
       .sort()
       .join('|');
 
-    assertEquals(key, expectedHexCoords);
+    assertEquals(key, 'v' + expectedHexCoords);
   });
 
   it('should return correct vertex key for cornerIndex 3', () => {
@@ -111,7 +111,7 @@ describe('getVertexKey and toJSON', () => {
       .sort()
       .join('|');
 
-    assertEquals(key, expectedHexCoords);
+    assertEquals(key, 'v' + expectedHexCoords);
   });
 
   it('should serialize to JSON correctly', () => {

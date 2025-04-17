@@ -25,15 +25,15 @@ describe('Edge', () => {
   it('should return edge key for consistent identification', () => {
   const key1 = Edge.getEdgeKey('v1', 'v2');
 
-    assertEquals(key1, 'v1_v2');
+    assertEquals(key1, 'e-v1_v2');
   });
 
   it('should return sorted edge key for consistent identification', () => {
     const key1 = Edge.getEdgeKey('v1', 'v2');
     const key2 = Edge.getEdgeKey('v2', 'v1');
 
-    assertEquals(key1, 'v1_v2');
-    assertEquals(key2, 'v1_v2');
+    assertEquals(key1, 'e-v1_v2');
+    assertEquals(key2, 'e-v1_v2');
   });
 
   it("should serialize to JSON correctly", () => {

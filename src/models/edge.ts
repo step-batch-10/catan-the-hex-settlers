@@ -15,7 +15,7 @@ export class Edge {
   }
 
   static getEdgeKey(v1: string, v2: string): string {
-    return [v1, v2].sort().join('_');
+    return 'e-' + [v1, v2].sort().join('_');
   }
 
   isOccupied(): boolean {
