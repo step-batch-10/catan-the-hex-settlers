@@ -19,7 +19,7 @@ export class Catan {
     this.currentPlayerIndex = 0;
     this.phase = 'setup';
     this.winner = null;
-    this.diceRoll = [];
+    this.diceRoll = [1, 1];
     this.board = new Board();
   }
 
@@ -38,9 +38,10 @@ export class Catan {
   }
 
   rollDice(): [number, number] {
-    const dice1 = Math.floor(Math.random() * 6) + 1;
-    const dice2 = Math.floor(Math.random() * 6) + 1;
+    const dice1 = _.random(1, 6);
+    const dice2 = _.random(1, 6);
     this.diceRoll = [dice1, dice2];
+    this.changeTurn();
     return this.diceRoll;
   }
 
@@ -68,12 +69,19 @@ export class Catan {
     return { me, others: othersData };
   }
 
+  getAvailableActions(playerId: string) {
+    const canRoll = this.players[this.currentPlayerIndex].id === playerId;
+    return { canRoll };
+  }
+
   getGameState(playerId: string): object {
     const players = this.getPlayersInfo(playerId);
     const board = this.board.getBoard();
     const currentPlayerId = this.players[this.currentPlayerIndex].id;
     const { gameId, diceRoll } = this;
+    const availableActions = this.getAvailableActions(playerId);
 
-    return { gameId, diceRoll, playerId, currentPlayerId, players, board };
+    const playersData = { playerId, players, currentPlayerId };
+    return { gameId, diceRoll, board, availableActions, ...playersData };
   }
 }

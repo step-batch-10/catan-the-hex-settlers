@@ -41,7 +41,7 @@ describe('Catan', () => {
     assertEquals(freshGame.currentPlayerIndex, 0);
     assertEquals(freshGame.phase, 'setup');
     assertEquals(freshGame.winner, null);
-    assertEquals(freshGame.diceRoll.length, 0);
+    assertEquals(freshGame.diceRoll.length, 2);
     assert(freshGame.board !== undefined);
   });
 
