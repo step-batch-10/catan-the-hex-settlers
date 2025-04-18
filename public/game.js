@@ -9,8 +9,9 @@ const textDecStyle = (hasSpecialCard) =>
 const setSpecialCardsStyles = (cloneTemplate, player) => {
   const largestArmy = cloneTemplate.getElementById('largest-army');
   const longestRoad = cloneTemplate.getElementById('longest-road');
-  largestArmy.classList.add(textDecStyle(player.largestArmy));
-  longestRoad.classList.add(textDecStyle(player.longestRoad));
+  
+  largestArmy.classList.add(textDecStyle(player.hasLargestArmy));
+  longestRoad.classList.add(textDecStyle(player.hasLongestRoad));
 };
 
 const createProfileCard = (player) => {

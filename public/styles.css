@@ -212,3 +212,11 @@ body {
   border-radius: 50%;
   background-color: grey;
 }
+
+.no-line-through {
+  text-decoration: none;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
