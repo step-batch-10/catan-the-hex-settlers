@@ -57,11 +57,44 @@ const renderPlayersData = (players) => {
   });
 };
 
+const diceDotMap = {
+  1: [4],
+  2: [0, 8],
+  3: [0, 4, 8],
+  4: [0, 2, 6, 8],
+  5: [0, 2, 4, 6, 8],
+  6: [0, 2, 3, 5, 6, 8],
+};
+
+function renderDice(diceId, value) {
+  const dice = document.getElementById(diceId);
+  dice.innerHTML = '';
+
+  const positions = diceDotMap[value];
+
+  for (let i = 0; i < 9; i++) {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
+    if (positions.includes(i)) {
+      dice.appendChild(dot);
+    } else {
+      const spacer = document.createElement('div');
+      dice.appendChild(spacer);
+    }
+  }
+
+  dice.classList.remove('dice');
+  void dice.offsetWidth; 
+  dice.classList.add('dice');
+}
+
 const main = async () => {
   const response = await fetch('/game/gameState');
   
   const gameState = await response.json();
-
+  
+  renderDice('dice1', 3);
+  renderDice('dice2', 5);
   renderPlayersData(gameState.players);
 };
 
