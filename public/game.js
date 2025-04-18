@@ -3,6 +3,16 @@ const appendText = (template, elementId, text) => {
   element.textContent += text;
 };
 
+const textDecStyle = (hasSpecialCard) =>
+  (hasSpecialCard ? 'no-' : '') + 'line-through';
+
+const setSpecialCardsStyles = (cloneTemplate, player) => {
+  const largestArmy = cloneTemplate.getElementById('largest-army');
+  const longestRoad = cloneTemplate.getElementById('longest-road');
+  largestArmy.classList.add(textDecStyle(player.largestArmy));
+  longestRoad.classList.add(textDecStyle(player.longestRoad));
+};
+
 const createProfileCard = (player) => {
   const clone = document.querySelector('#info-box-template');
   const cloneTemplate = clone.content.cloneNode(true);
@@ -11,6 +21,7 @@ const createProfileCard = (player) => {
 
   color.style.backgroundColor = player.color;
 
+  setSpecialCardsStyles(cloneTemplate, player);
   appendText(cloneTemplate, 'player-name', player.name);
   appendText(cloneTemplate, 'vp', player.victoryPoints);
   appendText(cloneTemplate, 'dev-cards', player.devCards);
