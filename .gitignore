@@ -3,7 +3,4 @@ coverage/
 !.vscode/settings.json
 .DS_Store
 references.md
-commit-msg.sh
-commit_message.txt
-
 spikes
