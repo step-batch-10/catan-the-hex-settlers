@@ -8,7 +8,7 @@ const noTokenImages = {
   9: '/images/tokens/token-9.png',
   10: '/images/tokens/token-10.png',
   11: '/images/tokens/token-11.png',
-  12: '/images/tokens/token-12.png'
+  12: '/images/tokens/token-12.png',
 };
 
 const terrainImages = {
@@ -17,7 +17,7 @@ const terrainImages = {
   mountains: '/images/terrains/mountains.png',
   hills: '/images/terrains/hills.png',
   fields: '/images/terrains/fields.png',
-  desert: '/images/terrains/desert.png'
+  desert: '/images/terrains/desert.png',
 };
 
 function* coordinates() {
@@ -26,7 +26,7 @@ function* coordinates() {
     for (let tileIndex = 0; tileIndex < length; tileIndex++) {
       yield {
         x: (Math.floor(length / 3) - (length % 3)) * 50 + 100 * tileIndex,
-        y: 86.5 * index
+        y: 86.5 * index,
       };
     }
   }
@@ -38,11 +38,11 @@ const generateTiles = (tiles) => {
   return tiles
     .map((tile) => {
       const coord = coordinate.next().value;
-      console.log(tile.terrain, tile.terrainNumber)
+      console.log(tile.terrain, tile.terrainNumber);
       const header = `<g
     transform="translate(${coord.x},${coord.y})"
     >`;
-      
+
       const tilesImage = `<image
     href="${terrainImages[tile.terrain]}"
     x="10"
@@ -50,8 +50,8 @@ const generateTiles = (tiles) => {
     width="90"
     height="110"
     transform="translate(-155,-237.5)"
-    />`
-      
+    />`;
+
       const resourceNumber = `<image href="${noTokenImages[tile.terrainNumber]}"
     x="0"
     y="0"
@@ -59,18 +59,17 @@ const generateTiles = (tiles) => {
     height="36"
     transform="translate(-120,-190)">
     </g>`;
-  
+
       const template = `${header} ${tilesImage}`;
-      
+
       return tile.terrainNumber === null ? template : template + resourceNumber;
     })
     .join('\n');
 };
 
-
 const appendText = (template, elementId, text) => {
   const element = template.getElementById(elementId);
-  element.textContent += text;
+  element.textContent = text;
 };
 
 const textDecStyle = (hasSpecialCard) =>
@@ -79,7 +78,7 @@ const textDecStyle = (hasSpecialCard) =>
 const setSpecialCardsStyles = (cloneTemplate, player) => {
   const largestArmy = cloneTemplate.getElementById('largest-army');
   const longestRoad = cloneTemplate.getElementById('longest-road');
-  
+
   largestArmy.classList.add(textDecStyle(player.hasLargestArmy));
   longestRoad.classList.add(textDecStyle(player.hasLongestRoad));
 };
@@ -122,6 +121,7 @@ const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
 
   const list = document.querySelector('#player-list');
+  list.innerHTML = '';
   players.others.forEach((player) => {
     const template = createProfileCard(player);
     list.append(template);
@@ -155,31 +155,62 @@ const renderDice = (diceId, value) => {
   }
 
   dice.classList.remove('dice');
-  void dice.offsetWidth; 
+  void dice.offsetWidth;
   dice.classList.add('dice');
-}
+};
 
 const renderBoard = (hexes) => {
-  const tilescontainer = document.querySelector("#tilesContainer");
+  const tilescontainer = document.querySelector('#tilesContainer');
   const tiles = generateTiles(hexes);
   tilescontainer.innerHTML = tiles;
-}
+};
 
 const renderBothDice = (diceRoll) => {
-  ['dice1', 'dice2'].forEach((diceId, i) => renderDice(diceId, diceRoll[i]))
-} 
+  ['dice1', 'dice2'].forEach((diceId, i) => renderDice(diceId, diceRoll[i]));
+};
 
 const renderElements = (gameState) => {
   renderPlayersData(gameState.players);
-  renderBothDice([3, 3]);
-  renderBoard(gameState.board.hexes)
-}
+  renderBothDice(gameState.diceRoll, gameState.availableActions.canRoll);
+};
+
+const notYourTurn = () => {
+  alert('Not your turn');
+};
+
+const rollDiceHandler = async () => {
+  const dice = await fetch('/game/dice/can-roll').then((res) => res.json());
+
+  if (!dice.canRoll) return notYourTurn();
+  await fetch('game/roll-dice', { method: 'POST' });
+};
+
+const addRollDiceEvent = () => {
+  const diceContainer = document.querySelector('.dice-container');
+
+  diceContainer.addEventListener('click', rollDiceHandler);
+};
+
+const addEventListeners = () => {
+  addRollDiceEvent();
+};
+
+const poll = () => {
+  setInterval(async () => {
+    const response = await fetch('/game/gameState');
+    const gameState = await response.json();
+    renderBothDice(gameState.diceRoll, gameState.availableActions.canRoll);
+  }, 1000);
+};
 
 const main = async () => {
   const response = await fetch('/game/gameState');
-  
   const gameState = await response.json();
+
+  addEventListeners();
   renderElements(gameState);
+  renderBoard(gameState.board.hexes);
+  poll();
 };
 
 globalThis.onload = main;

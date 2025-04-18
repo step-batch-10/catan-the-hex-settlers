@@ -113,7 +113,6 @@ body {
   padding: 5px;
   position: relative;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-  animation: roll 0.3s ease;
 }
 
 .dot {
@@ -121,31 +120,6 @@ body {
   height: 10px;
   background: black;
   border-radius: 50%;
-  opacity: 0;
-  animation: appear 0.3s forwards;
-}
-
-@keyframes appear {
-  0% {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes roll {
-  0% {
-    transform: rotate(0deg) scale(1);
-  }
-  50% {
-    transform: rotate(180deg) scale(1.2);
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
-  }
 }
 
 #player-panel {
