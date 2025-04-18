@@ -12,7 +12,7 @@ export class Hex {
     r: number,
     terrain: string,
     number: number | null,
-    hasRobber: boolean
+    hasRobber: boolean,
   ) {
     this.id = id;
     this.q = q;
@@ -32,5 +32,10 @@ export class Hex {
 
   toString(): string {
     return this.terrain;
+  }
+
+  toJSON(): object {
+    const { hasRobber, id, q, r, terrain, terrainNumber } = this;
+    return { id, q, r, terrain, terrainNumber, hasRobber };
   }
 }
