@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="catanStyle.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="/game.js"></script>
     <title>Catan-game-board</title>
   </head>
   <body>
@@ -50,12 +51,35 @@
       </div>
       
       <div id="side-bar">
-        <div id="side-bar-top"></div>
+        <div id="side-bar-top">
+           <div id="player-list"></div>
+        </div>
         <div id="side-bar-bottom"></div>
       </div>
     </div>
 
 
     </div>
+
+        <template id="info-box-template">
+      <div id="player-info">
+        <div>
+          <div id="color"></div>
+          <p id="player-name"></p>
+        </div>
+        <div>
+          <p id="vp">VP:</p>
+          <p id="resources">Resources:</p>
+          <p id="dev-cards">Dev Cards:</p>
+          <div>
+            <div>
+              <p id="largest-army">LargestArmy</p>
+            </div>
+            <div><p id="longest-road">LongestRoad</p></div>
+          </div>
+        </div>
+      </div>
+    </template>
+
   </body>
 </html>
