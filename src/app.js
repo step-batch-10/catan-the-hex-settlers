@@ -1,27 +1,30 @@
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
-import {
-  canRoll,
-  rollDice,
-  servePlayersList
-} from './handlers/dynamicHandlers.ts';
+import { serveGamePage, serveGameState } from './handlers/dynamicHandlers.ts';
 
-const inject = (gameData) => async (c, next) => {
-  c.set('gameData', gameData);
+const inject = (game) => async (c, next) => {
+  c.set('game', game);
   await next();
 };
 
-export const createApp = (gameData) => {
+const gameRoutes = (game) => {
+  const gameApp = new Hono();
+
+  gameApp.use(inject(game));
+  gameApp.get('/gameState', serveGameState);
+  gameApp.get('/:playerId', serveGamePage);
+  return gameApp;
+};
+
+export const createApp = (game) => {
   const app = new Hono();
 
   app.use(logger());
   app.get('/ok', (c) => c.text('ok'));
-  app.use(inject(gameData));
-  app.get('/players', servePlayersList);
-  app.get('/dice', rollDice);
-  app.get(`/canRoll/:playerId`, canRoll);
-  app.get('*', serveStatic({ root: './public' }));
 
+  app.route('/game', gameRoutes(game));
+
+  app.get('*', serveStatic({ root: './public' }));
   return app;
 };

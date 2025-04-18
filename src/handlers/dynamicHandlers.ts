@@ -1,24 +1,16 @@
 import { Context } from 'hono';
+import { getCookie, setCookie } from 'hono/cookie';
 
-export const servePlayersList = (ctx: Context): Response => {
-  const gameData = ctx.get('gameData');
-  const players = gameData.players;
+export const serveGameState = (ctx: Context): Response => {
+  const game = ctx.get('game');
+  const playerId = getCookie(ctx, 'player-id');
+  const gameState = game.getGameState(playerId);
 
-  return ctx.json(players);
+  return ctx.json(gameState);
 };
 
-export const rollDice = (ctx: Context) => {
-  const gameData = ctx.get('gameData');
-  const [dice1, dice2] = gameData.diceRoll;
-  return ctx.json({ dice1, dice2 }, 200);
-};
-
-export const canRoll = (ctx: Context) => {
-  const playerId = ctx.req.param('playerId');
-  const gameData = ctx.get('gameData');
-  if (playerId === gameData.playerId) {
-    const isRolled = !gameData.availableActions.canRoll;
-    return ctx.json({ isRolled });
-  }
-  return ctx.json({ isRolled: true });
+export const serveGamePage = (ctx: Context): Response => {
+  console.log(ctx.req.param('playerId'));
+  setCookie(ctx, 'player-id', ctx.req.param('playerId'));
+  return ctx.redirect('/playersList.html', 303);
 };
