@@ -14,7 +14,7 @@ const main = (port) => {
         name: 'Adil',
         color: 'blue',
         victoryPoints: 5,
-        resources: { wood: 1, brick: 2, sheep: 0, wheat: 1, ore: 0 },
+        resources: { wood: 0, brick: 0, sheep: 0, wheat: 0, ore: 0 },
         roads: ['e12', 'e13'],
         settlements: ['v5', 'v19'],
         cities: [],
@@ -28,11 +28,11 @@ const main = (port) => {
           name: 'Dora',
           color: 'blue',
           victoryPoints: 5,
-          resources: 6,
+          resources: 0,
           roads: ['e12', 'e13'],
           settlements: ['v5', 'v19'],
           cities: [],
-          devCards: 2,
+          devCards: 0,
           hasLongestRoad: false,
           hasLargestArmy: false
         },
@@ -45,7 +45,7 @@ const main = (port) => {
           roads: ['e12', 'e13'],
           settlements: ['v5', 'v19'],
           cities: [],
-          devCards: 2,
+          devCards: 0,
           hasLongestRoad: false,
           hasLargestArmy: false
         },
@@ -58,7 +58,7 @@ const main = (port) => {
           roads: ['e12', 'e13'],
           settlements: ['v5', 'v19'],
           cities: [],
-          devCards: 2,
+          devCards: 0,
           hasLongestRoad: false,
           hasLargestArmy: false
         }
