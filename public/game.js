@@ -67,7 +67,7 @@ const diceDotMap = {
   6: [0, 2, 3, 5, 6, 8],
 };
 
-function renderDice(diceId, value) {
+const renderDice = (diceId, value) => {
   const dice = document.getElementById(diceId);
   dice.innerHTML = '';
 
@@ -89,14 +89,20 @@ function renderDice(diceId, value) {
   dice.classList.add('dice');
 }
 
+const renderBothDice = (diceRoll) => {
+  ['dice1', 'dice2'].forEach((diceId, i) => renderDice(diceId, diceRoll[i]))
+} 
+
+const renderElements = (gameState) => {
+  renderPlayersData(gameState.players);
+  renderBothDice([3, 3]);
+}
+
 const main = async () => {
   const response = await fetch('/game/gameState');
   
   const gameState = await response.json();
-  
-  renderDice('dice1', 3);
-  renderDice('dice2', 5);
-  renderPlayersData(gameState.players);
+  renderElements(gameState);
 };
 
 globalThis.onload = main;
