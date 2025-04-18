@@ -33,8 +33,8 @@ export class Catan {
   }
 
   changeTurn(): void {
-    this.currentPlayerIndex =
-      (this.currentPlayerIndex + 1) % this.players.length;
+    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
+      this.players.length;
   }
 
   rollDice(): [number, number] {
@@ -58,7 +58,7 @@ export class Catan {
   } {
     const [[player], others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId
+      (p: Player) => p.id === playerId,
     );
 
     const me = player.getPlayerData();

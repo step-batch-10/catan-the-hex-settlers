@@ -36,7 +36,7 @@ export class Player {
       brick: 0,
       sheep: 0,
       wheat: 0,
-      ore: 0
+      ore: 0,
     };
 
     this.roads = [];
@@ -47,7 +47,7 @@ export class Player {
       knight: 0,
       'road-building': 0,
       'year-of-plenty': 0,
-      monopoly: 0
+      monopoly: 0,
     };
 
     this.hasLongestRoad = false;
@@ -83,7 +83,7 @@ export class Player {
       devCards,
       hasLargestArmy,
       hasLongestRoad,
-      victoryPoints
+      victoryPoints,
     } = this;
 
     return {
@@ -97,7 +97,7 @@ export class Player {
       devCards,
       hasLargestArmy,
       hasLongestRoad,
-      victoryPoints
+      victoryPoints,
     };
   }
 }

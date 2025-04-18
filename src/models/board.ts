@@ -101,11 +101,15 @@ export class Board {
     return edges;
   }
 
-  getBoard(): { hexes: Hex[]; vertices: VertexData[]; edges: EdgeData[] }
-   {
+  getHexes() {
+    return this.hexes.map((hex) => hex.toJSON());
+  }
+
+  getBoard(): { hexes: object[]; vertices: VertexData[]; edges: EdgeData[] } {
+    const hexesData = this.getHexes();
     const vertices = this.getVertices();
     const edges = this.getEdges();
 
-    return  { hexes: this.hexes, vertices, edges } ;
+    return { hexes: hexesData, vertices, edges };
   }
 }
