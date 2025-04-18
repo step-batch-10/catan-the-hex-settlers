@@ -30,25 +30,25 @@ const createProfileCard = (player) => {
   return cloneTemplate;
 };
 
-// const displayResourceCount = ({ sheep, wood, brick, ore, wheat }) => {
-//   appendText(document, 'ore', ore);
-//   appendText(document, 'wood', wood);
-//   appendText(document, 'sheep', sheep);
-//   appendText(document, 'brick', brick);
-//   appendText(document, 'wheat', wheat);
-// };
+const displayResourceCount = ({ sheep, wood, brick, ore, wheat }) => {
+  appendText(document, 'ore', ore);
+  appendText(document, 'wood', wood);
+  appendText(document, 'sheep', sheep);
+  appendText(document, 'brick', brick);
+  appendText(document, 'wheat', wheat);
+};
 
-// const renderPlayerPanel = (player) => {
-//   const name = document.querySelector('#player-name');
-//   const color = document.querySelector('#color');
+const renderPlayerPanel = (player) => {
+  const name = document.querySelector('#player-name');
+  const color = document.querySelector('#color');
 
-//   name.textContent = player.name;
-//   color.style.backgroundColor = player.color;
-//   displayResourceCount(player.resources);
-// };
+  name.textContent = player.name;
+  color.style.backgroundColor = player.color;
+  displayResourceCount(player.resources);
+};
 
 const renderPlayersData = (players) => {
-  // renderPlayerPanel(players.me);
+  renderPlayerPanel(players.me);
 
   const list = document.querySelector('#player-list');
   players.others.forEach((player) => {

@@ -9,7 +9,6 @@
   </head>
   <body>
     <div class="container">
-
       <div id="top">
         <div id="top-left"></div>
         <div id="top-middle"></div>
@@ -47,21 +46,66 @@
             </div>
           </div>
         </div>
-        <div id="main-bottom"></div>
+        <div id="player-panel">
+          <div class="player-panel">
+            <span id="player-name"></span>
+            <div id="color"></div>
+            <div class="status">
+              <div class="color">
+                <div class="avatar"></div>
+                <div id="victory-points"></div>
+              </div>
+            </div>
+            <div class="resource-cards">
+              <div>
+                <div class="count" id="brick"></div>
+                <img class="cards" src="./images/brick.png" alt="brick" />
+              </div>
+              <div>
+                <div id="wood" class="count"></div>
+                <img class="cards" src="./images/lumber.png" alt="lumber" />
+              </div>
+              <div>
+                <div id="sheep" class="count"></div>
+                <img class="cards" src="./images/wool.png" alt="wool" />
+              </div>
+              <div>
+                <div id="ore" class="count"></div>
+                <img class="cards" src="./images/ore.png" alt="ore" />
+              </div>
+              <div>
+                <div id="wheat" class="count"></div>
+                <img class="cards" src="./images/grain.png" alt="grain" />
+              </div>
+            </div>
+            <div class="dev-cards"><div class="show-cards"></div></div>
+            <div class="played-dev-cards">
+              <div class="vp-cards-played"></div>
+            </div>
+            <div class="special-cards">
+              <div id="longest-army-badge"></div>
+              <div id="longest-road-badge"></div>
+            </div>
+            <div class="player-actions">
+              <button id="trade">Trade</button>
+              <button id="build">Build</button>
+              <button id="buy-dev-cards">Buy Dev Card</button>
+            </div>
+          </div>
+        </div>
       </div>
-      
+
       <div id="side-bar">
         <div id="side-bar-top">
-           <div id="player-list"></div>
+          <div id="player-list"></div>
         </div>
-        <div id="side-bar-bottom"></div>
+        <div id="side-bar-bottom">
+          <div class="logs"></div>
+        </div>
       </div>
     </div>
 
-
-    </div>
-
-        <template id="info-box-template">
+    <template id="info-box-template">
       <div id="player-info">
         <div>
           <div id="color"></div>
@@ -80,6 +124,5 @@
         </div>
       </div>
     </template>
-
   </body>
 </html>
