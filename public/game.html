@@ -3,60 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="stylesheet" href="catanStyle.css" />
+    <title>Catan-game-board</title>
   </head>
-  <style>
-    .dice-container {
-      width: 720px;
-      display: flex;
-      gap: 30px;
-      border: 1px solid black;
-      padding: 40px;
-    }
-    .dice1 > *,
-    .dice2 > * {
-      background-color: aqua;
-      border-radius: 50%;
-      border: 1px solid black;
-      visibility: hidden;
-    }
-    .dice1,
-    .dice2 {
-      width: 340px;
-      aspect-ratio: 1px;
-      display: grid;
-      grid-template-columns: repeat(3, 100px);
-      grid-template-rows: repeat(3, 100px);
-      border: 2px solid palegreen;
-      gap: 10px 10px;
-      padding: 10px;
-    }
-  </style>
-  <script src="./dice.js"></script>
   <body>
-    <div class="dice-container">
-      <div class="dice1">
-        <div class="dot 1"></div>
-        <div class="dot 2"></div>
-        <div class="dot 3"></div>
-        <div class="dot 4"></div>
-        <div class="dot 5"></div>
-        <div class="dot 6"></div>
-        <div class="dot 7"></div>
-        <div class="dot 8"></div>
-        <div class="dot 9"></div>
+    <div class="container">
+
+      <div id="top">
+        <div id="top-left"></div>
+        <div id="top-middle"></div>
+        <div id="top-right"></div>
       </div>
-      <div class="dice2">
-        <div class="dot 1"></div>
-        <div class="dot 2"></div>
-        <div class="dot 3"></div>
-        <div class="dot 4"></div>
-        <div class="dot 5"></div>
-        <div class="dot 6"></div>
-        <div class="dot 7"></div>
-        <div class="dot 8"></div>
-        <div class="dot 9"></div>
+
+      <div id="main">
+        <div id="main-top">
+          <div id="main-left"></div>
+          <div id="main-middle1"></div>
+          <div id="main-middle2">
+            <div class="dice-container">
+              <div class="dice1">
+                <div class="dot-1"></div>
+                <div class="dot-2"></div>
+                <div class="dot-3"></div>
+                <div class="dot-4"></div>
+                <div class="dot-5"></div>
+                <div class="dot-6"></div>
+                <div class="dot-7"></div>
+                <div class="dot-8"></div>
+                <div class="dot-9"></div>
+              </div>
+              <div class="dice2">
+                <div class="dot-1"></div>
+                <div class="dot-2"></div>
+                <div class="dot-3"></div>
+                <div class="dot-4"></div>
+                <div class="dot-5"></div>
+                <div class="dot-6"></div>
+                <div class="dot-7"></div>
+                <div class="dot-8"></div>
+                <div class="dot-9"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="main-bottom"></div>
       </div>
+      
+      <div id="side-bar">
+        <div id="side-bar-top"></div>
+        <div id="side-bar-bottom"></div>
+      </div>
+    </div>
+
+
     </div>
   </body>
 </html>
