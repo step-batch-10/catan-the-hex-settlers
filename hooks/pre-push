@@ -1,10 +1,3 @@
-deno task test
-testStatus=$?
-if [ $testStatus -ne 0 ]; then
-   echo 'TESTS ARE FAILING...'
-   exit 1
-fi
-
 deno task lint
 lintStatus=$?
 if [ $lintStatus -ne 0 ]; then
@@ -19,5 +12,4 @@ if [ $fmtStatus -ne 0 ]; then
    exit 1
 fi
 
-rm -rf coverage/ &&
 deno task coverage
