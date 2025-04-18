@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="./playersList.js"></script>
-
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -13,13 +12,56 @@
       <header>
         <nav>
           <div class="turn"></div>
-          <div class="rules"></div>
+          <div class="rules">?</div>
         </nav>
       </header>
       <main>
         <div class="map"></div>
         <div class="dice"></div>
-        <div class="player-panel"></div>
+
+        <div class="player-panel">
+          <div class="status">
+            <div class="color">
+              <div class="avatar"></div>
+              <div id="victory-points"></div>
+            </div>
+          </div>
+          <div class="resource-cards">
+            <div>
+              <div class="count" id="brick"></div>
+              <img class="cards" src="./images/brick.png" alt="brick" />
+            </div>
+            <div>
+              <div id="wood" class="count"></div>
+              <img class="cards" src="./images/lumber.png" alt="lumber" />
+            </div>
+            <div>
+              <div id="sheep" class="count"></div>
+              <img class="cards" src="./images/wool.png" alt="wool" />
+            </div>
+            <div>
+              <div id="ore" class="count"></div>
+              <img class="cards" src="./images/ore.png" alt="ore" />
+            </div>
+            <div>
+              <div id="wheat" class="count"></div>
+              <img class="cards" src="./images/grain.png" alt="grain" />
+            </div>
+          </div>
+          <div class="dev-cards"><div class="show-cards"></div></div>
+          <div class="played-dev-cards">
+            <div class="vp-cards-played"></div>
+          </div>
+          <div class="special-cards">
+            <div id="longest-army-badge"></div>
+            <div id="longest-road-badge"></div>
+          </div>
+          <div class="player-actions">
+            <button id="trade">Trade</button>
+            <button id="build">Build</button>
+            <button id="buy-dev-cards">Buy Dev Card</button>
+          </div>
+        </div>
       </main>
       <aside>
         <div id="player-list"></div>

@@ -1,4 +1,3 @@
-/* General Reset and Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -10,7 +9,6 @@ body {
   background-color: #e0f0ff;
 }
 
-/* Main Game Layout */
 .game-container {
   display: grid;
   grid-template-areas:
@@ -23,7 +21,6 @@ body {
   padding: 10px;
 }
 
-/* Header (Turn + Rules) */
 header {
   grid-area: header;
 }
@@ -33,7 +30,6 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background-color: #d0d0d0;
   border-radius: 8px;
 }
 
@@ -45,13 +41,16 @@ nav {
 }
 
 .rules {
-  width: 30px;
-  height: 30px;
+  width: 60px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
   background-color: #fff;
   border-radius: 50%;
 }
 
-/* Main Area (Map, Dice, Player Panel) */
 main {
   grid-area: main;
   position: relative;
@@ -67,12 +66,9 @@ main {
 }
 
 .dice {
-  position: absolute;
-  right: 20px;
-  bottom: 100px;
-  width: 100px;
-  height: 50px;
-  background-color: #eee;
+  width: 120px;
+  height: 60px;
+  background-color: #bcbaba;
   text-align: center;
   line-height: 50px;
   border-radius: 6px;
@@ -80,9 +76,35 @@ main {
 
 .player-panel {
   background-color: #fff;
+  display: flex;
   height: 180px;
   border-radius: 10px;
   padding: 10px;
+}
+
+.resource-cards {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.count {
+  width: 20px;
+  position: relative;
+  left: 30px;
+  top: 10px;
+  text-align: center;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: rgb(151, 127, 127);
+}
+
+.cards {
+  width: 44px;
+  height: 64px;
 }
 
 /* Sidebar (Player List + Logs) */

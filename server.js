@@ -25,8 +25,8 @@ const main = (port) => {
       others: [
         {
           id: 'p2',
-          name: 'Rohini',
-          color: 'white',
+          name: 'Dora',
+          color: 'blue',
           victoryPoints: 5,
           resources: 6,
           roads: ['e12', 'e13'],

@@ -22,12 +22,21 @@ const createProfileCard = (player) => {
   return cloneTemplate;
 };
 
+const displayResourceCount = ({ sheep, wood, brick, ore, wheat }) => {
+  appendText(document, 'ore', ore);
+  appendText(document, 'wood', wood);
+  appendText(document, 'sheep', sheep);
+  appendText(document, 'brick', brick);
+  appendText(document, 'wheat', wheat);
+};
+
 const main = async () => {
   const response = await fetch('/players');
   const players = await response.json();
-  console.log(players);
   const list = document.querySelector('#player-list');
 
+  console.log(players.me.resources);
+  displayResourceCount(players.me.resources);
   players.others.forEach((player) => {
     const template = createProfileCard(player);
     list.append(template);
