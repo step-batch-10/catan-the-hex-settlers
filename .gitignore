@@ -1,5 +1,6 @@
 coverage/
-.vscode
+.vscode/*
+!.vscode/settings.json
 .DS_Store
 references.md
 spikes
