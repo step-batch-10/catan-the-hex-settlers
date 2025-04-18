@@ -27,9 +27,18 @@ const displayResourceCount = ({ sheep, wood, brick, ore, wheat }) => {
   appendText(document, 'wheat', wheat);
 };
 
+const renderPlayerPanel = (player) => {
+  const name = document.querySelector('#player-name');
+  const color = document.querySelector('#color');
+  name.textContent = player.name;
+  color.style.backgroundColor = player.color;
+  displayResourceCount(player.resources);
+};
+
 const renderPlayersData = (players) => {
+  renderPlayerPanel(players.me);
+
   const list = document.querySelector('#player-list');
-  displayResourceCount(players.me.resources);
   players.others.forEach((player) => {
     const template = createProfileCard(player);
     list.append(template);
