@@ -12,6 +12,7 @@ export class Catan {
   winner: string | null;
   diceRoll: [number, number] | [];
   board: Board;
+  turns: number;
 
   constructor() {
     this.gameId = 'game123';
@@ -21,6 +22,7 @@ export class Catan {
     this.winner = null;
     this.diceRoll = [1, 1];
     this.board = new Board();
+    this.turns = 0;
   }
 
   mockGame(): this {
@@ -33,16 +35,60 @@ export class Catan {
   }
 
   changeTurn(): void {
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
-      this.players.length;
+    this.currentPlayerIndex =
+      (this.currentPlayerIndex + 1) % this.players.length;
   }
 
   rollDice(): [number, number] {
     const dice1 = _.random(1, 6);
     const dice2 = _.random(1, 6);
     this.diceRoll = [dice1, dice2];
+    this.turns++;
     this.changeTurn();
     return this.diceRoll;
+  }
+
+  isInitialSetup(): boolean {
+    return this.turns > 4 && this.turns <= 12;
+  }
+
+  canRoll(playerId: string): boolean {
+    return (
+      !this.isInitialSetup() &&
+      this.players[this.currentPlayerIndex].id === playerId
+    );
+  }
+
+  canBuildSettlement(playerId: string): boolean {
+    return (
+      this.turns % 2 === 0 &&
+      this.players[this.currentPlayerIndex].id === playerId
+    );
+  }
+
+  canBuildRoad(playerId: string): boolean {
+    return (
+      this.turns % 2 === 1 &&
+      this.players[this.currentPlayerIndex].id === playerId
+    );
+  }
+
+  buildRoad(edgeId: string): boolean {
+    const currentPlayer = this.players[this.currentPlayerIndex];
+    this.board.edges.get(edgeId)?.occupy(currentPlayer.id);
+    currentPlayer.roads.push(edgeId);
+    this.turns++;
+
+    return true;
+  }
+
+  buildSettlement(vertexId: string): boolean {
+    const currentPlayer = this.players[this.currentPlayerIndex];
+    this.board.vertices.get(vertexId)?.occupy(currentPlayer.id);
+    currentPlayer.settlements.push(vertexId);
+    this.turns++;
+
+    return true;
   }
 
   abstractPlayerData(player: Player): object {
@@ -59,7 +105,7 @@ export class Catan {
   } {
     const [[player], others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId,
+      (p: Player) => p.id === playerId
     );
 
     const me = player.getPlayerData();
@@ -70,7 +116,9 @@ export class Catan {
   }
 
   getAvailableActions(playerId: string) {
-    const canRoll = this.players[this.currentPlayerIndex].id === playerId;
+    const canRoll =
+      this.players[this.currentPlayerIndex].id === playerId &&
+      !this.isInitialSetup();
     return { canRoll };
   }
 

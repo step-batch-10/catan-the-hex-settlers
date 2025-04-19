@@ -92,4 +92,69 @@ describe('Catan', () => {
     assertEquals(state.players.others.length, 3);
     assert(state.board.hexes.length > 0);
   });
+
+    it('should correctly determine if player can roll (not during setup)', () => {
+      game.turns = 13; // outside setup phase
+      const currentPlayer = game.players[game.currentPlayerIndex];
+      const canRoll = game.canRoll(currentPlayer.id);
+      assertEquals(canRoll, true);
+    });
+
+    it('should prevent rolling during initial setup', () => {
+      game.turns = 5; // still within setup phase
+      const currentPlayer = game.players[game.currentPlayerIndex];
+      const canRoll = game.canRoll(currentPlayer.id);
+      assertEquals(canRoll, false);
+    });
+
+    it('should allow building settlement only on even turns by current player', () => {
+      game.turns = 6; // even turn
+      const currentPlayer = game.players[game.currentPlayerIndex];
+      assertEquals(game.canBuildSettlement(currentPlayer.id), true);
+
+      game.turns = 7; // odd turn
+      assertEquals(game.canBuildSettlement(currentPlayer.id), false);
+    });
+
+    it('should allow building road only on odd turns by current player', () => {
+      game.turns = 7; // odd turn
+      const currentPlayer = game.players[game.currentPlayerIndex];
+      assertEquals(game.canBuildRoad(currentPlayer.id), true);
+
+      game.turns = 8; // even turn
+      assertEquals(game.canBuildRoad(currentPlayer.id), false);
+    });
+
+    it('should build a road and increment turn count', () => {
+      const currentPlayer = game.players[game.currentPlayerIndex];
+      const [edgeId] = Array.from(game.board.edges.keys());
+      const prevTurn = game.turns;
+
+      const success = game.buildRoad(edgeId);
+
+      assertEquals(success, true);
+      assertEquals(currentPlayer.roads.includes(edgeId), true);
+      assertEquals(game.turns, prevTurn + 1);
+    });
+
+    it('should build a settlement and increment turn count', () => {
+      const currentPlayer = game.players[game.currentPlayerIndex];
+      const [vertexId] = Array.from(game.board.vertices.keys());
+      const prevTurn = game.turns;
+
+      const success = game.buildSettlement(vertexId);
+
+      assertEquals(success, true);
+      assertEquals(currentPlayer.settlements.includes(vertexId), true);
+      assertEquals(game.turns, prevTurn + 1);
+    });
+
+    it('should return correct available actions for current player', () => {
+      const currentPlayer = game.players[game.currentPlayerIndex];
+      game.turns = 5;
+
+      const actions = game.getAvailableActions(currentPlayer.id);
+
+      assertEquals(actions.canRoll, false);
+    });
 });
