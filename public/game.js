@@ -1,4 +1,4 @@
-const noTokenImages = {
+const noTokenImages = { 
   2: '/images/tokens/token-2.png',
   3: '/images/tokens/token-3.png',
   4: '/images/tokens/token-4.png',
@@ -38,7 +38,7 @@ const generateTiles = (tiles) => {
   return tiles
     .map((tile) => {
       const coord = coordinate.next().value;
-      console.log(tile.terrain, tile.terrainNumber);
+      // console.log(tile.terrain, tile.terrainNumber);
       const header = `<g
     transform="translate(${coord.x},${coord.y})"
     >`;
@@ -69,6 +69,8 @@ const generateTiles = (tiles) => {
 
 const appendText = (template, elementId, text) => {
   const element = template.getElementById(elementId);
+  console.log(element);
+  
   element.textContent = text;
 };
 

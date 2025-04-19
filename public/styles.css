@@ -7,49 +7,56 @@
 html,
 body {
   height: 100%;
+  background-color: rgb(64, 146, 201);
+}
+
+#svg20 {
+  position: relative;
+  left: -200px;
+  z-index: 10;
 }
 
 .container {
   display: flex;
   flex-wrap: wrap;
-  background-color: antiquewhite;
+  /* background-color: antiquewhite; */
   height: 100vh;
 }
 
 #top {
-  background-color: azure;
+  /* background-color: azure; */
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 30%;
   height: 10%;
 }
 
 #top-left {
   height: 100%;
   width: 10%;
-  background-color: rgb(161, 72, 87);
+  /* background-color: rgb(161, 72, 87); */
 }
-
+/* 
 #top-middle {
   height: 100%;
   width: 80%;
   background-color: rgb(222, 51, 79);
 }
-
+ */
 #top-right {
   height: 100%;
   width: 10%;
-  background-color: pink;
+  /* background-color: pink; */
 }
 
 #main {
-  background-color: orange;
+  /* background-color: orange; */
   height: 90%;
   width: 80%;
 }
 
 #side-bar {
-  background-color: red;
+  /* background-color: red; */
   height: 90%;
   width: 20%;
 }
@@ -57,13 +64,13 @@ body {
 #side-bar-top {
   width: 100%;
   height: 60%;
-  background-color: grey;
+  /* background-color: grey; */
 }
 
 #side-bar-bottom {
   width: 100%;
   height: 40%;
-  background-color: rgb(228, 224, 224);
+  /* background-color: rgb(228, 224, 224); */
 }
 
 #main-top {
@@ -71,19 +78,19 @@ body {
   height: 80%;
   display: flex;
   flex-wrap: wrap;
-  background-color: darkcyan;
+  /* background-color: darkcyan; */
 }
 
 #main-left {
   width: 10%;
   height: 100%;
-  background-color: blue;
+  /* background-color: blue; */
 }
 
 #main-middle1 {
   width: 80%;
   height: 100%;
-  background-color: rgb(110, 110, 201);
+  /* background-color: rgb(110, 110, 201); */
 }
 
 #main-middle2 {
@@ -91,13 +98,13 @@ body {
   height: 100%;
   display: flex;
   align-items: flex-end;
-  background-color: rgb(191, 191, 239);
+  /* background-color: rgb(191, 191, 239); */
 }
 
 .dice-container {
   display: flex;
   gap: 20px;
-  margin: 8px;
+  margin: 2px;
 }
 
 .dice {
