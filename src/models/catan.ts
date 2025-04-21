@@ -61,8 +61,8 @@ export class Catan {
     this.changePhase();
 
     if (this.turns >= 8 && this.turns < 16) return this.reverseOrder();
-    this.currentPlayerIndex =
-      (this.currentPlayerIndex + 1) % this.players.length;
+    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
+      this.players.length;
   }
 
   rollDice(): [number, number] {
@@ -116,7 +116,7 @@ export class Catan {
     const adjacentVertexIds = edge?.vertices || [];
 
     return [...adjacentVertexIds].some(
-      (vtxId: string) => vertices.get(vtxId)?.owner === currentPlayerId
+      (vtxId: string) => vertices.get(vtxId)?.owner === currentPlayerId,
     );
   }
 
@@ -191,7 +191,7 @@ export class Catan {
   } {
     const [[player], others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId
+      (p: Player) => p.id === playerId,
     );
 
     const me = player.getPlayerData();
@@ -202,8 +202,7 @@ export class Catan {
   }
 
   getAvailableActions(playerId: string) {
-    const canRoll =
-      this.players[this.currentPlayerIndex].id === playerId &&
+    const canRoll = this.players[this.currentPlayerIndex].id === playerId &&
       !this.isInitialSetup();
     return { canRoll };
   }
@@ -259,7 +258,7 @@ export class Catan {
     const currentPlayerId = this.players[this.currentPlayerIndex].id;
 
     return [...adjacentEdges].some(
-      (edge: string) => edges.get(edge)?.owner === currentPlayerId
+      (edge: string) => edges.get(edge)?.owner === currentPlayerId,
     );
   }
 
