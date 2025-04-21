@@ -34,7 +34,7 @@ describe('Player', () => {
 
   it('should not add invalid resource', () => {
     player.addResource('unknown', 5);
-    assertEquals((player.resources as any).unknown, undefined);
+    assertEquals(player.resources.unknown, undefined);
   });
 
   it('should return player data', () => {

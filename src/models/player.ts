@@ -9,8 +9,8 @@ export interface Resources {
 
 interface DevCards {
   knight: number;
-  "road-building": number;
-  "year-of-plenty": number;
+  'road-building': number;
+  'year-of-plenty': number;
   monopoly: number;
 }
 
@@ -46,8 +46,8 @@ export class Player {
 
     this.devCards = {
       knight: 0,
-      "road-building": 0,
-      "year-of-plenty": 0,
+      'road-building': 0,
+      'year-of-plenty': 0,
       monopoly: 0,
     };
 
@@ -92,8 +92,8 @@ export class Player {
       victoryPoints,
     } = this;
 
-    if (id === "p1") this.hasLargestArmy = !this.hasLargestArmy;
-    if (id === "p3") this.hasLongestRoad = !this.hasLongestRoad;
+    if (id === 'p1') this.hasLargestArmy = !this.hasLargestArmy;
+    if (id === 'p3') this.hasLongestRoad = !this.hasLongestRoad;
 
     return {
       id,

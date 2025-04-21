@@ -16,7 +16,7 @@ export class Hex {
     terrain: string,
     number: number | null,
     hasRobber: boolean,
-    resource: keyof Resources | string
+    resource: keyof Resources | string,
   ) {
     this.id = id;
     this.q = q;

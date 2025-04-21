@@ -60,8 +60,8 @@ export class Catan {
   changeTurn(): void {
     this.changePhase();
     if (this.turns >= 12 && this.turns < 20) return this.reverseOrder();
-    this.currentPlayerIndex =
-      (this.currentPlayerIndex + 1) % this.players.length;
+    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
+      this.players.length;
   }
 
   rollDice(): [number, number] {
@@ -145,7 +145,7 @@ export class Catan {
   } {
     const [[player], others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId
+      (p: Player) => p.id === playerId,
     );
 
     const me = player.getPlayerData();
@@ -156,8 +156,7 @@ export class Catan {
   }
 
   getAvailableActions(playerId: string) {
-    const canRoll =
-      this.players[this.currentPlayerIndex].id === playerId &&
+    const canRoll = this.players[this.currentPlayerIndex].id === playerId &&
       !this.isInitialSetup();
     return { canRoll };
   }
