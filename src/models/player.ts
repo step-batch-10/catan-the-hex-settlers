@@ -1,9 +1,10 @@
-interface Resources {
+export interface Resources {
   wood: number;
   brick: number;
   sheep: number;
   wheat: number;
   ore: number;
+  [key: string]: number;
 }
 
 interface DevCards {
@@ -57,6 +58,11 @@ export class Player {
 
   hasWon(): boolean {
     return this.victoryPoints >= 10;
+  }
+
+  addResource(cardType: keyof Resources | string, count: number): void {
+    if (!(cardType in this.resources)) return;
+    this.resources[cardType] += count;
   }
 
   getPlayerData(): {

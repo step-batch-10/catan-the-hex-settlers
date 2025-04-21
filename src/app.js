@@ -1,7 +1,15 @@
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
-import { serveGamePage, serveGameState } from './handlers/dynamicHandlers.ts';
+import {
+  buildAtEdge,
+  buildAtVertex,
+  canBuildRoad,
+  canBuildSettlement,
+  serveGameData,
+  serveGamePage,
+  serveGameState,
+} from './handlers/dynamicHandlers.ts';
 import { canRoll, rollDiceHandler } from './handlers/dynamicHandlers.ts';
 
 const inject = (game) => async (c, next) => {
@@ -14,8 +22,13 @@ const gameRoutes = (game) => {
 
   gameApp.use(inject(game));
   gameApp.get('/gameState', serveGameState);
+  gameApp.get('/gameData', serveGameData);
   gameApp.post('/roll-dice', rollDiceHandler);
+  gameApp.post('/build/vertex', buildAtVertex);
+  gameApp.post('/build/edge', buildAtEdge);
   gameApp.get('/dice/can-roll', canRoll);
+  gameApp.get('/build/vertex', canBuildSettlement);
+  gameApp.get('/build/edge', canBuildRoad);
   gameApp.get('/:playerId', serveGamePage);
   return gameApp;
 };

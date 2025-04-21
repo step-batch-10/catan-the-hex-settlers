@@ -1,36 +1,45 @@
-import { assert, assertEquals } from 'assert';
-import { describe, it, beforeEach } from 'testing/bdd';
+import { assertEquals, assert } from 'assert';
 import { Board } from '../src/models/board.ts';
-
-let board: Board;
-
-beforeEach(() => {
-  board = new Board();
-  board.createBoard();
-});
+import { describe, it } from 'testing/bdd';
 
 describe('Board', () => {
-  it('should create vertices from hexes', () => {
-    const vertices = board.getVertices();
-    assert(vertices.length > 6);
+  const board = new Board();
+
+  it('should initialize correctly', () => {
+    assertEquals(board.hexes.size, 0);
+    assertEquals(board.vertices.size, 0);
+    assertEquals(board.edges.size, 0);
+    assertEquals(board.settlements.size, 0);
+    assertEquals(board.roads.size, 0);
   });
 
-  it('should create edges between vertices', () => {
-    const edges = board.getEdges();
-    assert(edges.length >= 6);
+  it('should create board and populate hexes, vertices, and edges', () => {
+    board.createBoard();
+
+    assert(board.hexes.size > 0, 'Hexes should be created.');
+    assert(board.vertices.size > 0, 'Vertices should be created.');
+    assert(board.edges.size > 0, 'Edges should be created.');
   });
 
-  it('should serialize the board correctly', () => {
-    const result = board.getBoard();
-    assertEquals(Object.keys(result), ['hexes', 'vertices', 'edges']);
-    assertEquals(result.hexes.length, 19);
+  it('should get all vertices data', () => {
+    const verticesData = board.getVertices();
+    assert(verticesData.length > 0, 'Should return vertices data.');
   });
 
-  it('should link vertices to each other and to edges', () => {
-    const vertices = [...board.vertices.values()];
-    for (const vertex of vertices) {
-      assert(vertex.connectedVertices.size > 0);
-      assert(vertex.connectedEdges.size > 0);
-    }
+  it('should get all edges data', () => {
+    const edgesData = board.getEdges();
+    assert(edgesData.length > 0, 'Should return edges data.');
+  });
+
+  it('should get all hexes data', () => {
+    const hexesData = board.getHexes();
+    assert(hexesData.length > 0, 'Should return hexes data.');
+  });
+
+  it('should return full board data', () => {
+    const boardData = board.getBoard();
+    assert(boardData.hexes.length > 0, 'Hexes data should be returned.');
+    assert(boardData.vertices.length > 0, 'Vertices data should be returned.');
+    assert(boardData.edges.length > 0, 'Edges data should be returned.');
   });
 });

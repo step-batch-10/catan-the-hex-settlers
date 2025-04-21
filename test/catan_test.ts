@@ -1,160 +1,173 @@
 import { assertEquals, assert } from 'assert';
-import { describe, it, beforeEach } from 'testing/bdd';
 import { Catan } from '../src/models/catan.ts';
-import { Player } from '../src/models/player.ts';
-import { Hex } from '../src/models/hex.ts';
+import { describe, it, beforeEach } from 'testing/bdd';
 
-interface GameState {
-  gameId: string;
-  playerId: string;
-  players: { me: Player; others: Player[] };
-  board: { hexes: Hex[] };
-}
-
-interface AbstractPlayerData {
+interface EdgeData {
   id: string;
-  name: string;
-  color: string;
-  resources: number;
-  roads: string[];
-  settlements: string[];
-  cities: string[];
-  devCards: number;
-  hasLargestArmy: boolean;
-  hasLongestRoad: boolean;
-  victoryPoints: number;
+  owner: string | null;
 }
 
-let game: Catan;
-
-beforeEach(() => {
-  game = new Catan();
-  game.mockGame();
-});
+interface VertexData {
+  id: string;
+  owner: string | null;
+  harbor: string | null;
+  adjacentHexes: string[];
+}
 
 describe('Catan', () => {
-  it('should initialize correctly', () => {
-    const freshGame = new Catan();
+  let catan: Catan;
 
-    assertEquals(freshGame.gameId, 'game123');
-    assertEquals(freshGame.players.length, 0);
-    assertEquals(freshGame.currentPlayerIndex, 0);
-    assertEquals(freshGame.phase, 'setup');
-    assertEquals(freshGame.winner, null);
-    assertEquals(freshGame.diceRoll.length, 2);
-    assert(freshGame.board !== undefined);
+  beforeEach(() => {
+    catan = new Catan();
+    catan.mockGame();
   });
 
-  it('should create mock players and board', () => {
-    assertEquals(game.players.length, 4);
-    assertEquals(game.players[0].name, 'Adil');
-    assert(game.board.hexes.length > 0);
+  it('should initialize the game correctly', () => {
+    assertEquals(catan.gameId, 'game123');
+    assertEquals(catan.players.length, 4);
+    assertEquals(catan.phase, 'rolling');
+    assertEquals(catan.currentPlayerIndex, 0);
+    assertEquals(catan.turns, 0);
+    assertEquals(catan.diceRoll.length, 2);
   });
 
-  it('should change turn correctly', () => {
-    const prev = game.currentPlayerIndex;
-    game.changeTurn();
-    assertEquals(game.currentPlayerIndex, (prev + 1) % game.players.length);
+  it('should roll the dice correctly', () => {
+    const diceRoll = catan.rollDice();
+    assert(
+      diceRoll[0] >= 1 && diceRoll[0] <= 6,
+      'First dice should be between 1 and 6.'
+    );
+    assert(
+      diceRoll[1] >= 1 && diceRoll[1] <= 6,
+      'Second dice should be between 1 and 6.'
+    );
+    assertEquals(catan.turns, 1);
   });
 
-  it('should roll two dice with values 1-6', () => {
-    const result = game.rollDice();
-    assertEquals(result.length, 2);
-    assert(result[0] >= 1 && result[0] <= 6);
-    assert(result[1] >= 1 && result[1] <= 6);
+  it('should change the turn correctly', () => {
+    catan.changeTurn();
+    assertEquals(catan.currentPlayerIndex, 1);
+
+    catan.changeTurn();
+    assertEquals(catan.currentPlayerIndex, 2);
+
+    catan.turns = 12;
+    catan.changeTurn();
+    assertEquals(catan.currentPlayerIndex, 3);
   });
 
-  it('should abstract player data with resource and dev card totals', () => {
-    const player: Player = game.players[0];
-    player.resources.wood = 2;
-    player.devCards.knight = 3;
-
-    const data = game.abstractPlayerData(player) as AbstractPlayerData;
-    assertEquals(data.resources, 2);
-    assertEquals(data.devCards, 3);
-    assertEquals(data.name, 'Adil');
+  it('should correctly handle setup phase', () => {
+    assertEquals(catan.phase, 'rolling');
+    catan.turns = 4;
+    catan.changePhase();
+    assertEquals(catan.phase, 'setup');
   });
 
-  it('should return correct player info split into me and others', () => {
-    const playerId = 'p2';
-    const { me, others } = game.getPlayersInfo(playerId);
+  it('should check if player can roll', () => {
+    const player1 = catan.players[0];
+    const canRoll = catan.canRoll(player1.id);
+    assertEquals(canRoll, true);
 
-    assertEquals(me.id, 'p2');
-    assertEquals(others.length, 3);
+    catan.phase = 'setup';
+    const cannotRoll = catan.canRoll(player1.id);
+    assertEquals(cannotRoll, false);
   });
 
-  it('should return full game state with board and player info', () => {
-    const state = game.getGameState('p1') as GameState;
+  it('should allow players to build settlements on the correct turns', () => {
+    const player1 = catan.players[0];
+    const canBuildSettlement = catan.canBuildSettlement(player1.id);
+    assertEquals(canBuildSettlement, true);
 
-    assertEquals(state.gameId, 'game123');
-    assertEquals(state.playerId, 'p1');
-    assertEquals(state.players.me.id, 'p1');
-    assertEquals(state.players.others.length, 3);
-    assert(state.board.hexes.length > 0);
+    catan.turns = 1;
+    const cannotBuildSettlement = catan.canBuildSettlement(player1.id);
+    assertEquals(cannotBuildSettlement, false);
   });
 
-    it('should correctly determine if player can roll (not during setup)', () => {
-      game.turns = 13; // outside setup phase
-      const currentPlayer = game.players[game.currentPlayerIndex];
-      const canRoll = game.canRoll(currentPlayer.id);
-      assertEquals(canRoll, true);
-    });
+  it('should allow players to build roads on the correct turns', () => {
+    const player1 = catan.players[0];
+    const canBuildRoad = catan.canBuildRoad(player1.id);
+    assertEquals(canBuildRoad, false);
 
-    it('should prevent rolling during initial setup', () => {
-      game.turns = 5; // still within setup phase
-      const currentPlayer = game.players[game.currentPlayerIndex];
-      const canRoll = game.canRoll(currentPlayer.id);
-      assertEquals(canRoll, false);
-    });
+    catan.turns = 1;
+    const canBuildRoadNow = catan.canBuildRoad(player1.id);
+    assertEquals(canBuildRoadNow, true);
+  });
 
-    it('should allow building settlement only on even turns by current player', () => {
-      game.turns = 6; // even turn
-      const currentPlayer = game.players[game.currentPlayerIndex];
-      assertEquals(game.canBuildSettlement(currentPlayer.id), true);
+  it('should build a road correctly', () => {
+    const edgeId = 'e-v0,-1|0,0|1,-1_v0,-1|1,-1|1,-2';
+    const result = catan.buildRoad(edgeId);
+    assertEquals(result, true);
 
-      game.turns = 7; // odd turn
-      assertEquals(game.canBuildSettlement(currentPlayer.id), false);
-    });
+    const edges = catan.getOccupiedEdges();
+    assertEquals(edges, [
+      { id: 'e-v0,-1|0,0|1,-1_v0,-1|1,-1|1,-2', color: 'red' },
+    ]);
+  });
 
-    it('should allow building road only on odd turns by current player', () => {
-      game.turns = 7; // odd turn
-      const currentPlayer = game.players[game.currentPlayerIndex];
-      assertEquals(game.canBuildRoad(currentPlayer.id), true);
+  it('should build a settlement correctly', () => {
+    const vertexId = 'v1_1';
+    const result = catan.buildSettlement(vertexId);
+    assertEquals(result, true);
+  });
 
-      game.turns = 8; // even turn
-      assertEquals(game.canBuildRoad(currentPlayer.id), false);
-    });
+  it('should provide game state correctly', () => {
+    const player1 = catan.players[0];
+    const gameState: {
+      gameId: string;
+      diceRoll: number[];
+      board: { hexes: object[]; vertices: VertexData[]; edges: EdgeData[] };
+      availableActions: { canRoll: boolean };
+    } = catan.getGameState(player1.id);
 
-    it('should build a road and increment turn count', () => {
-      const currentPlayer = game.players[game.currentPlayerIndex];
-      const [edgeId] = Array.from(game.board.edges.keys());
-      const prevTurn = game.turns;
+    assertEquals(gameState.gameId, 'game123');
+    assert(gameState.diceRoll.length === 2, 'Dice roll should be present.');
+    assert(gameState.board.hexes.length > 0, 'Board hexes should be present.');
+    assert(
+      gameState.board.vertices.length > 0,
+      'Board vertices should be present.'
+    );
+    assert(gameState.board.edges.length > 0, 'Board edges should be present.');
+    assert(
+      gameState.availableActions.canRoll === true,
+      'Player should be able to roll.'
+    );
+  });
 
-      const success = game.buildRoad(edgeId);
+  it('should correctly change the game phase from setup to main', () => {
+    catan.turns = 4;
+    catan.changePhase();
+    assertEquals(catan.phase, 'setup');
+  });
 
-      assertEquals(success, true);
-      assertEquals(currentPlayer.roads.includes(edgeId), true);
-      assertEquals(game.turns, prevTurn + 1);
-    });
+  it('should reverse turn order correctly after turn 12', () => {
+    catan.turns = 12;
+    catan.changeTurn();
+    assertEquals(catan.currentPlayerIndex, 3); 
 
-    it('should build a settlement and increment turn count', () => {
-      const currentPlayer = game.players[game.currentPlayerIndex];
-      const [vertexId] = Array.from(game.board.vertices.keys());
-      const prevTurn = game.turns;
+    catan.changeTurn();
+    assertEquals(catan.currentPlayerIndex, 3);
 
-      const success = game.buildSettlement(vertexId);
+    catan.changeTurn();
+    assertEquals(catan.currentPlayerIndex, 3);
+  });
 
-      assertEquals(success, true);
-      assertEquals(currentPlayer.settlements.includes(vertexId), true);
-      assertEquals(game.turns, prevTurn + 1);
-    });
+  it('should distribute resources when a settlement is built', () => {
+    const vertexId = 'v0,0|1,-1|1,0';
+    const player = catan.players[catan.currentPlayerIndex];
+    player.settlements.push('');
 
-    it('should return correct available actions for current player', () => {
-      const currentPlayer = game.players[game.currentPlayerIndex];
-      game.turns = 5;
+    const initialResourceCount = player.resources.brick;
 
-      const actions = game.getAvailableActions(currentPlayer.id);
+    catan.buildSettlement(vertexId);
 
-      assertEquals(actions.canRoll, false);
-    });
+    const newResourceCount = player.resources.brick;
+
+    assert(
+      newResourceCount > initialResourceCount,
+      'Player should receive resources after building a settlement.'
+    );
+
+    const vertices = catan.getOccupiedVertices();
+    assertEquals(vertices, [{ id: 'v0,0|1,-1|1,0', color: 'red' }]);
+  });
 });

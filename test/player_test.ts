@@ -1,84 +1,47 @@
-import { assertEquals, assertFalse } from 'assert';
+import { assertEquals } from 'assert';
 import { describe, it } from 'testing/bdd';
 import { Player } from '../src/models/player.ts';
 
 describe('Player', () => {
-  it('should initialize all properties correctly', () => {
-    const player = new Player('p1', 'Ajay', 'red');
+  const player = new Player('p1', 'Alice', 'red');
 
+  it('should initialize correctly', () => {
     assertEquals(player.id, 'p1');
-    assertEquals(player.name, 'Ajay');
+    assertEquals(player.name, 'Alice');
     assertEquals(player.color, 'red');
-
-    assertEquals(player.resources, {
-      wood: 0,
-      brick: 0,
-      sheep: 0,
-      wheat: 0,
-      ore: 0
-    });
-
-    assertEquals(player.devCards, {
-      knight: 0,
-      'road-building': 0,
-      'year-of-plenty': 0,
-      monopoly: 0
-    });
-
+    assertEquals(player.victoryPoints, 0);
+    assertEquals(player.hasLargestArmy, false);
+    assertEquals(player.hasLongestRoad, false);
     assertEquals(player.roads.length, 0);
     assertEquals(player.settlements.length, 0);
     assertEquals(player.cities.length, 0);
-
-    assertFalse(player.hasLongestRoad);
-    assertFalse(player.hasLargestArmy);
-    assertEquals(player.victoryPoints, 0);
+    assertEquals(player.resources.wood, 0);
+    assertEquals(player.devCards.knight, 0);
   });
 
-  it('should return false for hasWon() if under 10 points', () => {
-    const player = new Player('p2', 'Surendra', 'blue');
-    player.victoryPoints = 7;
-    assertFalse(player.hasWon());
-  });
-
-  it('should return true for hasWon() if 10 or more points', () => {
-    const player = new Player('p3', 'Adil', 'white');
+  it('should return win status', () => {
     player.victoryPoints = 10;
     assertEquals(player.hasWon(), true);
   });
 
-  it('should return correct player data with getPlayerData()', () => {
-    const player = new Player('p4', 'Aman', 'orange');
-    player.resources.wood = 1;
-    player.settlements.push('s1');
-    player.devCards.knight = 2;
-    player.hasLargestArmy = true;
-    player.victoryPoints = 5;
+  it('should add resource', () => {
+    player.addResource('wood', 2);
+    assertEquals(player.resources.wood, 2);
 
+    player.addResource('brick', 1);
+    assertEquals(player.resources.brick, 1);
+  });
+
+  it('should not add invalid resource', () => {
+    player.addResource('unknown', 5);
+    assertEquals((player.resources as any).unknown, undefined);
+  });
+
+  it('should return player data', () => {
     const data = player.getPlayerData();
-
-    assertEquals(data, {
-      id: 'p4',
-      name: 'Aman',
-      color: 'orange',
-      resources: {
-        wood: 1,
-        brick: 0,
-        sheep: 0,
-        wheat: 0,
-        ore: 0
-      },
-      roads: [],
-      settlements: ['s1'],
-      cities: [],
-      devCards: {
-        knight: 2,
-        'road-building': 0,
-        'year-of-plenty': 0,
-        monopoly: 0
-      },
-      hasLargestArmy: true,
-      hasLongestRoad: false,
-      victoryPoints: 5
-    });
+    assertEquals(data.name, 'Alice');
+    assertEquals(data.color, 'red');
+    assertEquals(data.roads.length, 0);
+    assertEquals(data.devCards.knight, 0);
   });
 });

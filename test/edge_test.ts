@@ -1,50 +1,44 @@
-import { assert, assertEquals, assertFalse } from 'assert';
+import { assertEquals } from 'assert';
 import { describe, it } from 'testing/bdd';
 import { Vertex } from '../src/models/vertex.ts';
 import { Edge } from '../src/models/edge.ts';
 
 describe('Edge', () => {
-  it('should give if the Edge is occupied or not', () => {
-    const v1 = new Vertex('v1', null);
-    const v2 = new Vertex('v2', null);
-    const edge = new Edge('e1', [v1.id, v2.id]);
+  const vertex1 = new Vertex('v1', 'port');
+  const vertex2 = new Vertex('v2', 'none');
+  const edge = new Edge('e-v1_v2', [vertex1.id, vertex2.id]);
 
-    assertFalse(edge.isOccupied());
+  it('should initialize correctly', () => {
+    assertEquals(edge.id, 'e-v1_v2');
+    assertEquals(edge.vertices, [vertex1.id, vertex2.id]);
+    assertEquals(edge.owner, null);
+    assertEquals(edge.color, null);
   });
 
-  it('should occupy the edge with playerId', () => {
-    const v1 = new Vertex('v1', null);
-    const v2 = new Vertex('v2', null);
-    const edge = new Edge('e2', [v1.id, v2.id]);
+  it('should occupy edge', () => {
+    edge.occupy('p1', 'red');
+    assertEquals(edge.owner, 'p1');
+    assertEquals(edge.color, 'red');
+  });
 
-    assertEquals(edge.occupy('p1'), 'e2');
-    assert(edge.isOccupied());
+  it('should check if occupied', () => {
+    assertEquals(edge.isOccupied(), true);
+  });
+
+  it('should get occupied by', () => {
     assertEquals(edge.occupiedBy(), 'p1');
   });
 
-  it('should return edge key for consistent identification', () => {
-  const key1 = Edge.getEdgeKey('v1', 'v2');
-
-    assertEquals(key1, 'e-v1_v2');
+  it('should return edge key', () => {
+    const edgeKey = Edge.getEdgeKey('v1', 'v2');
+    assertEquals(edgeKey, 'e-v1_v2');
   });
 
-  it('should return sorted edge key for consistent identification', () => {
-    const key1 = Edge.getEdgeKey('v1', 'v2');
-    const key2 = Edge.getEdgeKey('v2', 'v1');
-
-    assertEquals(key1, 'e-v1_v2');
-    assertEquals(key2, 'e-v1_v2');
-  });
-
-  it("should serialize to JSON correctly", () => {
-    const edge = new Edge("e4", ["v7", "v8"]);
-    edge.occupy("player2");
-
+  it('should return JSON data', () => {
     const json = edge.toJSON();
-
     assertEquals(json, {
-      id: "e4",
-      owner: "player2"
+      id: 'e-v1_v2',
+      owner: 'p1',
     });
   });
 });

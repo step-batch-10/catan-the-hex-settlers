@@ -10,7 +10,6 @@ export const serveGameState = (ctx: Context): Response => {
 };
 
 export const serveGamePage = (ctx: Context): Response => {
-  console.log(ctx.req.param('playerId'));
   setCookie(ctx, 'player-id', ctx.req.param('playerId'));
   return ctx.redirect('/game.html', 303);
 };
@@ -25,7 +24,46 @@ export const rollDiceHandler = (ctx: Context): Response => {
 export const canRoll = (ctx: Context): Response => {
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
-  const canRoll = game.players[game.currentPlayerIndex].id === playerId;
+  const canRoll = game.canRoll(playerId);
 
   return ctx.json({ canRoll });
+};
+
+export const serveGameData = (ctx: Context): Response => {
+  const game = ctx.get('game');
+  const gameData = game.getGameData();
+
+  return ctx.json(gameData);
+};
+
+export const buildAtVertex = async (ctx: Context): Promise<Response> => {
+  const game = ctx.get('game');
+  const { id } = await ctx.req.parseBody();
+  game.buildSettlement(id);
+
+  return ctx.json(true);
+};
+
+export const buildAtEdge = async (ctx: Context): Promise<Response> => {
+  const game = ctx.get('game');
+  const { id } = await ctx.req.parseBody();
+  game.buildRoad(id);
+
+  return ctx.json(true);
+};
+
+export const canBuildRoad = (ctx: Context): Response => {
+  const game = ctx.get('game');
+  const playerId = getCookie(ctx, 'player-id');
+  const canBuild = game.canBuildRoad(playerId);
+
+  return ctx.json({ canBuild });
+};
+
+export const canBuildSettlement = (ctx: Context): Response => {
+  const game = ctx.get('game');
+  const playerId = getCookie(ctx, 'player-id');
+  const canBuild = game.canBuildSettlement(playerId);
+
+  return ctx.json({ canBuild });
 };

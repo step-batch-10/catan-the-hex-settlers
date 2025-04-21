@@ -1,3 +1,5 @@
+import { Resources } from './player.ts';
+
 export class Hex {
   id: string;
   q: number;
@@ -5,6 +7,7 @@ export class Hex {
   terrain: string;
   terrainNumber: number | null;
   hasRobber: boolean;
+  resource: keyof Resources | string;
 
   constructor(
     id: string,
@@ -13,11 +16,13 @@ export class Hex {
     terrain: string,
     number: number | null,
     hasRobber: boolean,
+    resource: keyof Resources | string
   ) {
     this.id = id;
     this.q = q;
     this.r = r;
     this.terrain = terrain;
+    this.resource = resource;
     this.terrainNumber = number;
     this.hasRobber = hasRobber;
   }

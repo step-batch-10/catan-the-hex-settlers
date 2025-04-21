@@ -1,7 +1,8 @@
 import { Hex } from './hex.ts';
 import { Vertex } from './vertex.ts';
-import hexes from '../data/hexes.json' with { type: 'json' };
+import { hexes } from '../data/hexes.ts';
 import { Edge } from './edge.ts';
+import { Resources } from './player.ts';
 
 interface EdgeData {
   id: string;
@@ -21,18 +22,19 @@ interface HexData {
   id: string;
   terrain: string;
   number: number | null;
+  resource: keyof Resources | string;
   hasRobber: boolean;
 }
 
 export class Board {
-  hexes: Hex[];
+  hexes: Map<string, Hex>;
   vertices: Map<string, Vertex>;
   edges: Map<string, Edge>;
   settlements: Map<string, string>;
   roads: Map<string, string>;
 
   constructor() {
-    this.hexes = [];
+    this.hexes = new Map();
     this.vertices = new Map();
     this.edges = new Map();
     this.settlements = new Map();
@@ -46,7 +48,7 @@ export class Board {
     }
 
     const vertex = this.vertices.get(vertexKey)!;
-    vertex.adjacentHexes.push(`${q}_${r}`);
+    vertex.adjacentHexes.push(`h${q}_${r}`);
     return vertex;
   }
 
@@ -70,15 +72,16 @@ export class Board {
   }
 
   private createHex(hexData: HexData): Hex {
-    const { q, r, id, terrain, number, hasRobber } = hexData;
-    const hex = new Hex(id, q, r, terrain, number, hasRobber);
+    const { q, r, id, terrain, number, hasRobber, resource } = hexData;
+    const hex = new Hex(id, q, r, terrain, number, hasRobber, resource);
     const vertices = this.createVertices(hex);
     vertices.map((vertex, i) => this.createEdge(vertex, vertices[(i + 1) % 6]));
+    this.hexes.set(id, hex);
     return hex;
   }
 
   createBoard(): void {
-    this.hexes = hexes.map((hex) => this.createHex(hex));
+    hexes.forEach((hex) => this.createHex(hex));
   }
 
   getVertices(): VertexData[] {
@@ -101,8 +104,10 @@ export class Board {
     return edges;
   }
 
-  getHexes() {
-    return this.hexes.map((hex) => hex.toJSON());
+  getHexes(): object[] {
+    const hexes: object[] = [];
+    this.hexes.forEach((hex) => hexes.push(hex.toJSON()));
+    return hexes;
   }
 
   getBoard(): { hexes: object[]; vertices: VertexData[]; edges: EdgeData[] } {

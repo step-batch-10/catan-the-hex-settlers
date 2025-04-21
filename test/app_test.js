@@ -1,87 +1,128 @@
-import { assert, assertEquals, assertStringIncludes } from 'jsr:@std/assert';
-import { describe, it } from 'jsr:@std/testing/bdd';
+import { Hono } from 'hono';
 import { createApp } from '../src/app.js';
+import { describe, it, beforeEach } from 'testing/bdd';
+import { assertEquals, assert, assertNotEquals } from 'assert';
+import { Catan } from '../src/models/catan.ts';
 
-const createMockGame = () => {
-  return {
-    getGameState: (playerId) => ({ playerId, state: 'mocked' }),
-    rollDice: () => [3, 5],
-    players: [{ id: 'p1' }, { id: 'p2' }],
-    currentPlayerIndex: 0,
-  };
-};
+describe('Catan App Routes', () => {
+  let game = Catan;
+  let app = Hono;
 
-describe('app test', () => {
-  it('should give status code 200', async () => {
-    const app = createApp();
-    const response = await app.request('/ok');
-    assertEquals(response.status, 200);
+  beforeEach(() => {
+    game = new Catan();
+    app = createApp(game.mockGame());
   });
 
-  it('should give game state', async () => {
-    const game = createMockGame();
-    const app = createApp(game);
-    const req = new Request('http://localhost/game/gameState', {
-      method: 'GET',
-      headers: {
-        Cookie: 'player-id=p1;',
-      },
-    });
-    const response = await app.request(req);
-    assertEquals(await response.json(), { playerId: 'p1', state: 'mocked' });
+  it("should respond with 'ok' on /ok route", async () => {
+    const res = await app.request('/ok');
+    assertEquals(res.status, 200);
+    const text = await res.text();
+    assertEquals(text, 'ok');
   });
 
-  it('should redirect to game page and set cookie', async () => {
-    const app = createApp({});
-    const response = await app.request('http://localhost/game/p1');
-    assertEquals(response.status, 303);
-    assertEquals(response.headers.get('location'), '/game.html');
-    const cookie = response.headers.get('set-cookie');
-    assert(cookie);
-    assertStringIncludes(cookie, 'player-id=p1');
-  });
-
-  it('should roll dice on POST /game/roll-dice', async () => {
-    const game = createMockGame();
-    const app = createApp(game);
-    const req = new Request('http://localhost/game/roll-dice', {
+  it('should request dice roll on /roll-dice', async () => {
+    const res = await app.request('/game/roll-dice', {
       method: 'POST',
     });
-    const response = await app.request(req);
-    const data = await response.json();
-    assertEquals(data.rolled, [3, 5]);
-  });
-
-  it("should return canRoll: true if it is player's turn", async () => {
-    const game = createMockGame();
-    const app = createApp(game);
-    const req = new Request('http://localhost/game/dice/can-roll', {
-      headers: {
-        Cookie: 'player-id=p1',
-      },
-    });
-    const res = await app.request(req);
     const body = await res.json();
-    assertEquals(body.canRoll, true);
+    assert(body.rolled.length === 2, 'Dice should return two values.');
+    assert(
+      body.rolled[0] >= 1 && body.rolled[0] <= 6,
+      'Dice values should be between 1 and 6.'
+    );
   });
 
-  it("should return canRoll: false if it is NOT player's turn", async () => {
-    const game = createMockGame();
-    game.currentPlayerIndex = 1; // it's p2's turn
-    const app = createApp(game);
-    const req = new Request('http://localhost/game/dice/can-roll', {
-      headers: {
-        Cookie: 'player-id=p1',
-      },
+  it('should allow building a settlement at a vertex on /build/vertex', async () => {
+    const vertexId = 'v1_1';
+    const res = await app.request('/game/build/vertex', {
+      method: 'POST',
+      body: JSON.stringify({ id: vertexId }),
     });
-    const res = await app.request(req);
     const body = await res.json();
-    assertEquals(body.canRoll, false);
+    assertEquals(
+      body,
+      true,
+      'Response should be true when building a settlement.'
+    );
   });
 
-  it('should serve static fallback (simulate)', async () => {
-    const app = createApp({});
-    const response = await app.request('/nonexistent-route');
-    assertEquals(response.status, 404);
+  it('should allow building a road at an edge on /build/edge', async () => {
+    const edgeId = 'e1_1';
+    const res = await app.request('/game/build/edge', {
+      method: 'POST',
+      body: JSON.stringify({ id: edgeId }),
+    });
+    const body = await res.json();
+    assertEquals(body, true, 'Response should be true when building a road.');
+  });
+
+  it('should check if a player can build a road on /build/edge', async () => {
+    const res = await app.request('/game/build/edge');
+    const body = await res.json();
+    assertEquals(
+      body.canBuild,
+      false,
+      "Player shouldn't be able to build a road."
+    );
+  });
+
+  it('should check if a player can build a settlement on /build/vertex', async () => {
+    const res = await app.request('/game/build/vertex');
+    const body = await res.json();
+    assertEquals(
+      body.canBuild,
+      false,
+      "Player shouldn't be able to build a settlement."
+    );
+  });
+
+  it('should check if a player can roll the dice on /dice/can-roll', async () => {
+    const res = await app.request('/game/dice/can-roll');
+    const body = await res.json();
+    assertEquals(
+      body.canRoll,
+      false,
+      "Player shouldn't be able to roll the dice."
+    );
+  });
+
+  it('should redirect to the game page for a player', async () => {
+    const playerId = 'p1';
+    const res = await app.request(`/game/${playerId}`);
+    assertEquals(res.status, 303);
+    assertNotEquals(
+      res.headers.get('Location'),
+      null,
+      'Response should redirect.'
+    );
+  });
+
+  it('should set a player ID cookie when redirecting', async () => {
+    const playerId = 'p1';
+    const res = await app.request(`/game/${playerId}`);
+    const cookies = res.headers.get('Set-Cookie');
+    assert(
+      cookies?.includes('player-id=p1'),
+      "Cookie 'player-id' should be set."
+    );
+  });
+
+  it('should give gameState', async () => {
+    const app = createApp(game.mockGame());
+    const request = new Request('http:localhost:3000/game/gameState', {
+      headers: { Cookie: 'player-id=p1' },
+    });
+    const res = await app.request(request);
+    const gameState = await res.json();
+
+    assertEquals(gameState.gameId, 'game123');
+  });
+
+  it('should give gameData', async () => {
+    const app = createApp(game.mockGame());
+    const res = await app.request('/game/gameData');
+    const gameState = await res.json();
+
+    assertEquals(gameState.vertices.length, 0);
   });
 });

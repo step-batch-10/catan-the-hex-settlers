@@ -7,11 +7,13 @@ export class Edge {
   id: string;
   vertices: [string, string];
   owner: string | null;
+  color: string | null;
 
   constructor(id: string, vertices: [string, string]) {
     this.id = id;
     this.vertices = vertices;
     this.owner = null;
+    this.color = null;
   }
 
   static getEdgeKey(v1: string, v2: string): string {
@@ -22,8 +24,10 @@ export class Edge {
     return this.owner !== null;
   }
 
-  occupy(ownerId: string): string {
+  occupy(ownerId: string, color: string): string {
     this.owner = ownerId;
+    this.color = color;
+
     return this.id;
   }
 

@@ -1,4 +1,4 @@
-const noTokenImages = { 
+const noTokenImages = {
   2: '/images/tokens/token-2.png',
   3: '/images/tokens/token-3.png',
   4: '/images/tokens/token-4.png',
@@ -38,27 +38,23 @@ const generateTiles = (tiles) => {
   return tiles
     .map((tile) => {
       const coord = coordinate.next().value;
-      // console.log(tile.terrain, tile.terrainNumber);
-      const header = `<g
-    transform="translate(${coord.x},${coord.y})"
-    >`;
-
+      const header = `<g transform="translate(${coord.x},${coord.y})" >`;
       const tilesImage = `<image
-    href="${terrainImages[tile.terrain]}"
-    x="10"
-    y="10"
-    width="90"
-    height="110"
-    transform="translate(-155,-237.5)"
-    />`;
+       href="${terrainImages[tile.terrain]}"
+       x="10"
+       y="10"
+       width="90"
+       height="110"
+       transform="translate(-155,-237.5)"
+     />`;
 
       const resourceNumber = `<image href="${noTokenImages[tile.terrainNumber]}"
-    x="0"
-    y="0"
-    width="36"
-    height="36"
-    transform="translate(-120,-190)">
-    </g>`;
+       x="0"
+       y="0"
+       width="36"
+       height="36"
+       transform="translate(-120,-190)">
+     </g>`;
 
       const template = `${header} ${tilesImage}`;
 
@@ -69,8 +65,6 @@ const generateTiles = (tiles) => {
 
 const appendText = (template, elementId, text) => {
   const element = template.getElementById(elementId);
-  console.log(element);
-  
   element.textContent = text;
 };
 
@@ -193,15 +187,74 @@ const addRollDiceEvent = () => {
   diceContainer.addEventListener('click', rollDiceHandler);
 };
 
+const isPieceTypeValid = (pieceType) => ['vertex', 'edge'].includes(pieceType);
+
+const build = async (event) => {
+  const element = event.target;
+  const targetElementId = element.id;
+  const pieceType = element.classList[0];
+  console.log(pieceType);
+  const { canBuild } = await fetch(`/game/build/${pieceType}`).then((r) =>
+    r.json()
+  );
+
+  console.log(canBuild);
+
+  if (canBuild) {
+    const fd = new FormData();
+    fd.set('id', targetElementId);
+    return await fetch(`/game/build/${pieceType}`, {
+      body: fd,
+      method: 'POST',
+    });
+  }
+
+  if (!isPieceTypeValid(pieceType)) {
+    alert('You Cannot Build There..');
+    return;
+  }
+};
+
+const addBuildEvent = () => {
+  const svg = document.getElementById('svg20');
+  svg.addEventListener('click', build);
+};
+
 const addEventListeners = () => {
   addRollDiceEvent();
+  addBuildEvent();
+};
+
+const renderEdges = (edges) => {
+  edges.forEach(({ color, id }) => {
+    const edge = document.getElementById(id);
+    edge.style.fill = color;
+    edge.style.opacity = 1;
+  });
+};
+
+const renderVertices = (vertices) => {
+  vertices.forEach(({ color, id }) => {
+    const vertices = document.getElementById(id);
+    vertices.style.fill = color;
+    vertices.style.opacity = 1;
+  });
+};
+
+const renderPieces = (gameState) => {
+  const { vertices, edges } = gameState;
+
+  renderVertices(vertices);
+  renderEdges(edges);
 };
 
 const poll = () => {
   setInterval(async () => {
-    const response = await fetch('/game/gameState');
+    const response = await fetch('/game/gameData');
     const gameState = await response.json();
-    renderBothDice(gameState.diceRoll, gameState.availableActions.canRoll);
+    console.log(gameState);
+    renderPieces(gameState);
+    renderBothDice(gameState.diceRoll);
   }, 1000);
 };
 

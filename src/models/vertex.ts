@@ -17,6 +17,7 @@ export class Vertex {
   id: string;
   harbor: string | null;
   owner: string | null;
+  color: string | null;
   adjacentHexes: string[];
   connectedVertices: Set<string>;
   connectedEdges: Set<string>;
@@ -25,6 +26,7 @@ export class Vertex {
     this.id = id;
     this.harbor = harbor;
     this.owner = null;
+    this.color = null;
     this.adjacentHexes = [];
     this.connectedVertices = new Set<string>();
     this.connectedEdges = new Set<string>();
@@ -50,8 +52,9 @@ export class Vertex {
     return this.owner !== null;
   }
 
-  occupy(ownerId: string): boolean {
+  occupy(ownerId: string, color: string): boolean {
     this.owner = ownerId;
+    this.color = color;
     return true;
   }
 

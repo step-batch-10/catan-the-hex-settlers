@@ -1,8 +1,22 @@
 import { Board } from './board.ts';
 import { Player } from './player.ts';
 import _ from 'lodash';
+import { Vertex } from './vertex.ts';
+import { Edge } from './edge.ts';
 
-type GamePhase = 'setup' | 'main' | 'end';
+type GamePhase = 'rolling' | 'setup' | 'main' | 'end';
+
+interface EdgeData {
+  id: string;
+  owner: string | null;
+}
+
+interface VertexData {
+  id: string;
+  owner: string | null;
+  harbor: string | null;
+  adjacentHexes: string[];
+}
 
 export class Catan {
   gameId: string;
@@ -18,7 +32,7 @@ export class Catan {
     this.gameId = 'game123';
     this.players = [];
     this.currentPlayerIndex = 0;
-    this.phase = 'setup';
+    this.phase = 'rolling';
     this.winner = null;
     this.diceRoll = [1, 1];
     this.board = new Board();
@@ -34,7 +48,18 @@ export class Catan {
     return this;
   }
 
+  changePhase(): void {
+    if (this.turns === 4) this.phase = 'setup';
+  }
+
+  reverseOrder(): void {
+    if (this.turns === 12) this.currentPlayerIndex = 4;
+    this.currentPlayerIndex--;
+  }
+
   changeTurn(): void {
+    this.changePhase();
+    if (this.turns >= 12 && this.turns < 20) return this.reverseOrder();
     this.currentPlayerIndex =
       (this.currentPlayerIndex + 1) % this.players.length;
   }
@@ -49,7 +74,7 @@ export class Catan {
   }
 
   isInitialSetup(): boolean {
-    return this.turns > 4 && this.turns <= 12;
+    return this.phase === 'setup';
   }
 
   canRoll(playerId: string): boolean {
@@ -75,17 +100,32 @@ export class Catan {
 
   buildRoad(edgeId: string): boolean {
     const currentPlayer = this.players[this.currentPlayerIndex];
-    this.board.edges.get(edgeId)?.occupy(currentPlayer.id);
+    this.board.edges.get(edgeId)?.occupy(currentPlayer.id, currentPlayer.color);
     currentPlayer.roads.push(edgeId);
     this.turns++;
+    this.changeTurn();
 
     return true;
   }
 
+  distributeResources(vertexId: string, player: Player, count: number): void {
+    const hexes = this.board.vertices.get(vertexId)?.adjacentHexes;
+    const resources = hexes?.map((hex) => this.board.hexes.get(hex)?.resource);
+
+    resources?.forEach((resource) => {
+      if (resource) player.addResource(resource, count);
+    });
+  }
+
   buildSettlement(vertexId: string): boolean {
     const currentPlayer = this.players[this.currentPlayerIndex];
-    this.board.vertices.get(vertexId)?.occupy(currentPlayer.id);
+    this.board.vertices
+      .get(vertexId)
+      ?.occupy(currentPlayer.id, currentPlayer.color);
     currentPlayer.settlements.push(vertexId);
+    if (currentPlayer.settlements.length === 2) {
+      this.distributeResources(vertexId, currentPlayer, 1);
+    }
     this.turns++;
 
     return true;
@@ -122,7 +162,12 @@ export class Catan {
     return { canRoll };
   }
 
-  getGameState(playerId: string): object {
+  getGameState(playerId: string): {
+    gameId: string;
+    diceRoll: number[];
+    board: { hexes: object[]; vertices: VertexData[]; edges: EdgeData[] };
+    availableActions: { canRoll: boolean };
+  } {
     const players = this.getPlayersInfo(playerId);
     const board = this.board.getBoard();
     const currentPlayerId = this.players[this.currentPlayerIndex].id;
@@ -131,5 +176,33 @@ export class Catan {
 
     const playersData = { playerId, players, currentPlayerId };
     return { gameId, diceRoll, board, availableActions, ...playersData };
+  }
+
+  getOccupiedVertices(): object[] {
+    const vertices: object[] = [];
+    this.board.vertices.forEach((vertex: Vertex, key: string) => {
+      if (vertex.owner) {
+        vertices.push({ id: key, color: vertex.color });
+      }
+    });
+
+    return vertices;
+  }
+
+  getOccupiedEdges(): object[] {
+    const edges: object[] = [];
+    this.board.edges.forEach((edge: Edge, key: string) => {
+      if (edge.owner) edges.push({ id: key, color: edge.color });
+    });
+
+    return edges;
+  }
+
+  getGameData(): object {
+    const vertices = this.getOccupiedVertices();
+    const edges = this.getOccupiedEdges();
+    const diceRoll = this.diceRoll;
+
+    return { vertices, edges, diceRoll };
   }
 }
