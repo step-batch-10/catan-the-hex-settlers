@@ -32,7 +32,7 @@ export class Catan {
     this.gameId = 'game123';
     this.players = [];
     this.currentPlayerIndex = 0;
-    this.phase = 'rolling';
+    this.phase = 'setup';
     this.winner = null;
     this.diceRoll = [1, 1];
     this.board = new Board();
@@ -49,17 +49,17 @@ export class Catan {
   }
 
   changePhase(): void {
-    if (this.turns === 4) this.phase = 'setup';
+    if (this.turns === 16) this.phase = 'main';
   }
 
   reverseOrder(): void {
-    if (this.turns === 12) this.currentPlayerIndex = 4;
+    if (this.turns === 8) this.currentPlayerIndex = 4;
     this.currentPlayerIndex--;
   }
 
   changeTurn(): void {
     this.changePhase();
-    if (this.turns >= 12 && this.turns < 20) return this.reverseOrder();
+    if (this.turns >= 8 && this.turns < 16) return this.reverseOrder();
     this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
       this.players.length;
   }

@@ -1,6 +1,7 @@
-import { assertEquals, assert } from 'assert';
+import { assertEquals, assert, assertFalse } from 'assert';
 import { Catan } from '../src/models/catan.ts';
 import { describe, it, beforeEach } from 'testing/bdd';
+import { Player } from '../src/models/player.ts';
 
 interface EdgeData {
   id: string;
@@ -25,7 +26,7 @@ describe('Catan', () => {
   it('should initialize the game correctly', () => {
     assertEquals(catan.gameId, 'game123');
     assertEquals(catan.players.length, 4);
-    assertEquals(catan.phase, 'rolling');
+    assertEquals(catan.phase, 'setup');
     assertEquals(catan.currentPlayerIndex, 0);
     assertEquals(catan.turns, 0);
     assertEquals(catan.diceRoll.length, 2);
@@ -53,11 +54,11 @@ describe('Catan', () => {
 
     catan.turns = 12;
     catan.changeTurn();
-    assertEquals(catan.currentPlayerIndex, 3);
+    assertEquals(catan.currentPlayerIndex, 1);
   });
 
   it('should correctly handle setup phase', () => {
-    assertEquals(catan.phase, 'rolling');
+    assertEquals(catan.phase, 'setup');
     catan.turns = 4;
     catan.changePhase();
     assertEquals(catan.phase, 'setup');
@@ -66,11 +67,11 @@ describe('Catan', () => {
   it('should check if player can roll', () => {
     const player1 = catan.players[0];
     const canRoll = catan.canRoll(player1.id);
-    assertEquals(canRoll, true);
+    assertFalse(canRoll);
 
     catan.phase = 'setup';
     const cannotRoll = catan.canRoll(player1.id);
-    assertEquals(cannotRoll, false);
+    assertFalse(cannotRoll);
   });
 
   it('should allow players to build settlements on the correct turns', () => {
@@ -128,7 +129,7 @@ describe('Catan', () => {
     );
     assert(gameState.board.edges.length > 0, 'Board edges should be present.');
     assert(
-      gameState.availableActions.canRoll === true,
+      gameState.availableActions.canRoll === false,
       'Player should be able to roll.'
     );
   });
@@ -139,10 +140,10 @@ describe('Catan', () => {
     assertEquals(catan.phase, 'setup');
   });
 
-  it('should reverse turn order correctly after turn 12', () => {
-    catan.turns = 12;
+  it('should reverse turn order correctly after turn 8', () => {
+    catan.turns = 8;
     catan.changeTurn();
-    assertEquals(catan.currentPlayerIndex, 3); 
+    assertEquals(catan.currentPlayerIndex, 3);
 
     catan.changeTurn();
     assertEquals(catan.currentPlayerIndex, 3);
@@ -169,5 +170,19 @@ describe('Catan', () => {
 
     const vertices = catan.getOccupiedVertices();
     assertEquals(vertices, [{ id: 'v0,0|1,-1|1,0', color: 'red' }]);
+  });
+
+  it('should change the phase to main', () => {
+    catan.turns = 16;
+    catan.changePhase();
+    assertEquals(catan.phase, 'main');
+  });
+
+  it('should be able to roll', () => {
+    catan.turns = 16;
+    catan.changePhase();
+    assertEquals(catan.phase, 'main');
+    catan.players[0] = new Player('p1', 'Adil', 'red');
+    catan.canRoll('p1');
   });
 });
