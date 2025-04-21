@@ -188,7 +188,8 @@ const addRollDiceEvent = () => {
   diceContainer.addEventListener('click', rollDiceHandler);
 };
 
-const isPieceTypeValid = (pieceType) => ['vertex', 'edge'].includes(pieceType);
+const isPieceTypeValid = (pieceType) =>
+  new Set(['vertex', 'edge']).has(pieceType);
 
 const build = async (event) => {
   const element = event.target;
@@ -201,8 +202,6 @@ const build = async (event) => {
     method: 'POST',
   }).then((r) => r.json());
 
-  console.log(canBuild);
-
   if (canBuild) {
     const fd = new FormData();
     fd.set('id', targetElementId);
@@ -212,7 +211,7 @@ const build = async (event) => {
     });
   }
 
-  if (!isPieceTypeValid(pieceType)) {
+  if (!isPieceTypeValid(pieceType) || !canBuild) {
     alert('You Cannot Build There..');
     return;
   }
