@@ -92,8 +92,8 @@ export class Player {
       victoryPoints,
     } = this;
 
-    if (id === 'p1') this.hasLargestArmy = !this.hasLargestArmy;
-    if (id === 'p3') this.hasLongestRoad = !this.hasLongestRoad;
+    // if (id === 'p1') this.hasLargestArmy = !this.hasLargestArmy;
+    // if (id === 'p3') this.hasLongestRoad = !this.hasLongestRoad;
 
     return {
       id,

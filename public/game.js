@@ -166,8 +166,9 @@ const renderBothDice = (diceRoll) => {
 };
 
 const renderElements = (gameState) => {
+  renderPieces(gameState);
   renderPlayersData(gameState.players);
-  renderBothDice(gameState.diceRoll, gameState.availableActions.canRoll);
+  renderBothDice(gameState.diceRoll);
   // renderResources(gameState);
 };
 
@@ -255,8 +256,9 @@ const poll = () => {
     const response = await fetch('/game/gameData');
     const gameState = await response.json();
     console.log(gameState);
-    renderPieces(gameState);
-    renderBothDice(gameState.diceRoll);
+    renderElements(gameState);
+    // renderPieces(gameState);
+    // renderBothDice(gameState.diceRoll);
   }, 1000);
 };
 
@@ -265,7 +267,7 @@ const main = async () => {
   const gameState = await response.json();
 
   addEventListeners();
-  renderElements(gameState);
+  // renderElements(gameState);
   renderBoard(gameState.board.hexes);
   poll();
 };

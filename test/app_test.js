@@ -126,7 +126,10 @@ describe('Catan App Routes', () => {
 
   it('should give gameData', async () => {
     const app = createApp(game.mockGame());
-    const res = await app.request('/game/gameData');
+    const request = new Request('http:localhost:3000/game/gameData', {
+      headers: { Cookie: 'player-id=p1' },
+    });
+    const res = await app.request(request);
     const gameState = await res.json();
 
     assertEquals(gameState.vertices.length, 0);

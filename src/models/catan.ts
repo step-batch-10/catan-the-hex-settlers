@@ -220,7 +220,13 @@ export class Catan {
     const availableActions = this.getAvailableActions(playerId);
 
     const playersData = { playerId, players, currentPlayerId };
-    return { gameId, diceRoll, board, availableActions, ...playersData };
+    return {
+      gameId,
+      diceRoll,
+      board,
+      availableActions,
+      ...playersData,
+    };
   }
 
   getOccupiedVertices(): object[] {
@@ -243,12 +249,13 @@ export class Catan {
     return edges;
   }
 
-  getGameData(): object {
+  getGameData(playerId: string): object {
     const vertices = this.getOccupiedVertices();
     const edges = this.getOccupiedEdges();
     const diceRoll = this.diceRoll;
+    const players = this.getPlayersInfo(playerId);
 
-    return { vertices, edges, diceRoll };
+    return { vertices, edges, diceRoll, players };
   }
 
   private hasConnectedRoad(vertexId: string): boolean {

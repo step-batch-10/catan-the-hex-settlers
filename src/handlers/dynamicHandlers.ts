@@ -31,7 +31,9 @@ export const canRoll = (ctx: Context): Response => {
 
 export const serveGameData = (ctx: Context): Response => {
   const game = ctx.get('game');
-  const gameData = game.getGameData();
+  const playerId = getCookie(ctx, 'player-id');
+
+  const gameData = game.getGameData(playerId);
 
   return ctx.json(gameData);
 };
