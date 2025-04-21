@@ -254,8 +254,8 @@ export class Catan {
     const edges = this.getOccupiedEdges();
     const diceRoll = this.diceRoll;
     const players = this.getPlayersInfo(playerId);
-
-    return { vertices, edges, diceRoll, players };
+    const currentPlayer = this.players[this.currentPlayerIndex].name;
+    return { vertices, edges, diceRoll, players, currentPlayer };
   }
 
   private hasConnectedRoad(vertexId: string): boolean {

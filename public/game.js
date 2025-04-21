@@ -165,11 +165,16 @@ const renderBothDice = (diceRoll) => {
   ['dice1', 'dice2'].forEach((diceId, i) => renderDice(diceId, diceRoll[i]));
 };
 
+const renderToast = (currentPlayer) => {
+  const toast = document.querySelector(".toast");
+  toast.textContent = `current player - ${currentPlayer}`;
+}
+
 const renderElements = (gameState) => {
   renderPieces(gameState);
   renderPlayersData(gameState.players);
   renderBothDice(gameState.diceRoll);
-  // renderResources(gameState);
+  renderToast(gameState.currentPlayer);
 };
 
 const notYourTurn = () => {
