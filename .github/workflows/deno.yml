@@ -49,17 +49,3 @@ jobs:
           project: 'hex-settlers-of-catan-dev'
           entrypoint: 'server.js'
           root: '.'
-
-      - name: Upload to Deno Deploy (QA machine)
-        uses: denoland/deployctl@v1
-        with:
-          project: 'hex-settlers-of-catan-qa'
-          entrypoint: 'server.js'
-          root: '.'
-
-      - name: Upload to Deno Deploy (Production)
-        uses: denoland/deployctl@v1
-        with:
-          project: 'hex-settlers-of-catan'
-          entrypoint: 'server.js'
-          root: '.'
