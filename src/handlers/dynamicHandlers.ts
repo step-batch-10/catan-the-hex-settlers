@@ -52,18 +52,22 @@ export const buildAtEdge = async (ctx: Context): Promise<Response> => {
   return ctx.json(true);
 };
 
-export const canBuildRoad = (ctx: Context): Response => {
+export const canBuildRoad = async (ctx: Context): Promise<Response> => {
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
-  const canBuild = game.canBuildRoad(playerId);
+  const { id } = await ctx.req.parseBody();
+
+  const canBuild = game.validateBuildRoad(id, playerId);
 
   return ctx.json({ canBuild });
 };
 
-export const canBuildSettlement = (ctx: Context): Response => {
+export const canBuildSettlement = async (ctx: Context): Promise<Response> => {
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
-  const canBuild = game.canBuildSettlement(playerId);
+  const { id } = await ctx.req.parseBody();
+
+  const canBuild = game.validateBuildSettlement(id, playerId);
 
   return ctx.json({ canBuild });
 };

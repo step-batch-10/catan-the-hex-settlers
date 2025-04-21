@@ -27,8 +27,8 @@ const gameRoutes = (game) => {
   gameApp.post('/build/vertex', buildAtVertex);
   gameApp.post('/build/edge', buildAtEdge);
   gameApp.get('/dice/can-roll', canRoll);
-  gameApp.get('/build/vertex', canBuildSettlement);
-  gameApp.get('/build/edge', canBuildRoad);
+  gameApp.post('/can-build/vertex', canBuildSettlement);
+  gameApp.post('/can-build/edge', canBuildRoad);
   gameApp.get('/:playerId', serveGamePage);
   return gameApp;
 };

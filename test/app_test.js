@@ -57,7 +57,12 @@ describe('Catan App Routes', () => {
   });
 
   it('should check if a player can build a road on /build/edge', async () => {
-    const res = await app.request('/game/build/edge');
+    const fd = new FormData();
+    fd.set('id', 'e1');
+    const res = await app.request('/game/can-build/edge', {
+      method: 'POST',
+      body: fd,
+    });
     const body = await res.json();
     assertEquals(
       body.canBuild,
@@ -67,7 +72,12 @@ describe('Catan App Routes', () => {
   });
 
   it('should check if a player can build a settlement on /build/vertex', async () => {
-    const res = await app.request('/game/build/vertex');
+    const fd = new FormData();
+    fd.set('id', 'v1');
+    const res = await app.request('/game/can-build/vertex', {
+      method: 'POST',
+      body: fd,
+    });
     const body = await res.json();
     assertEquals(
       body.canBuild,
@@ -79,11 +89,7 @@ describe('Catan App Routes', () => {
   it('should check if a player can roll the dice on /dice/can-roll', async () => {
     const res = await app.request('/game/dice/can-roll');
     const body = await res.json();
-    assertEquals(
-      body.canRoll,
-      false,
-      "Player shouldn't be able to roll the dice."
-    );
+    assertEquals(body.canRoll, false);
   });
 
   it('should redirect to the game page for a player', async () => {

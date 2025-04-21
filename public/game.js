@@ -194,10 +194,12 @@ const build = async (event) => {
   const element = event.target;
   const targetElementId = element.id;
   const pieceType = element.classList[0];
-  console.log(pieceType);
-  const { canBuild } = await fetch(`/game/build/${pieceType}`).then((r) =>
-    r.json()
-  );
+  const fd = new FormData();
+  fd.set('id', targetElementId);
+  const { canBuild } = await fetch(`/game/can-build/${pieceType}`, {
+    body: fd,
+    method: 'POST',
+  }).then((r) => r.json());
 
   console.log(canBuild);
 
