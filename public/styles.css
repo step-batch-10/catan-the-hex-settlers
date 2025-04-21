@@ -116,11 +116,10 @@ body {
 }
 
 .resource-cards {
-  width: 300px;
+  width: 500px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: space-evenly;
+  flex-wrap: nowrap;
   gap: 10px;
 }
 .count {

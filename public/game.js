@@ -168,6 +168,7 @@ const renderBothDice = (diceRoll) => {
 const renderElements = (gameState) => {
   renderPlayersData(gameState.players);
   renderBothDice(gameState.diceRoll, gameState.availableActions.canRoll);
+  // renderResources(gameState);
 };
 
 const notYourTurn = () => {
