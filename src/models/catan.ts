@@ -1,14 +1,19 @@
-import { Board } from './board.ts';
-import { Player } from './player.ts';
-import _ from 'lodash';
-import { Vertex } from './vertex.ts';
-import { Edge } from './edge.ts';
+import _ from "lodash";
+import { Board } from "./board.ts";
+import { Player } from "./player.ts";
+import { Vertex } from "./vertex.ts";
+import { Edge } from "./edge.ts";
 
-type GamePhase = 'rolling' | 'setup' | 'main' | 'end';
+type GamePhase = "rolling" | "setup" | "main" | "end";
 
 interface EdgeData {
   id: string;
   owner: string | null;
+}
+
+interface Components {
+  id: string;
+  color: string | null;
 }
 
 interface VertexData {
@@ -16,6 +21,24 @@ interface VertexData {
   owner: string | null;
   harbor: string | null;
   adjacentHexes: string[];
+}
+
+interface GameState {
+  gameId: string;
+  diceRoll: number[];
+  board: {
+    hexes: object[];
+    vertices: VertexData[];
+    edges: EdgeData[];
+  };
+  availableActions: {
+    canRoll: boolean;
+  };
+}
+
+interface PlayersList {
+  me: ReturnType<Player["getPlayerData"]>;
+  others: object[];
 }
 
 export class Catan {
@@ -29,10 +52,10 @@ export class Catan {
   turns: number;
 
   constructor() {
-    this.gameId = 'game123';
+    this.gameId = "game123";
     this.players = [];
     this.currentPlayerIndex = 0;
-    this.phase = 'setup';
+    this.phase = "setup";
     this.winner = null;
     this.diceRoll = [1, 1];
     this.board = new Board();
@@ -40,16 +63,16 @@ export class Catan {
   }
 
   mockGame(): this {
-    this.players.push(new Player('p1', 'Adil', 'red'));
-    this.players.push(new Player('p2', 'Aman', 'blue'));
-    this.players.push(new Player('p3', 'Vineet', 'orange'));
-    this.players.push(new Player('p4', 'Shalu', 'white'));
+    this.players.push(new Player("p1", "Adil", "red"));
+    this.players.push(new Player("p2", "Aman", "blue"));
+    this.players.push(new Player("p3", "Surendra", "orange"));
+    this.players.push(new Player("p4", "Shalu", "white"));
     this.board.createBoard();
     return this;
   }
 
   changePhase(): void {
-    if (this.turns === 16) this.phase = 'main';
+    if (this.turns === 16) this.phase = "main";
   }
 
   reverseOrder(): void {
@@ -57,12 +80,16 @@ export class Catan {
     this.currentPlayerIndex--;
   }
 
+  private arePlacingSecondSettlement() {
+    return this.turns >= 8 && this.turns < 16;
+  }
+
   changeTurn(): void {
     this.changePhase();
 
-    if (this.turns >= 8 && this.turns < 16) return this.reverseOrder();
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
-      this.players.length;
+    if (this.arePlacingSecondSettlement()) return this.reverseOrder();
+    this.currentPlayerIndex =
+      (this.currentPlayerIndex + 1) % this.players.length;
   }
 
   rollDice(): [number, number] {
@@ -75,18 +102,31 @@ export class Catan {
   }
 
   isInitialSetup(): boolean {
-    return this.phase === 'setup';
+    return this.phase === "setup";
+  }
+
+  private getCurrentPlayer() {
+    return this.players[this.currentPlayerIndex];
+  }
+
+  private isCurrentPlayer(playerId: string) {
+    return this.getCurrentPlayer().id === playerId;
   }
 
   canRoll(playerId: string): boolean {
-    return (
-      !this.isInitialSetup() &&
-      this.players[this.currentPlayerIndex].id === playerId
-    );
+    return !this.isInitialSetup() && this.isCurrentPlayer(playerId);
+  }
+
+  private getEdge(id: string): Edge | undefined {
+    return this.board.edges.get(id);
+  }
+
+  private getVertex(id: string): Vertex | undefined {
+    return this.board.vertices.get(id);
   }
 
   private isVertexOccupied(vertexId: string) {
-    return this.board.vertices.get(vertexId)?.isOccupied();
+    return this.getVertex(vertexId)?.isOccupied();
   }
 
   private isVertexValid(vertexId: string) {
@@ -94,11 +134,10 @@ export class Catan {
   }
 
   private isDistanceRuleFollowed(vertexId: string) {
-    const vertices = this.board.vertices;
-    const vertex = vertices.get(vertexId);
-    const adjacentVtx = vertex?.connectedVertices || [];
+    const vertex = this.getVertex(vertexId);
+    const adjacentVertices = vertex?.connectedVertices || [];
 
-    return [...adjacentVtx].every((vtx) => !vertices.get(vtx)?.isOccupied());
+    return [...adjacentVertices].every((vtx) => !this.isVertexOccupied(vtx));
   }
 
   private setupValidation(vertexId: string): boolean {
@@ -110,26 +149,24 @@ export class Catan {
   }
 
   private hasConnectedSettlement(edgeId: string): boolean {
-    const edge = this.board.edges.get(edgeId);
-    const vertices = this.board.vertices;
-    const currentPlayerId = this.players[this.currentPlayerIndex].id;
+    const edge = this.getEdge(edgeId);
+    const currentPlayerId = this.getCurrentPlayer().id;
     const adjacentVertexIds = edge?.vertices || [];
 
     return [...adjacentVertexIds].some(
-      (vtxId: string) => vertices.get(vtxId)?.owner === currentPlayerId,
+      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId
     );
   }
 
   private hasOwnedAdjacentRoad(edgeId: string) {
-    const edge = this.board.edges.get(edgeId);
+    const edge = this.getEdge(edgeId);
     const adjacentVertexIds = edge?.vertices || [];
 
     return [...adjacentVertexIds].some((vtxId) => this.hasConnectedRoad(vtxId));
   }
 
   private canBuildRoad(edge: string) {
-    const edges = this.board.edges;
-    const isRoadOccupied = edges.get(edge)?.isOccupied();
+    const isRoadOccupied = this.getEdge(edge)?.isOccupied();
     const hasConnectedSettlement = this.hasConnectedSettlement(edge);
     const hasConnectedRoad = this.hasOwnedAdjacentRoad(edge);
 
@@ -140,13 +177,25 @@ export class Catan {
     return this.turns % 2 === 0 && this.setupValidation(settlementId);
   }
 
+  private isNearLatestSettlement(roadId: string): boolean {
+    const currentPlayer = this.getCurrentPlayer();
+    const latestSettlement = currentPlayer.settlements.at(-1) || "";
+    const roads = this.getVertex(latestSettlement)?.connectedEdges;
+
+    return roads?.has(roadId) || false;
+  }
+
   canBuildInitialRoad(roadId: string): boolean {
-    return this.turns % 2 === 1 && this.canBuildRoad(roadId);
+    return (
+      this.turns % 2 === 1 &&
+      this.isNearLatestSettlement(roadId) &&
+      this.canBuildRoad(roadId)
+    );
   }
 
   buildRoad(edgeId: string): boolean {
-    const currentPlayer = this.players[this.currentPlayerIndex];
-    this.board.edges.get(edgeId)?.occupy(currentPlayer.id, currentPlayer.color);
+    const currentPlayer = this.getCurrentPlayer();
+    this.getEdge(edgeId)?.occupy(currentPlayer.id, currentPlayer.color);
     currentPlayer.roads.push(edgeId);
     this.turns++;
     this.changeTurn();
@@ -155,8 +204,10 @@ export class Catan {
   }
 
   distributeResources(vertexId: string, player: Player, count: number): void {
-    const hexes = this.board.vertices.get(vertexId)?.adjacentHexes;
-    const resources = hexes?.map((hex) => this.board.hexes.get(hex)?.resource);
+    const hexes = this.getVertex(vertexId)?.adjacentHexes;
+    const resources = hexes?.map(
+      (hexId) => this.board.hexes.get(hexId)?.resource
+    );
 
     resources?.forEach((resource) => {
       if (resource) player.addResource(resource, count);
@@ -164,11 +215,11 @@ export class Catan {
   }
 
   buildSettlement(vertexId: string): boolean {
-    const currentPlayer = this.players[this.currentPlayerIndex];
-    this.board.vertices
-      .get(vertexId)
-      ?.occupy(currentPlayer.id, currentPlayer.color);
+    const currentPlayer = this.getCurrentPlayer();
+
+    this.getVertex(vertexId)?.occupy(currentPlayer.id, currentPlayer.color);
     currentPlayer.settlements.push(vertexId);
+
     if (currentPlayer.settlements.length === 2) {
       this.distributeResources(vertexId, currentPlayer, 1);
     }
@@ -185,13 +236,10 @@ export class Catan {
     return { ...data, resources, devCards };
   }
 
-  getPlayersInfo(playerId: string): {
-    me: ReturnType<Player['getPlayerData']>;
-    others: object[];
-  } {
+  getPlayersInfo(playerId: string): PlayersList {
     const [[player], others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId,
+      (p: Player) => p.id === playerId
     );
 
     const me = player.getPlayerData();
@@ -202,20 +250,14 @@ export class Catan {
   }
 
   getAvailableActions(playerId: string) {
-    const canRoll = this.players[this.currentPlayerIndex].id === playerId &&
-      !this.isInitialSetup();
+    const canRoll = this.isCurrentPlayer(playerId) && !this.isInitialSetup();
     return { canRoll };
   }
 
-  getGameState(playerId: string): {
-    gameId: string;
-    diceRoll: number[];
-    board: { hexes: object[]; vertices: VertexData[]; edges: EdgeData[] };
-    availableActions: { canRoll: boolean };
-  } {
+  getGameState(playerId: string): GameState {
     const players = this.getPlayersInfo(playerId);
     const board = this.board.getBoard();
-    const currentPlayerId = this.players[this.currentPlayerIndex].id;
+    const currentPlayerId = this.getCurrentPlayer().id;
     const { gameId, diceRoll } = this;
     const availableActions = this.getAvailableActions(playerId);
 
@@ -229,23 +271,26 @@ export class Catan {
     };
   }
 
-  getOccupiedVertices(): object[] {
-    const vertices: object[] = [];
-    this.board.vertices.forEach((vertex: Vertex, key: string) => {
-      if (vertex.owner) {
-        vertices.push({ id: key, color: vertex.color });
+  private extractOccupiedComponents(
+    componentsMap: Map<string, Vertex | Edge>,
+    occupiedComponents: Components[]
+  ) {
+    componentsMap.forEach((component: Vertex | Edge, key: string) => {
+      if (component.owner) {
+        occupiedComponents.push({ id: key, color: component.color });
       }
     });
+  }
 
+  getOccupiedVertices(): object[] {
+    const vertices: Components[] = [];
+    this.extractOccupiedComponents(this.board.vertices, vertices);
     return vertices;
   }
 
   getOccupiedEdges(): object[] {
-    const edges: object[] = [];
-    this.board.edges.forEach((edge: Edge, key: string) => {
-      if (edge.owner) edges.push({ id: key, color: edge.color });
-    });
-
+    const edges: Components[] = [];
+    this.extractOccupiedComponents(this.board.edges, edges);
     return edges;
   }
 
@@ -259,30 +304,29 @@ export class Catan {
   }
 
   private hasConnectedRoad(vertexId: string): boolean {
-    const vtx = this.board.vertices.get(vertexId);
-    const edges = this.board.edges;
+    const vtx = this.getVertex(vertexId);
     const adjacentEdges = vtx?.connectedEdges || [];
-    const currentPlayerId = this.players[this.currentPlayerIndex].id;
+    const currentPlayerId = this.getCurrentPlayer().id;
 
     return [...adjacentEdges].some(
-      (edge: string) => edges.get(edge)?.owner === currentPlayerId,
+      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId
     );
   }
 
-  private mainValidation(vertexId: string): boolean {
+  private canBuildSettlement(vertexId: string): boolean {
     return this.setupValidation(vertexId) && this.hasConnectedRoad(vertexId);
   }
 
   validateBuildSettlement(vertexId: string, playerId: string): boolean {
-    if (this.players[this.currentPlayerIndex].id !== playerId) return false;
-    if (this.phase === 'setup') return this.canBuildInitialSettlement(vertexId);
+    if (!this.isCurrentPlayer(playerId)) return false;
+    if (this.isInitialSetup()) return this.canBuildInitialSettlement(vertexId);
 
-    return this.mainValidation(vertexId);
+    return this.canBuildSettlement(vertexId);
   }
 
   validateBuildRoad(edgeId: string, playerId: string): boolean {
-    if (this.players[this.currentPlayerIndex].id !== playerId) return false;
-    if (this.phase === 'setup') return this.canBuildInitialRoad(edgeId);
+    if (!this.isCurrentPlayer(playerId)) return false;
+    if (this.isInitialSetup()) return this.canBuildInitialRoad(edgeId);
 
     return this.canBuildRoad(edgeId);
   }
