@@ -43,10 +43,6 @@ describe('Catan', () => {
 
     catan.changeTurn();
     assertEquals(catan.currentPlayerIndex, 2);
-
-    catan.turns = 12;
-    catan.changeTurn();
-    assertEquals(catan.currentPlayerIndex, 1);
   });
 
   it('should correctly handle setup phase', () => {

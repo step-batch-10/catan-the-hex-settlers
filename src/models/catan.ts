@@ -60,8 +60,6 @@ export class Catan {
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
     this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
       this.players.length;
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
-      this.players.length;
   }
 
   private getProducedResources(
@@ -287,7 +285,6 @@ export class Catan {
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId,
       (p: Player) => p.id === playerId,
     );
 
