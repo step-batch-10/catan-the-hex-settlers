@@ -5,3 +5,6 @@ coverage/
 references.md
 spikes
 commitMessage.sh
+public/test.html
+public/testGame.js
+public/testStyle.css

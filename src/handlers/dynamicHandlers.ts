@@ -1,5 +1,6 @@
 import { Context } from 'hono';
 import { getCookie, setCookie } from 'hono/cookie';
+import _ from 'lodash';
 
 export const serveGameState = (ctx: Context): Response => {
   const game = ctx.get('game');

@@ -1431,16 +1431,19 @@
               <div class="dice" id="dice1"></div>
               <div class="dice" id="dice2"></div>
             </div>
-            <div id="floating-trade-menu"></div>
-            <div id="trade-with-bank-container"></div>
-            
+            <div id="floating-trade-menu">
+              <div id="navigation-container">
+                <button class="navigate-btn">❌</button>
+                <button class="navigate-btn" id="back-btn">⬅️</button>
+              </div>
+              <div id="trade-contents" class="trade-container">
+                <span id="button-container">
+                  <button id="domestic-btn">Domestic Trade</button>
+                  <button id="maritime-btn">Maritime Trade</button>
+                </span>
+              </div>
+            </div>
         </div>
-
-            <div id="floating-trade-menu"></div>
-            <div id="trade-with-bank-container"></div>
-            
-        </div>
-
         <div id="player-panel">
           <div class="player-panel">
             <span id="player-name"></span>
@@ -1511,13 +1514,6 @@
       </div>
 
       <div id="side-bar">
-        <div id="player-list"></div>
-        <div id="logs"></div>
-      </div>
-      
-      
-    </div>
-    <!-- </div> -->
         <div id="player-list"></div>
         <div id="logs"></div>
       </div>

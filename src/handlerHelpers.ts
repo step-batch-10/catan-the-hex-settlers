@@ -13,11 +13,13 @@ export const decrementResources = (
     player.resources[resource] -= count;
   }
 };
-
-export const addResources = (incomingResources: Resources, player: Player) => {
-  Object.entries(incomingResources).forEach(([resource, count]) => {
+export const addResources = (
+  incomingResources: Resources,
+  player: Player,
+) => {
+  for (const [resource, count] of Object.entries(incomingResources)) {
     player.resources[resource] += count;
-  });
+  }
 };
 
 export const updateResources = (player: Player, resources: TradeResources) => {
