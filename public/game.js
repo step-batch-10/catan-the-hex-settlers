@@ -195,16 +195,14 @@ const renderToast = (gameState) => {
 };
 
 const renderMsg = (msg) => {
-  const msgDiv =
+  const msgBox =
     document.querySelector('.msg') ||
     cloneTemplateElement('#message-container').querySelector('.msg');
 
-  msgDiv.textContent = msg;
-  document.body.appendChild(msgDiv);
+  msgBox.textContent = msg;
+  document.body.appendChild(msgBox);
 
-  setTimeout(() => {
-    msgDiv.remove();
-  }, 1000);
+  setTimeout(() => msgBox.remove(), 1000);
 };
 
 const renderElements = (gameState) => {
@@ -231,6 +229,25 @@ const addRollDiceEvent = () => {
   diceContainer.addEventListener('click', rollDiceHandler);
 };
 
+const buildAt = async (targetElementId, pieceType) => {
+  const fd = new FormData();
+  fd.set('id', targetElementId);
+
+  return await fetch(`/game/build/${pieceType}`, {
+    body: fd,
+    method: 'POST',
+  });
+};
+
+const isValidBuilt = async (pieceType, fd) => {
+  const { canBuild } = await fetch(`/game/can-build/${pieceType}`, {
+    body: fd,
+    method: 'POST',
+  }).then((r) => r.json());
+
+  return canBuild;
+};
+
 const isPieceTypeValid = (pieceType) =>
   new Set(['vertex', 'edge']).has(pieceType);
 
@@ -238,37 +255,54 @@ const build = async (event) => {
   const element = event.target;
   const targetElementId = element.id;
   const pieceType = element.classList[0];
-  const fd = new FormData();
-  fd.set('id', targetElementId);
+  const formData = new FormData();
+  formData.set('id', targetElementId);
+  const canBuild = await isValidBuilt(pieceType, formData);
 
-  const { canBuild } = await fetch(`/game/can-build/${pieceType}`, {
-    body: fd,
-    method: 'POST',
-  }).then((r) => r.json());
+  if (!canBuild) return renderMsg('You Cannot Build There');
 
-  if (canBuild) {
-    const fd = new FormData();
-    fd.set('id', targetElementId);
-    return await fetch(`/game/build/${pieceType}`, {
-      body: fd,
-      method: 'POST',
-    });
-  }
-
-  if (!isPieceTypeValid(pieceType) || !canBuild) {
-    renderMsg('You Cannot Build There..');
-    return;
-  }
+  return buildAt(targetElementId, pieceType);
 };
 
-const addBuildEvent = () => {
+const highlightElement = (element, currentPlayer) => {
+  element.style.fill = currentPlayer.color;
+  element.style.opacity = 0.4;
+  element.classList.add('highlight');
+};
+
+const lowLightElement = (element, className) => {
+  return () => {
+    element.style.opacity = 0;
+    element.classList.remove(className);
+  };
+};
+
+const canBuildHandler = (currentPlayer) => async (event) => {
+  const element = event.target;
+  const targetElementId = element.id;
+  const pieceType = element.classList[0];
+
+  if (!isPieceTypeValid(pieceType)) return;
+
+  const formData = new FormData();
+  formData.set('id', targetElementId);
+  const canBuild = await isValidBuilt(pieceType, formData);
+
+  if (!canBuild) return;
+
+  highlightElement(element, currentPlayer);
+  setTimeout(lowLightElement(element, 'highlight'), 500);
+};
+
+const addBuildEvent = (currentPlayer) => {
   const svg = document.getElementById('svg20');
   svg.addEventListener('click', build);
+  svg.addEventListener('mouseover', canBuildHandler(currentPlayer));
 };
 
-const addEventListeners = () => {
+const addEventListeners = (gameState) => {
   addRollDiceEvent();
-  addBuildEvent();
+  addBuildEvent(gameState.players.me);
 };
 
 const renderEdges = (edges) => {
@@ -307,7 +341,7 @@ const main = async () => {
   const response = await fetch('/game/gameState');
   const gameState = await response.json();
 
-  addEventListeners();
+  addEventListeners(gameState);
   renderBoard(gameState.board.hexes);
   poll();
 };
