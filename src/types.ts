@@ -62,6 +62,12 @@ interface GameState {
   };
 }
 
+interface DistributeResourceData {
+  playerId: string;
+  resource: string;
+  buildingType: string;
+}
+
 interface PlayersList {
   me: ReturnType<Player['getPlayerData']>;
   others: object[];
@@ -73,6 +79,7 @@ type GamePhase = 'rolling' | 'setup' | 'main' | 'end';
 export type {
   Components,
   DevCards,
+  DistributeResourceData,
   EdgeData,
   GameBoard,
   GamePhase,

@@ -9,6 +9,8 @@ import type {
   GameState,
   PlayersList,
   RollDice,
+  Resources,
+  DistributeResourceData,
 } from '../types.ts';
 
 export class Catan {
@@ -60,11 +62,83 @@ export class Catan {
       this.players.length;
   }
 
+  private getProducedResources(
+    terrains: string[] | undefined,
+    rolledNumber: number
+  ) {
+    const { board } = this;
+    const { hexes } = board;
+    const producedTerrains = terrains?.filter(
+      (hex) => hexes.get(hex)?.terrainNumber === rolledNumber
+    );
+
+    return producedTerrains?.map((terrain) => hexes.get(terrain)?.resource);
+  }
+
+  private addProducedResource(
+    playerId: string,
+    resource: keyof Resources | undefined,
+    buildingType: string
+  ) {
+    return { playerId, resource, buildingType };
+  }
+
+  private addProducedResources(
+    resources: (keyof Resources | undefined)[] | undefined,
+    resourcesProduced: object[],
+    player: Player
+  ) {
+    resources?.forEach((resource) =>
+      resourcesProduced.push(
+        this.addProducedResource(player.id, resource, 'settlement')
+      )
+    );
+  }
+
+  private resourcesForSettlement(player: Player, rolledNumber: number) {
+    const resourcesProduced: DistributeResourceData[] = [];
+    player.settlements.forEach((settlement) => {
+      const terrains = this.board.vertices.get(settlement)?.adjacentHexes;
+      const resources = this.getProducedResources(terrains, rolledNumber);
+      this.addProducedResources(resources, resourcesProduced, player);
+    });
+    return resourcesProduced;
+  }
+
+  private toBeDistributed(rolledNumber: number): DistributeResourceData[] {
+    const resourcesProduced: DistributeResourceData[] = [];
+    this.players.forEach((player) => {
+      const settlements = this.resourcesForSettlement(player, rolledNumber);
+      resourcesProduced.push(...settlements);
+    });
+    return resourcesProduced;
+  }
+
+  updateResource(resourceData: DistributeResourceData) {
+    const { playerId, resource, buildingType } = resourceData;
+    const player = _.find(this.players, { id: playerId });
+    const count = buildingType === 'city' ? 2 : 1;
+    player.addResource(resource, count);
+  }
+
+  distributeResources(resourcesToBeDistributed: DistributeResourceData[]) {
+    resourcesToBeDistributed.forEach((resourceData) =>
+      this.updateResource(resourceData)
+    );
+  }
+
+  distributeResourcesForDiceRoll(): void {
+    const rolledNumber = this.diceRoll.reduce((sum, a) => sum + a, 0);
+    const needToDistributed = this.toBeDistributed(rolledNumber);
+    this.distributeResources(needToDistributed);
+  }
+
   rollDice(): [number, number] {
     const dice1 = this.diceFn(1, 6);
     const dice2 = this.diceFn(1, 6);
     this.diceRoll = [dice1, dice2];
     this.turns++;
+    this.distributeResourcesForDiceRoll();
     this.changeTurn();
     return this.diceRoll;
   }
@@ -171,7 +245,11 @@ export class Catan {
     return true;
   }
 
-  distributeResources(vertexId: string, player: Player, count: number): void {
+  distributeInitialResources(
+    vertexId: string,
+    player: Player,
+    count: number
+  ): void {
     const hexes = this.getVertex(vertexId)?.adjacentHexes;
     const resources = hexes?.map(
       (hexId) => this.board.hexes.get(hexId)?.resource,
@@ -189,7 +267,7 @@ export class Catan {
     currentPlayer.settlements.push(vertexId);
 
     if (currentPlayer.settlements.length === 2) {
-      this.distributeResources(vertexId, currentPlayer, 1);
+      this.distributeInitialResources(vertexId, currentPlayer, 1);
     }
     this.turns++;
 

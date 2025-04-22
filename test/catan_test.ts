@@ -418,3 +418,37 @@ describe('buildRoad', () => {
     assert(canBuild);
   });
 });
+
+describe('distribute Resources', () => {
+  let catan: Catan;
+
+  beforeEach(() => {
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    catan = new Catan('game123', players, board, _.random);
+  });
+
+  it('should distribute resources for player1', () => {
+    catan.diceFn = () => 5;
+    catan.players[0].settlements.push('v-1,1|-1,2|0,1');
+    const diceRoll = catan.rollDice();
+
+    assertEquals(diceRoll, [5, 5]);
+    assertEquals(catan.players[0].resources.wood, 1);
+  });
+
+  it('should distribute resources for city for player1', () => {
+    catan.updateResource({
+      playerId: 'p1',
+      resource: 'wood',
+      buildingType: 'city',
+    });
+
+    assertEquals(catan.players[0].resources.wood, 2);
+  });
+});
