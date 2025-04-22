@@ -49,20 +49,6 @@ interface Components {
   color: string | null;
 }
 
-interface PlayerData {
-  id: string;
-  name: string;
-  color: string;
-  resources: Resources;
-  roads: string[];
-  settlements: string[];
-  cities: string[];
-  devCards: DevCards;
-  hasLargestArmy: boolean;
-  hasLongestRoad: boolean;
-  victoryPoints: number;
-}
-
 interface GameState {
   gameId: string;
   diceRoll: number[];
@@ -74,9 +60,6 @@ interface GameState {
   availableActions: {
     canRoll: boolean;
   };
-  players: { me: { resources: Resources } };
-  playerId: string;
-  currentPlayerId: string;
 }
 
 interface DistributeResourceData {
@@ -92,8 +75,11 @@ interface PlayersList {
 
 type RollDice = (start?: number, end?: number) => number;
 type GamePhase = 'rolling' | 'setup' | 'main' | 'end';
-type Structures = 'road' | 'settlement' | 'city';
-type ResourceProduction = (keyof Resources | undefined)[] | undefined;
+
+interface TradeResources {
+  incomingResources: Resources;
+  outgoingResources: Resources;
+}
 
 export type {
   Components,
@@ -104,11 +90,9 @@ export type {
   GamePhase,
   GameState,
   HexData,
-  PlayerData,
   PlayersList,
-  ResourceProduction,
   Resources,
   RollDice,
-  Structures,
+  TradeResources,
   VertexData,
 };

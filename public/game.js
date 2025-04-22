@@ -357,7 +357,11 @@ const main = async () => {
 
   addEventListeners(gameState);
   renderBoard(gameState.board.hexes);
+  renderElements(gameState);
+  addEventListeners(gameState);
   poll();
 };
 
 globalThis.onload = main;
+
+
