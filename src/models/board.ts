@@ -2,29 +2,7 @@ import { Hex } from './hex.ts';
 import { Vertex } from './vertex.ts';
 import { hexes } from '../data/hexes.ts';
 import { Edge } from './edge.ts';
-import { Resources } from './player.ts';
-
-interface EdgeData {
-  id: string;
-  owner: string | null;
-}
-
-interface VertexData {
-  id: string;
-  owner: string | null;
-  harbor: string | null;
-  adjacentHexes: string[];
-}
-
-interface HexData {
-  q: number;
-  r: number;
-  id: string;
-  terrain: string;
-  number: number | null;
-  resource: keyof Resources | string;
-  hasRobber: boolean;
-}
+import type { GameBoard, VertexData, EdgeData, HexData } from '../types.ts';
 
 export class Board {
   hexes: Map<string, Hex>;
@@ -43,7 +21,7 @@ export class Board {
 
   private createVertex(q: number, r: number, cornerIndex: number): Vertex {
     const vertexKey = Vertex.getVertexKey(q, r, cornerIndex);
-    if (!this.vertices.get(vertexKey)) {
+    if (!this.vertices.has(vertexKey)) {
       this.vertices.set(vertexKey, new Vertex(vertexKey, null));
     }
 
@@ -75,7 +53,13 @@ export class Board {
     const { q, r, id, terrain, number, hasRobber, resource } = hexData;
     const hex = new Hex(id, q, r, terrain, number, hasRobber, resource);
     const vertices = this.createVertices(hex);
-    vertices.map((vertex, i) => this.createEdge(vertex, vertices[(i + 1) % 6]));
+
+    vertices.map((vertex, i) => {
+      const nextVertex = vertices[(i + 1) % 6];
+
+      this.createEdge(vertex, nextVertex);
+    });
+
     this.hexes.set(id, hex);
     return hex;
   }
@@ -86,20 +70,14 @@ export class Board {
 
   getVertices(): VertexData[] {
     const vertices: VertexData[] = [];
-
-    this.vertices.forEach((vertex) => {
-      vertices.push(vertex.toJSON());
-    });
+    this.vertices.forEach((vertex) => vertices.push(vertex.toJSON()));
 
     return vertices;
   }
 
   getEdges(): EdgeData[] {
     const edges: EdgeData[] = [];
-
-    this.edges.forEach((edge) => {
-      edges.push(edge.toJSON());
-    });
+    this.edges.forEach((edge) => edges.push(edge.toJSON()));
 
     return edges;
   }
@@ -107,10 +85,11 @@ export class Board {
   getHexes(): object[] {
     const hexes: object[] = [];
     this.hexes.forEach((hex) => hexes.push(hex.toJSON()));
+
     return hexes;
   }
 
-  getBoard(): { hexes: object[]; vertices: VertexData[]; edges: EdgeData[] } {
+  getBoard(): GameBoard {
     const hexesData = this.getHexes();
     const vertices = this.getVertices();
     const edges = this.getEdges();

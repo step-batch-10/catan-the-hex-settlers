@@ -6,11 +6,12 @@ import {
   buildAtVertex,
   canBuildRoad,
   canBuildSettlement,
+  canRoll,
+  rollDiceHandler,
   serveGameData,
   serveGamePage,
   serveGameState,
 } from './handlers/dynamicHandlers.ts';
-import { canRoll, rollDiceHandler } from './handlers/dynamicHandlers.ts';
 
 const inject = (game) => async (c, next) => {
   c.set('game', game);
@@ -30,6 +31,7 @@ const gameRoutes = (game) => {
   gameApp.post('/can-build/vertex', canBuildSettlement);
   gameApp.post('/can-build/edge', canBuildRoad);
   gameApp.get('/:playerId', serveGamePage);
+
   return gameApp;
 };
 
@@ -37,10 +39,8 @@ export const createApp = (game) => {
   const app = new Hono();
 
   app.use(logger());
-  app.get('/ok', (c) => c.text('ok'));
-
   app.route('/game', gameRoutes(game));
-
   app.get('*', serveStatic({ root: './public' }));
+
   return app;
 };

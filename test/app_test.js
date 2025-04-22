@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { createApp } from '../src/app.js';
+import { Catan } from '../src/models/catan.ts';
 import { describe, it, beforeEach } from 'testing/bdd';
 import { assertEquals, assert, assertNotEquals } from 'assert';
-import { Catan } from '../src/models/catan.ts';
 
 describe('Catan App Routes', () => {
   let game = Catan;
@@ -11,13 +11,6 @@ describe('Catan App Routes', () => {
   beforeEach(() => {
     game = new Catan();
     app = createApp(game.mockGame());
-  });
-
-  it("should respond with 'ok' on /ok route", async () => {
-    const res = await app.request('/ok');
-    assertEquals(res.status, 200);
-    const text = await res.text();
-    assertEquals(text, 'ok');
   });
 
   it('should request dice roll on /roll-dice', async () => {

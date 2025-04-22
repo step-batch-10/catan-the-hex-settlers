@@ -1,4 +1,4 @@
-import { Resources } from './player.ts';
+import { Resources } from '../types.ts';
 
 export class Hex {
   id: string;

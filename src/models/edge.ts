@@ -1,7 +1,4 @@
-interface EdgeData {
-  id: string;
-  owner: string | null;
-}
+import type { EdgeData } from '../types.ts';
 
 export class Edge {
   id: string;

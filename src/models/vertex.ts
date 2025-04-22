@@ -1,9 +1,4 @@
-interface VertexData {
-  id: string;
-  owner: string | null;
-  harbor: string | null;
-  adjacentHexes: string[];
-}
+import { VertexData } from '../types.ts';
 
 export class Vertex {
   static readonly CORNER_OFFSETS: [number, number][] = [
@@ -39,13 +34,17 @@ export class Vertex {
       this.CORNER_OFFSETS[(cornerIndex + 5) % 6],
     ];
 
-    const hexesTouchingVertex = directions.map(([dq, dr]) => [q + dq, r + dr]);
+    const hexesTouchingVertex = directions.map(
+      ([dq, dr]: number[]): number[] => [q + dq, r + dr],
+    );
 
-    const keyParts = hexesTouchingVertex.map(([q, r]) => `${q},${r}`);
+    const keyParts = hexesTouchingVertex.map(
+      ([q, r]: number[]): string => `${q},${r}`,
+    );
 
     keyParts.sort();
 
-    return 'v' + keyParts.join('|');
+    return 'v'.concat(keyParts.join('|'));
   }
 
   isOccupied(): boolean {

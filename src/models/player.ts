@@ -1,18 +1,4 @@
-export interface Resources {
-  wood: number;
-  brick: number;
-  sheep: number;
-  wheat: number;
-  ore: number;
-  [key: string]: number;
-}
-
-interface DevCards {
-  knight: number;
-  'road-building': number;
-  'year-of-plenty': number;
-  monopoly: number;
-}
+import type { Resources, DevCards } from '../types.ts';
 
 export class Player {
   id: string;
@@ -61,8 +47,7 @@ export class Player {
   }
 
   addResource(cardType: keyof Resources | string, count: number): void {
-    if (!(cardType in this.resources)) return;
-    this.resources[cardType] += count;
+    if (cardType in this.resources) this.resources[cardType] += count;
   }
 
   getPlayerData(): {
@@ -91,9 +76,6 @@ export class Player {
       hasLongestRoad,
       victoryPoints,
     } = this;
-
-    // if (id === 'p1') this.hasLargestArmy = !this.hasLargestArmy;
-    // if (id === 'p3') this.hasLongestRoad = !this.hasLongestRoad;
 
     return {
       id,

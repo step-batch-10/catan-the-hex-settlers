@@ -21,14 +21,13 @@ body {
   flex-direction: row;
   width: 100%;
   height: 5%;
-  /* background-color: aqua; */
 }
 
 #top-left {
   height: 100%;
   width: 10%;
-  /* background-color: bisque; */
 }
+
 #top-middle {
   height: 100%;
   width: 80%;
