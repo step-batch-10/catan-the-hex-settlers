@@ -1,28 +1,35 @@
 import { Hono } from 'hono';
 import { createApp } from '../src/app.js';
-import { Catan } from '../src/models/catan.ts';
 import { describe, it, beforeEach } from 'testing/bdd';
-import { assertEquals, assert, assertNotEquals } from 'assert';
+import { assertEquals, assert, assertNotEquals, assertFalse } from 'assert';
+import { Catan } from '../src/models/catan.ts';
+import { Board } from '../src/models/board.ts';
+import { Player } from '../src/models/player.ts';
+import _ from 'lodash';
 
 describe('Catan App Routes', () => {
-  let game = Catan;
-  let app = Hono;
+  let catan: Catan;
+  let app: Hono;
 
   beforeEach(() => {
-    game = new Catan();
-    app = createApp(game.mockGame());
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    catan = new Catan('game123', players, board, _.random);
+    app = createApp(catan);
   });
 
   it('should request dice roll on /roll-dice', async () => {
-    const res = await app.request('/game/roll-dice', {
-      method: 'POST',
-    });
+    catan.diceFn = () => 5;
+    const res = await app.request('/game/roll-dice', { method: 'POST' });
     const body = await res.json();
+
     assert(body.rolled.length === 2, 'Dice should return two values.');
-    assert(
-      body.rolled[0] >= 1 && body.rolled[0] <= 6,
-      'Dice values should be between 1 and 6.'
-    );
+    assertEquals(body, { rolled: [5, 5] });
   });
 
   it('should allow building a settlement at a vertex on /build/vertex', async () => {
@@ -32,11 +39,7 @@ describe('Catan App Routes', () => {
       body: JSON.stringify({ id: vertexId }),
     });
     const body = await res.json();
-    assertEquals(
-      body,
-      true,
-      'Response should be true when building a settlement.'
-    );
+    assert(body, 'Response should be true when building a settlement.');
   });
 
   it('should allow building a road at an edge on /build/edge', async () => {
@@ -46,7 +49,7 @@ describe('Catan App Routes', () => {
       body: JSON.stringify({ id: edgeId }),
     });
     const body = await res.json();
-    assertEquals(body, true, 'Response should be true when building a road.');
+    assert(body, 'Response should be true when building a road.');
   });
 
   it('should check if a player can build a road on /build/edge', async () => {
@@ -57,11 +60,7 @@ describe('Catan App Routes', () => {
       body: fd,
     });
     const body = await res.json();
-    assertEquals(
-      body.canBuild,
-      false,
-      "Player shouldn't be able to build a road."
-    );
+    assertFalse(body.canBuild, "Player shouldn't be able to build a road.");
   });
 
   it('should check if a player can build a settlement on /build/vertex', async () => {
@@ -72,17 +71,13 @@ describe('Catan App Routes', () => {
       body: fd,
     });
     const body = await res.json();
-    assertEquals(
-      body.canBuild,
-      false,
-      "Player shouldn't be able to build a settlement."
-    );
+    assertFalse(body.canBuild, "Player shouldn't be able to build settlement.");
   });
 
   it('should check if a player can roll the dice on /dice/can-roll', async () => {
     const res = await app.request('/game/dice/can-roll');
     const body = await res.json();
-    assertEquals(body.canRoll, false);
+    assertFalse(body.canRoll);
   });
 
   it('should redirect to the game page for a player', async () => {
@@ -107,7 +102,7 @@ describe('Catan App Routes', () => {
   });
 
   it('should give gameState', async () => {
-    const app = createApp(game.mockGame());
+    const app = createApp(catan.mockGame());
     const request = new Request('http:localhost:3000/game/gameState', {
       headers: { Cookie: 'player-id=p1' },
     });
@@ -118,7 +113,7 @@ describe('Catan App Routes', () => {
   });
 
   it('should give gameData', async () => {
-    const app = createApp(game.mockGame());
+    const app = createApp(catan.mockGame());
     const request = new Request('http:localhost:3000/game/gameData', {
       headers: { Cookie: 'player-id=p1' },
     });

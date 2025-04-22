@@ -19,15 +19,22 @@ export class Catan {
   diceRoll: [number, number] | [];
   board: Board;
   turns: number;
+  diceFn: (start: number, end: number) => number;
 
-  constructor() {
-    this.gameId = 'game123';
-    this.players = [];
+  constructor(
+    gameId: string,
+    players: Player[],
+    board: Board,
+    diceFn: (start?: number, end?: number) => number
+  ) {
+    this.diceFn = diceFn;
+    this.gameId = gameId;
+    this.players = players;
     this.currentPlayerIndex = 0;
     this.phase = 'setup';
     this.winner = null;
     this.diceRoll = [1, 1];
-    this.board = new Board();
+    this.board = board;
     this.turns = 0;
   }
 
@@ -62,8 +69,8 @@ export class Catan {
   }
 
   rollDice(): [number, number] {
-    const dice1 = _.random(1, 6);
-    const dice2 = _.random(1, 6);
+    const dice1 = this.diceFn(1, 6);
+    const dice2 = this.diceFn(1, 6);
     this.diceRoll = [dice1, dice2];
     this.turns++;
     this.changeTurn();
@@ -123,7 +130,7 @@ export class Catan {
     const adjacentVertexIds = edge?.vertices || [];
 
     return [...adjacentVertexIds].some(
-      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId,
+      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId
     );
   }
 
@@ -175,7 +182,7 @@ export class Catan {
   distributeResources(vertexId: string, player: Player, count: number): void {
     const hexes = this.getVertex(vertexId)?.adjacentHexes;
     const resources = hexes?.map(
-      (hexId) => this.board.hexes.get(hexId)?.resource,
+      (hexId) => this.board.hexes.get(hexId)?.resource
     );
 
     resources?.forEach((resource) => {
@@ -208,12 +215,12 @@ export class Catan {
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId,
+      (p: Player) => p.id === playerId
     );
 
     const me = player.getPlayerData();
     const othersData = others.map((other: Player) =>
-      this.abstractPlayerData(other),
+      this.abstractPlayerData(other)
     );
     return { me, others: othersData };
   }
@@ -242,7 +249,7 @@ export class Catan {
 
   private extractOccupiedComponents(
     componentsMap: Map<string, Vertex | Edge>,
-    occupiedComponents: Components[],
+    occupiedComponents: Components[]
   ) {
     componentsMap.forEach((component: Vertex | Edge, key: string) => {
       if (component.owner) {
@@ -278,7 +285,7 @@ export class Catan {
     const currentPlayerId = this.getCurrentPlayer().id;
 
     return [...adjacentEdges].some(
-      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId,
+      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId
     );
   }
 

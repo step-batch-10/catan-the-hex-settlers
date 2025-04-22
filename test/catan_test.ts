@@ -3,13 +3,21 @@ import { describe, it, beforeEach } from 'testing/bdd';
 import type { VertexData, EdgeData } from '../src/types.ts';
 import { Catan } from '../src/models/catan.ts';
 import { Player } from '../src/models/player.ts';
+import { Board } from '../src/models/board.ts';
+import _ from 'lodash';
 
 describe('Catan', () => {
   let catan: Catan;
 
   beforeEach(() => {
-    catan = new Catan();
-    catan.mockGame();
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    catan = new Catan('game123', players, board, _.random);
   });
 
   it('should initialize the game correctly', () => {
@@ -22,16 +30,10 @@ describe('Catan', () => {
   });
 
   it('should roll the dice correctly', () => {
+    catan.diceFn = () => 5;
     const diceRoll = catan.rollDice();
 
-    assert(
-      diceRoll[0] >= 1 && diceRoll[0] <= 6,
-      'First dice should be between 1 and 6.',
-    );
-    assert(
-      diceRoll[1] >= 1 && diceRoll[1] <= 6,
-      'Second dice should be between 1 and 6.',
-    );
+    assertEquals(diceRoll, [5, 5]);
     assertEquals(catan.turns, 1);
   });
 
@@ -122,12 +124,12 @@ describe('Catan', () => {
     assert(gameState.board.hexes.length > 0, 'Board hexes should be present.');
     assert(
       gameState.board.vertices.length > 0,
-      'Board vertices should be present.',
+      'Board vertices should be present.'
     );
     assert(gameState.board.edges.length > 0, 'Board edges should be present.');
     assert(
       gameState.availableActions.canRoll === false,
-      'Player should be able to roll.',
+      'Player should be able to roll.'
     );
   });
 
@@ -163,7 +165,7 @@ describe('Catan', () => {
 
     assert(
       newResourceCount > initialResourceCount,
-      'Player should receive resources after building a settlement.',
+      'Player should receive resources after building a settlement.'
     );
     assertEquals(vertices, [{ id: 'v0,0|1,-1|1,0', color: 'red' }]);
   });
@@ -190,7 +192,14 @@ describe('buildSettlement ', () => {
   let catan: Catan;
 
   beforeEach(() => {
-    catan = new Catan();
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    catan = new Catan('game123', players, board, _.random);
     catan.mockGame();
   });
 
@@ -321,8 +330,14 @@ describe('buildRoad', () => {
   let catan: Catan;
 
   beforeEach(() => {
-    catan = new Catan();
-    catan.mockGame();
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    catan = new Catan('game123', players, board, _.random);
   });
 
   it('should not be able to build road near other than the latest settlement', () => {
