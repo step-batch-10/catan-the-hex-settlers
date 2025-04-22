@@ -5,12 +5,12 @@ import { Vertex } from './vertex.ts';
 import { Edge } from './edge.ts';
 import type {
   Components,
+  DistributeResourceData,
   GamePhase,
   GameState,
   PlayersList,
-  RollDice,
   Resources,
-  DistributeResourceData,
+  RollDice,
 } from '../types.ts';
 
 export class Catan {
@@ -29,7 +29,7 @@ export class Catan {
     players: Player[],
     board: Board,
     diceFn: (start?: number, end?: number) => number,
-    ) {
+  ) {
     this.diceFn = diceFn;
     this.gameId = gameId;
     this.players = players;
@@ -60,16 +60,18 @@ export class Catan {
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
     this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
       this.players.length;
+    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
+      this.players.length;
   }
 
   private getProducedResources(
     terrains: string[] | undefined,
-    rolledNumber: number
+    rolledNumber: number,
   ) {
     const { board } = this;
     const { hexes } = board;
     const producedTerrains = terrains?.filter(
-      (hex) => hexes.get(hex)?.terrainNumber === rolledNumber
+      (hex) => hexes.get(hex)?.terrainNumber === rolledNumber,
     );
 
     return producedTerrains?.map((terrain) => hexes.get(terrain)?.resource);
@@ -78,7 +80,7 @@ export class Catan {
   private addProducedResource(
     playerId: string,
     resource: keyof Resources | undefined,
-    buildingType: string
+    buildingType: string,
   ) {
     return { playerId, resource, buildingType };
   }
@@ -86,11 +88,11 @@ export class Catan {
   private addProducedResources(
     resources: (keyof Resources | undefined)[] | undefined,
     resourcesProduced: object[],
-    player: Player
+    player: Player,
   ) {
     resources?.forEach((resource) =>
       resourcesProduced.push(
-        this.addProducedResource(player.id, resource, 'settlement')
+        this.addProducedResource(player.id, resource, 'settlement'),
       )
     );
   }
@@ -248,7 +250,7 @@ export class Catan {
   distributeInitialResources(
     vertexId: string,
     player: Player,
-    count: number
+    count: number,
   ): void {
     const hexes = this.getVertex(vertexId)?.adjacentHexes;
     const resources = hexes?.map(
@@ -285,6 +287,7 @@ export class Catan {
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], others] = _.partition(
       this.players,
+      (p: Player) => p.id === playerId,
       (p: Player) => p.id === playerId,
     );
 
