@@ -197,21 +197,21 @@ const renderToast = (gameState) => {
 const renderMsg = (msg) => {
   const msgDiv =
     document.querySelector('.msg') ||
-    cloneTemplateElement('#player-status').querySelector('.msg');
+    cloneTemplateElement('#message-container').querySelector('.msg');
 
   msgDiv.textContent = msg;
   document.body.appendChild(msgDiv);
 
   setTimeout(() => {
     msgDiv.remove();
-  }, 3000);
+  }, 1000);
 };
 
 const renderElements = (gameState) => {
   renderPieces(gameState);
   renderPlayersData(gameState.players);
   renderBothDice(gameState.diceRoll);
-  renderToast(gameState.currentPlayer);
+  renderToast(gameState);
 };
 
 const notYourTurn = () => {

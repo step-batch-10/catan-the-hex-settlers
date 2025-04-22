@@ -27,7 +27,7 @@ export class Catan {
     players: Player[],
     board: Board,
     diceFn: (start?: number, end?: number) => number,
-  ) {
+    ) {
     this.diceFn = diceFn;
     this.gameId = gameId;
     this.players = players;
