@@ -200,7 +200,6 @@ describe('buildSettlement ', () => {
     const board = new Board();
     board.createBoard();
     catan = new Catan('game123', players, board, _.random);
-    catan.mockGame();
   });
 
   it('should build the settlement for setup mode', () => {

@@ -14,7 +14,7 @@ export const serveGamePage = (ctx: Context): Response => {
   return ctx.redirect('/game.html', 303);
 };
 
-export const rollDiceHandler = (ctx: Context): Response => {
+export const rollDice = (ctx: Context): Response => {
   const game = ctx.get('game');
   const rolled = game.rollDice();
 
@@ -38,7 +38,7 @@ export const serveGameData = (ctx: Context): Response => {
   return ctx.json(gameData);
 };
 
-export const buildAtVertex = async (ctx: Context): Promise<Response> => {
+export const buildSettlement = async (ctx: Context): Promise<Response> => {
   const game = ctx.get('game');
   const { id } = await ctx.req.parseBody();
   game.buildSettlement(id);
@@ -46,7 +46,7 @@ export const buildAtVertex = async (ctx: Context): Promise<Response> => {
   return ctx.json(true);
 };
 
-export const buildAtEdge = async (ctx: Context): Promise<Response> => {
+export const buildRoad = async (ctx: Context): Promise<Response> => {
   const game = ctx.get('game');
   const { id } = await ctx.req.parseBody();
   game.buildRoad(id);
@@ -68,7 +68,6 @@ export const canBuildSettlement = async (ctx: Context): Promise<Response> => {
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
   const { id } = await ctx.req.parseBody();
-
   const canBuild = game.validateBuildSettlement(id, playerId);
 
   return ctx.json({ canBuild });

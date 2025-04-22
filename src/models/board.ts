@@ -2,7 +2,7 @@ import { Hex } from './hex.ts';
 import { Vertex } from './vertex.ts';
 import { hexes } from '../data/hexes.ts';
 import { Edge } from './edge.ts';
-import type { GameBoard, VertexData, EdgeData, HexData } from '../types.ts';
+import type { EdgeData, GameBoard, HexData, VertexData } from '../types.ts';
 
 export class Board {
   hexes: Map<string, Hex>;

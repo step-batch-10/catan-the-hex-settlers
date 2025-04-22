@@ -87,7 +87,7 @@ describe('Catan App Routes', () => {
     assertNotEquals(
       res.headers.get('Location'),
       null,
-      'Response should redirect.'
+      'Response should redirect.',
     );
   });
 
@@ -97,13 +97,12 @@ describe('Catan App Routes', () => {
     const cookies = res.headers.get('Set-Cookie');
     assert(
       cookies?.includes('player-id=p1'),
-      "Cookie 'player-id' should be set."
+      "Cookie 'player-id' should be set.",
     );
   });
 
   it('should give gameState', async () => {
-    const app = createApp(catan.mockGame());
-    const request = new Request('http:localhost:3000/game/gameState', {
+    const request = new Request('http:localhost/game/gameState', {
       headers: { Cookie: 'player-id=p1' },
     });
     const res = await app.request(request);
@@ -113,8 +112,7 @@ describe('Catan App Routes', () => {
   });
 
   it('should give gameData', async () => {
-    const app = createApp(catan.mockGame());
-    const request = new Request('http:localhost:3000/game/gameData', {
+    const request = new Request('http:localhost/game/gameData', {
       headers: { Cookie: 'player-id=p1' },
     });
     const res = await app.request(request);

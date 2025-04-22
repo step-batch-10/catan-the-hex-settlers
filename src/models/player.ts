@@ -1,4 +1,4 @@
-import type { Resources, DevCards } from '../types.ts';
+import type { DevCards, Resources } from '../types.ts';
 
 export class Player {
   id: string;

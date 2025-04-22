@@ -4,10 +4,11 @@ import { Player } from './player.ts';
 import { Vertex } from './vertex.ts';
 import { Edge } from './edge.ts';
 import type {
+  Components,
   GamePhase,
   GameState,
-  Components,
   PlayersList,
+  RollDice,
 } from '../types.ts';
 
 export class Catan {
@@ -19,13 +20,13 @@ export class Catan {
   diceRoll: [number, number] | [];
   board: Board;
   turns: number;
-  diceFn: (start: number, end: number) => number;
+  diceFn: RollDice;
 
   constructor(
     gameId: string,
     players: Player[],
     board: Board,
-    diceFn: (start?: number, end?: number) => number
+    diceFn: RollDice,
   ) {
     this.diceFn = diceFn;
     this.gameId = gameId;
@@ -36,15 +37,6 @@ export class Catan {
     this.diceRoll = [1, 1];
     this.board = board;
     this.turns = 0;
-  }
-
-  mockGame(): this {
-    this.players.push(new Player('p1', 'Adil', 'red'));
-    this.players.push(new Player('p2', 'Aman', 'blue'));
-    this.players.push(new Player('p3', 'Surendra', 'orange'));
-    this.players.push(new Player('p4', 'Shalu', 'white'));
-    this.board.createBoard();
-    return this;
   }
 
   changePhase(): void {
@@ -130,7 +122,7 @@ export class Catan {
     const adjacentVertexIds = edge?.vertices || [];
 
     return [...adjacentVertexIds].some(
-      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId
+      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId,
     );
   }
 
@@ -182,7 +174,7 @@ export class Catan {
   distributeResources(vertexId: string, player: Player, count: number): void {
     const hexes = this.getVertex(vertexId)?.adjacentHexes;
     const resources = hexes?.map(
-      (hexId) => this.board.hexes.get(hexId)?.resource
+      (hexId) => this.board.hexes.get(hexId)?.resource,
     );
 
     resources?.forEach((resource) => {
@@ -215,12 +207,12 @@ export class Catan {
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId
+      (p: Player) => p.id === playerId,
     );
 
     const me = player.getPlayerData();
     const othersData = others.map((other: Player) =>
-      this.abstractPlayerData(other)
+      this.abstractPlayerData(other),
     );
     return { me, others: othersData };
   }
@@ -249,7 +241,7 @@ export class Catan {
 
   private extractOccupiedComponents(
     componentsMap: Map<string, Vertex | Edge>,
-    occupiedComponents: Components[]
+    occupiedComponents: Components[],
   ) {
     componentsMap.forEach((component: Vertex | Edge, key: string) => {
       if (component.owner) {
@@ -285,7 +277,7 @@ export class Catan {
     const currentPlayerId = this.getCurrentPlayer().id;
 
     return [...adjacentEdges].some(
-      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId
+      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId,
     );
   }
 

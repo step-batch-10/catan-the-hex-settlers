@@ -1,4 +1,5 @@
 import { Player } from './models/player.ts';
+
 interface EdgeData {
   id: string;
   owner: string | null;
@@ -66,17 +67,19 @@ interface PlayersList {
   others: object[];
 }
 
+type RollDice = (start?: number, end?: number) => number;
 type GamePhase = 'rolling' | 'setup' | 'main' | 'end';
 
 export type {
-  EdgeData,
-  VertexData,
-  HexData,
-  GameBoard,
-  Resources,
-  DevCards,
-  GamePhase,
-  PlayersList,
-  GameState,
   Components,
+  DevCards,
+  EdgeData,
+  GameBoard,
+  GamePhase,
+  GameState,
+  HexData,
+  PlayersList,
+  Resources,
+  RollDice,
+  VertexData,
 };

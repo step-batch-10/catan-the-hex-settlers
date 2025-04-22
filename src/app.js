@@ -2,12 +2,12 @@ import { Hono } from 'hono';
 import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
 import {
-  buildAtEdge,
-  buildAtVertex,
+  buildRoad,
+  buildSettlement,
   canBuildRoad,
   canBuildSettlement,
   canRoll,
-  rollDiceHandler,
+  rollDice,
   serveGameData,
   serveGamePage,
   serveGameState,
@@ -24,9 +24,9 @@ const gameRoutes = (game) => {
   gameApp.use(inject(game));
   gameApp.get('/gameState', serveGameState);
   gameApp.get('/gameData', serveGameData);
-  gameApp.post('/roll-dice', rollDiceHandler);
-  gameApp.post('/build/vertex', buildAtVertex);
-  gameApp.post('/build/edge', buildAtEdge);
+  gameApp.post('/roll-dice', rollDice);
+  gameApp.post('/build/vertex', buildSettlement);
+  gameApp.post('/build/edge', buildRoad);
   gameApp.get('/dice/can-roll', canRoll);
   gameApp.post('/can-build/vertex', canBuildSettlement);
   gameApp.post('/can-build/edge', canBuildRoad);
