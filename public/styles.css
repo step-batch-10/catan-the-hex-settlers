@@ -178,7 +178,6 @@ body {
   z-index: 1000;
 }
 
-
 .toast {
   position: fixed;
   top: 5%;
@@ -187,8 +186,28 @@ body {
   background: white;
   padding: 20px 30px;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   font-size: 28px;
   z-index: 9999;
   display: none;
+}
+
+.highlight {
+  opacity: 0.4;
+  animation: flicker ease-in-out;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(1.5);
+  }
 }

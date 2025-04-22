@@ -8,7 +8,7 @@ function* coordinates(ar) {
     for (let tileIndex = 0; tileIndex < length; tileIndex++) {
       yield {
         x: (Math.floor(length / 3) - (length % 3)) * 50 + 100 * tileIndex,
-        y: 86.5 * index
+        y: 86.5 * index,
       };
     }
   }
@@ -48,7 +48,7 @@ const generateTiles = (tiles) => {
       y: 10,
       width: 90,
       height: 110,
-      transform: 'translate(-155,-237.5)'
+      transform: 'translate(-155,-237.5)',
     });
 
     if (!tile.terrainNumber) {
@@ -62,7 +62,7 @@ const generateTiles = (tiles) => {
       y: 0,
       width: 36,
       height: 36,
-      transform: 'translate(-120,-190)'
+      transform: 'translate(-120,-190)',
     });
 
     header.append(tilesImage, resourceNumber);
@@ -143,7 +143,7 @@ const diceDotMap = {
   3: [0, 4, 8],
   4: [0, 2, 6, 8],
   5: [0, 2, 4, 6, 8],
-  6: [0, 2, 3, 5, 6, 8]
+  6: [0, 2, 3, 5, 6, 8],
 };
 
 const renderDice = (diceId, value) => {
@@ -243,7 +243,7 @@ const build = async (event) => {
 
   const { canBuild } = await fetch(`/game/can-build/${pieceType}`, {
     body: fd,
-    method: 'POST'
+    method: 'POST',
   }).then((r) => r.json());
 
   if (canBuild) {
@@ -251,7 +251,7 @@ const build = async (event) => {
     fd.set('id', targetElementId);
     return await fetch(`/game/build/${pieceType}`, {
       body: fd,
-      method: 'POST'
+      method: 'POST',
     });
   }
 
