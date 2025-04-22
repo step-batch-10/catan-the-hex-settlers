@@ -1,24 +1,6 @@
-const noTokenImages = {
-  2: '/images/tokens/token-2.png',
-  3: '/images/tokens/token-3.png',
-  4: '/images/tokens/token-4.png',
-  5: '/images/tokens/token-5.png',
-  6: '/images/tokens/token-6.png',
-  8: '/images/tokens/token-8.png',
-  9: '/images/tokens/token-9.png',
-  10: '/images/tokens/token-10.png',
-  11: '/images/tokens/token-11.png',
-  12: '/images/tokens/token-12.png',
-};
+const getTerrainImage = (terrainType) => `/images/terrains/${terrainType}.png`;
 
-const terrainImages = {
-  forest: '/images/terrains/forest.png',
-  pasture: '/images/terrains/pasture.png',
-  mountains: '/images/terrains/mountains.png',
-  hills: '/images/terrains/hills.png',
-  fields: '/images/terrains/fields.png',
-  desert: '/images/terrains/desert.png',
-};
+const getTokenImage = (tokenNo) => `/images/tokens/token-${tokenNo}.png`
 
 function* coordinates() {
   const ar = [3, 4, 5, 4, 3];
@@ -39,8 +21,10 @@ const generateTiles = (tiles) => {
     .map((tile) => {
       const coord = coordinate.next().value;
       const header = `<g transform="translate(${coord.x},${coord.y})" >`;
+      const terrainImage = getTerrainImage(tile.terrain);
+      const tokenImage = getTokenImage(tile.terrainNumber);
       const tilesImage = `<image
-       href="${terrainImages[tile.terrain]}"
+       href="${terrainImage}"
        x="10"
        y="10"
        width="90"
@@ -48,7 +32,7 @@ const generateTiles = (tiles) => {
        transform="translate(-155,-237.5)"
      />`;
 
-      const resourceNumber = `<image href="${noTokenImages[tile.terrainNumber]}"
+      const resourceNumber = `<image href="${tokenImage}"
        x="0"
        y="0"
        width="36"
