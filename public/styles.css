@@ -23,32 +23,6 @@ body {
   height: 5%;
 }
 
-#top-left {
-  height: 100%;
-  width: 10%;
-}
-
-#top-middle {
-  height: 100%;
-  width: 80%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.toast {
-  width: 40%;
-  height: 90%;
-  text-align: center;
-  font-size: 28px;
-  background-color: #ffffff;
-}
-
-#top-right {
-  height: 100%;
-  width: 10%;
-}
-
 #main {
   height: 90%;
   width: 80%;
@@ -188,4 +162,33 @@ body {
 
 .line-through {
   text-decoration: line-through;
+}
+
+.msg {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f8f4f4;
+  color: rgb(4, 0, 0);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+
+.toast {
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  font-size: 28px;
+  z-index: 9999;
+  display: none;
 }

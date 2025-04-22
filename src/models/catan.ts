@@ -5,6 +5,7 @@ import { Vertex } from './vertex.ts';
 import { Edge } from './edge.ts';
 import type {
   Components,
+  Components,
   GamePhase,
   GameState,
   PlayersList,
@@ -26,7 +27,7 @@ export class Catan {
     gameId: string,
     players: Player[],
     board: Board,
-    diceFn: RollDice,
+    diceFn: (start?: number, end?: number) => number,
   ) {
     this.diceFn = diceFn;
     this.gameId = gameId;
@@ -56,8 +57,8 @@ export class Catan {
     this.changePhase();
 
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
-    this.currentPlayerIndex =
-      (this.currentPlayerIndex + 1) % this.players.length;
+    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
+      this.players.length;
   }
 
   rollDice(): [number, number] {
@@ -123,6 +124,7 @@ export class Catan {
 
     return [...adjacentVertexIds].some(
       (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId,
+      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId,
     );
   }
 
@@ -175,6 +177,7 @@ export class Catan {
     const hexes = this.getVertex(vertexId)?.adjacentHexes;
     const resources = hexes?.map(
       (hexId) => this.board.hexes.get(hexId)?.resource,
+      (hexId) => this.board.hexes.get(hexId)?.resource,
     );
 
     resources?.forEach((resource) => {
@@ -207,6 +210,7 @@ export class Catan {
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], others] = _.partition(
       this.players,
+      (p: Player) => p.id === playerId,
       (p: Player) => p.id === playerId,
     );
 
@@ -241,6 +245,7 @@ export class Catan {
 
   private extractOccupiedComponents(
     componentsMap: Map<string, Vertex | Edge>,
+    occupiedComponents: Components[],
     occupiedComponents: Components[],
   ) {
     componentsMap.forEach((component: Vertex | Edge, key: string) => {
@@ -277,6 +282,7 @@ export class Catan {
     const currentPlayerId = this.getCurrentPlayer().id;
 
     return [...adjacentEdges].some(
+      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId,
       (edge: string) => this.getEdge(edge)?.owner === currentPlayerId,
     );
   }

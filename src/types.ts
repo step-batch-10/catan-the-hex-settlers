@@ -73,13 +73,16 @@ type GamePhase = 'rolling' | 'setup' | 'main' | 'end';
 export type {
   Components,
   DevCards,
+  Components,
+  DevCards,
   EdgeData,
   GameBoard,
   GamePhase,
   GameState,
   HexData,
+  GameState,
+  HexData,
   PlayersList,
   Resources,
-  RollDice,
   VertexData,
 };

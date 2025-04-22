@@ -1,54 +1,77 @@
-const getTerrainImage = (terrainType) => `/images/terrains/${terrainType}.png`;
+const getTokenImageFile = (tokenNumber) =>
+  `images/tokens/token-${tokenNumber}.png`;
 
-const getTokenImage = (tokenNo) => `/images/tokens/token-${tokenNo}.png`
+const getTerrainImageFile = (terrain) => `images/terrains/${terrain}.png`;
 
-function* coordinates() {
-  const ar = [3, 4, 5, 4, 3];
+function* coordinates(ar) {
   for (const [index, length] of Object.entries(ar)) {
     for (let tileIndex = 0; tileIndex < length; tileIndex++) {
       yield {
         x: (Math.floor(length / 3) - (length % 3)) * 50 + 100 * tileIndex,
-        y: 86.5 * index,
+        y: 86.5 * index
       };
     }
   }
 }
 
+const createSvgElement = (svgElement) => {
+  const svgNS = 'http://www.w3.org/2000/svg';
+
+  return document.createElementNS(svgNS, svgElement);
+};
+
+const createImageTag = (imageFile, { x, y, width, height, transform }) => {
+  const image = createSvgElement('image');
+
+  image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', imageFile);
+  image.setAttribute('x', x);
+  image.setAttribute('y', y);
+  image.setAttribute('width', width);
+  image.setAttribute('height', height);
+  image.setAttribute('transform', transform);
+
+  return image;
+};
+
 const generateTiles = (tiles) => {
-  const coordinate = coordinates();
+  const ar = [3, 4, 5, 4, 3];
+  const coordinate = coordinates(ar);
 
-  return tiles
-    .map((tile) => {
-      const coord = coordinate.next().value;
-      const header = `<g transform="translate(${coord.x},${coord.y})" >`;
-      const terrainImage = getTerrainImage(tile.terrain);
-      const tokenImage = getTokenImage(tile.terrainNumber);
-      const tilesImage = `<image
-       href="${terrainImage}"
-       x="10"
-       y="10"
-       width="90"
-       height="110"
-       transform="translate(-155,-237.5)"
-     />`;
+  return tiles.map((tile) => {
+    const coord = coordinate.next().value;
+    const header = createSvgElement('g');
+    header.setAttribute('transform', `translate(${coord.x}, ${coord.y})`);
 
-      const resourceNumber = `<image href="${tokenImage}"
-       x="0"
-       y="0"
-       width="36"
-       height="36"
-       transform="translate(-120,-190)">
-     </g>`;
+    const terrainImage = getTerrainImageFile(tile.terrain);
+    const tilesImage = createImageTag(terrainImage, {
+      x: 10,
+      y: 10,
+      width: 90,
+      height: 110,
+      transform: 'translate(-155,-237.5)'
+    });
 
-      const template = `${header} ${tilesImage}`;
+    if (!tile.terrainNumber) {
+      header.appendChild(tilesImage);
+      return header;
+    }
 
-      return tile.terrainNumber === null ? template : template + resourceNumber;
-    })
-    .join('\n');
+    const tokenImage = getTokenImageFile(tile.terrainNumber);
+    const resourceNumber = createImageTag(tokenImage, {
+      x: 0,
+      y: 0,
+      width: 36,
+      height: 36,
+      transform: 'translate(-120,-190)'
+    });
+
+    header.append(tilesImage, resourceNumber);
+    return header;
+  });
 };
 
 const appendText = (template, elementId, text) => {
-  const element = template.getElementById(elementId);
+  const element = template.querySelector(elementId);
   element.textContent = text;
 };
 
@@ -63,37 +86,43 @@ const setSpecialCardsStyles = (cloneTemplate, player) => {
   longestRoad.classList.add(textDecStyle(player.hasLongestRoad));
 };
 
-const createProfileCard = (player) => {
-  const clone = document.querySelector('#info-box-template');
+const cloneTemplateElement = (id) => {
+  const clone = document.querySelector(id);
   const cloneTemplate = clone.content.cloneNode(true);
+
+  return cloneTemplate;
+};
+
+const createProfileCard = (player) => {
+  const cloneTemplate = cloneTemplateElement('#info-box-template');
+  const color = cloneTemplate.querySelector('#color');
   const resourceCount = player.resources;
-  const color = cloneTemplate.getElementById('color');
 
   color.style.backgroundColor = player.color;
 
   setSpecialCardsStyles(cloneTemplate, player);
-  appendText(cloneTemplate, 'player-name', player.name);
-  appendText(cloneTemplate, 'vp', player.victoryPoints);
-  appendText(cloneTemplate, 'dev-cards', player.devCards);
-  appendText(cloneTemplate, 'resources', resourceCount);
+  appendText(cloneTemplate, '#player-name', player.name);
+  appendText(cloneTemplate, '#vp', player.victoryPoints);
+  appendText(cloneTemplate, '#dev-cards', player.devCards);
+  appendText(cloneTemplate, '#resources', resourceCount);
 
   return cloneTemplate;
 };
 
 const displayResourceCount = ({ sheep, wood, brick, ore, wheat }) => {
-  appendText(document, 'ore', ore);
-  appendText(document, 'wood', wood);
-  appendText(document, 'sheep', sheep);
-  appendText(document, 'brick', brick);
-  appendText(document, 'wheat', wheat);
+  appendText(document, '#ore', ore);
+  appendText(document, '#wood', wood);
+  appendText(document, '#sheep', sheep);
+  appendText(document, '#brick', brick);
+  appendText(document, '#wheat', wheat);
 };
 
 const renderPlayerPanel = (player) => {
-  const name = document.querySelector('#player-name');
-  const color = document.querySelector('#color');
+  appendText(document, '#player-name', player.name);
 
-  name.textContent = player.name;
+  const color = document.querySelector('#color');
   color.style.backgroundColor = player.color;
+
   displayResourceCount(player.resources);
 };
 
@@ -114,7 +143,7 @@ const diceDotMap = {
   3: [0, 4, 8],
   4: [0, 2, 6, 8],
   5: [0, 2, 4, 6, 8],
-  6: [0, 2, 3, 5, 6, 8],
+  6: [0, 2, 3, 5, 6, 8]
 };
 
 const renderDice = (diceId, value) => {
@@ -142,17 +171,41 @@ const renderDice = (diceId, value) => {
 const renderBoard = (hexes) => {
   const tilescontainer = document.querySelector('#tilesContainer');
   const tiles = generateTiles(hexes);
-  tilescontainer.innerHTML = tiles;
+
+  tilescontainer.replaceChildren(...tiles);
 };
 
 const renderBothDice = (diceRoll) => {
   ['dice1', 'dice2'].forEach((diceId, i) => renderDice(diceId, diceRoll[i]));
 };
 
-const renderToast = (currentPlayer) => {
-  const toast = document.querySelector(".toast");
-  toast.textContent = `current player - ${currentPlayer}`;
-}
+const renderToast = (gameState) => {
+  const toastDiv =
+    document.querySelector('.toast') ||
+    cloneTemplateElement('#player-status').querySelector('.toast');
+
+  const isCurrentPlayer = gameState.currentPlayer !== gameState.players.me.name;
+  const msg = isCurrentPlayer
+    ? `current player - ${gameState.currentPlayer}`
+    : `your turn`;
+
+  toastDiv.textContent = msg;
+  toastDiv.style.display = 'block';
+  document.body.appendChild(toastDiv);
+};
+
+const renderMsg = (msg) => {
+  const msgDiv =
+    document.querySelector('.msg') ||
+    cloneTemplateElement('#player-status').querySelector('.msg');
+
+  msgDiv.textContent = msg;
+  document.body.appendChild(msgDiv);
+
+  setTimeout(() => {
+    msgDiv.remove();
+  }, 3000);
+};
 
 const renderElements = (gameState) => {
   renderPieces(gameState);
@@ -162,7 +215,7 @@ const renderElements = (gameState) => {
 };
 
 const notYourTurn = () => {
-  alert('Not your turn');
+  renderMsg('Not your turn');
 };
 
 const rollDiceHandler = async () => {
@@ -187,9 +240,10 @@ const build = async (event) => {
   const pieceType = element.classList[0];
   const fd = new FormData();
   fd.set('id', targetElementId);
+
   const { canBuild } = await fetch(`/game/can-build/${pieceType}`, {
     body: fd,
-    method: 'POST',
+    method: 'POST'
   }).then((r) => r.json());
 
   if (canBuild) {
@@ -197,12 +251,12 @@ const build = async (event) => {
     fd.set('id', targetElementId);
     return await fetch(`/game/build/${pieceType}`, {
       body: fd,
-      method: 'POST',
+      method: 'POST'
     });
   }
 
   if (!isPieceTypeValid(pieceType) || !canBuild) {
-    alert('You Cannot Build There..');
+    renderMsg('You Cannot Build There..');
     return;
   }
 };
@@ -244,11 +298,9 @@ const poll = () => {
   setInterval(async () => {
     const response = await fetch('/game/gameData');
     const gameState = await response.json();
-    console.log(gameState);
+
     renderElements(gameState);
-    // renderPieces(gameState);
-    // renderBothDice(gameState.diceRoll);
-  }, 1000);
+  }, 2000);
 };
 
 const main = async () => {
@@ -256,7 +308,6 @@ const main = async () => {
   const gameState = await response.json();
 
   addEventListeners();
-  // renderElements(gameState);
   renderBoard(gameState.board.hexes);
   poll();
 };

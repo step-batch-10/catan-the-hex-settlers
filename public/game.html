@@ -10,11 +10,6 @@
   <body>
     <div class="container">
       <div id="top">
-        <div id="top-left"></div>
-        <div id="top-middle">
-          <div class="toast"></div>
-        </div>
-        <div id="top-right"></div>
       </div>
 
       <div id="main">
@@ -1520,6 +1515,7 @@
     </div>
 
     <template id="info-box-template">
+      <div id="msg"></div>
       <div id="player-info">
         <div>
           <div id="color"></div>
@@ -1537,6 +1533,14 @@
           </div>
         </div>
       </div>
+    </template>
+
+    <template id="message-container">
+      <div class="msg"></div>
+    </template>
+
+    <template id="player-status">
+      <div class="toast"></div>
     </template>
   </body>
 </html>
