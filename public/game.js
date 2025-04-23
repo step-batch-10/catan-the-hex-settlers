@@ -1,7 +1,10 @@
 const getTokenImageFile = (tokenNumber) =>
   `images/tokens/token-${tokenNumber}.png`;
 
+
 const getTerrainImageFile = (terrain) => `images/terrains/${terrain}.png`;
+
+const resourceCards = (resource) => `/images/resource-cards/${resource}.png`;
 
 function* coordinates(ar) {
   for (const [index, length] of Object.entries(ar)) {
@@ -14,14 +17,18 @@ function* coordinates(ar) {
   }
 }
 
+
 const createSvgElement = (svgElement) => {
   const svgNS = 'http://www.w3.org/2000/svg';
+
 
   return document.createElementNS(svgNS, svgElement);
 };
 
+
 const createImageTag = (imageFile, { x, y, width, height, transform }) => {
   const image = createSvgElement('image');
+
 
   image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', imageFile);
   image.setAttribute('x', x);
@@ -30,8 +37,10 @@ const createImageTag = (imageFile, { x, y, width, height, transform }) => {
   image.setAttribute('height', height);
   image.setAttribute('transform', transform);
 
+
   return image;
 };
+
 
 const createTerrainImage = (terrain) => {
   const terrainImage = getTerrainImageFile(terrain);
@@ -44,6 +53,7 @@ const createTerrainImage = (terrain) => {
   });
 };
 
+
 const createTokenImage = (terrainNumber) => {
   const tokenImage = getTokenImageFile(terrainNumber);
   return createImageTag(tokenImage, {
@@ -55,57 +65,63 @@ const createTokenImage = (terrainNumber) => {
   });
 };
 
+
 const createTileElement = (tile, coord) => {
   const header = createSvgElement('g');
   header.setAttribute('transform', `translate(${coord.x}, ${coord.y})`);
 
+
   const terrainImg = createTerrainImage(tile.terrain);
   header.appendChild(terrainImg);
+
 
   if (tile.terrainNumber) {
     const tokenImg = createTokenImage(tile.terrainNumber);
     header.appendChild(tokenImg);
   }
 
+
   return header;
 };
+
 
 const generateTiles = (tiles) => {
   const ar = [3, 4, 5, 4, 3];
   const coordinate = coordinates(ar);
 
+
   return tiles.map((tile) => createTileElement(tile, coordinate.next().value));
 };
+
 
 const appendText = (template, elementId, text) => {
   const element = template.querySelector(elementId);
   element.textContent = text;
 };
 
+
 const textDecStyle = (hasSpecialCard) =>
   (hasSpecialCard ? 'no-' : '') + 'line-through';
+
 
 const setSpecialCardsStyles = (cloneTemplate, player) => {
   const largestArmy = cloneTemplate.getElementById('largest-army');
   largestArmy.classList.add(textDecStyle(player.hasLargestArmy));
 
+
   const longestRoad = cloneTemplate.getElementById('longest-road');
   longestRoad.classList.add(textDecStyle(player.hasLongestRoad));
 };
 
-const cloneTemplateElement = (id) => {
-  const clone = document.querySelector(id);
-  const cloneTemplate = clone.content.cloneNode(true);
-
-  return cloneTemplate;
-};
 
 const createProfileCard = (player) => {
   const cloneTemplate = cloneTemplateElement('#info-box-template');
   const color = cloneTemplate.querySelector('#color');
   const resourceCount = player.resources;
 
+
   color.style.backgroundColor = player.color;
+
 
   setSpecialCardsStyles(cloneTemplate, player);
   appendText(cloneTemplate, '#player-name', player.name);
@@ -113,8 +129,10 @@ const createProfileCard = (player) => {
   appendText(cloneTemplate, '#dev-cards', player.devCards);
   appendText(cloneTemplate, '#resources', resourceCount);
 
+
   return cloneTemplate;
 };
+
 
 const displayResourceCount = ({ sheep, wood, brick, ore, wheat }) => {
   appendText(document, '#ore', ore);
@@ -124,17 +142,22 @@ const displayResourceCount = ({ sheep, wood, brick, ore, wheat }) => {
   appendText(document, '#wheat', wheat);
 };
 
+
 const renderPlayerPanel = (player) => {
   appendText(document, '#player-name', player.name);
+
 
   const color = document.querySelector('#color');
   color.style.backgroundColor = player.color;
 
+
   displayResourceCount(player.resources);
 };
 
+
 const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
+
 
   const list = document.querySelector('#player-list');
   list.innerHTML = '';
@@ -143,6 +166,7 @@ const renderPlayersData = (players) => {
     list.append(template);
   });
 };
+
 
 const diceDotMap = {
   1: [4],
@@ -153,11 +177,13 @@ const diceDotMap = {
   6: [0, 2, 3, 5, 6, 8],
 };
 
+
 const restartAnimation = (dice, className) => {
   dice.classList.remove(className);
   void dice.offsetWidth;
   dice.classList.add(className);
 };
+
 
 const createDotGrid = (positions) => {
   const grid = [];
@@ -171,42 +197,59 @@ const createDotGrid = (positions) => {
   return grid;
 };
 
+
 const renderDotGrid = (dice, grid) => {
   grid.forEach((cell) => dice.appendChild(cell));
 };
+
 
 const renderDice = (diceId, value) => {
   const dice = document.getElementById(diceId);
   dice.innerHTML = '';
 
+
   const positions = diceDotMap[value];
+
 
   const dotGrid = createDotGrid(positions);
   renderDotGrid(dice, dotGrid);
 
+
   restartAnimation(dice, 'dice');
 };
+
 
 const renderBoard = (hexes) => {
   const tilescontainer = document.querySelector('#tilesContainer');
   const tiles = generateTiles(hexes);
 
+
   tilescontainer.replaceChildren(...tiles);
 };
 
+
 const renderBothDice = (diceRoll) => {
   ['dice1', 'dice2'].forEach((diceId, i) => renderDice(diceId, diceRoll[i]));
+};
+
+const cloneTemplateElement = (id) => {
+  const clone = document.querySelector(id);
+  const cloneTemplate = clone.content.cloneNode(true);
+
+
+  return cloneTemplate;
 };
 
 const showMessage = (templateId, elementId, msg) => {
   const container =
     document.querySelector(elementId) ||
     cloneTemplateElement(templateId).querySelector(elementId);
-
   container.textContent = msg;
   document.body.appendChild(container);
+
   return container;
 };
+
 
 const displayPlayerTurn = (gameState) => {
   const isCurrentPlayer = gameState.currentPlayer !== gameState.players.me.name;
@@ -214,30 +257,126 @@ const displayPlayerTurn = (gameState) => {
     ? `current player - ${gameState.currentPlayer}`
     : `your turn`;
 
+
   showMessage('#current-player', '.player-turn', msg);
 };
+
 
 const notifyInValid = (msg) => {
   const msgBox = showMessage('#message-container', '.invalid-msg', msg);
   setTimeout(() => msgBox.remove(), 1000);
 };
 
+
 const notYourTurn = () => {
   notifyInValid('Not your turn');
 };
 
+const createMaritimeTradeCenter = () => {
+  const resources = globalThis.gameState.players.me.resources;
+  const available = Object.entries(resources)
+    .filter((resource) => resource[1] >= 4);
+
+  const tradeContainer = cloneTemplateElement("#tradeWithBank");
+
+  const resourceContainer = tradeContainer.querySelector("#available-resource");
+  const className = available.length > 3
+    ? `items-${available.length}`
+    : "items-3";
+
+  resourceContainer.classList.add(className);
+
+  const availableElements = available.map(([resourceName]) => {
+    const image = document.createElement("img");
+    image.classList.add("card");
+    image.id = `resource-${resourceName}`;
+    image.src = resourceCards(resourceName);
+
+    return image;
+  });
+
+  resourceContainer.append(...availableElements);
+
+  return tradeContainer;
+};
+
+const addListenerToCard = () => {
+  const cards = document.querySelectorAll(".card");
+  cards.forEach((card) =>
+    card.addEventListener(
+      "click",
+      (e) => e.target.classList.toggle("card-selected"),
+    )
+  );
+};
+
+const parseCards = () => {
+  const selectedCards = [...document.querySelectorAll(".card-selected")];
+
+  return selectedCards.reduce((parsedCards, card) => {
+    const action = card.parentElement.id === "return-resource"
+      ? "incomingResources"
+      : "outgoingResources";
+    const cardName = card.id.split("-")[1];
+
+    parsedCards[action][cardName] = action == "outgoingResources" ? 4 : 1;
+
+    return parsedCards;
+  }, { outgoingResources: {}, incomingResources: {} });
+};
+
+const tradeWithBank = async (_e) => {
+  const body = JSON.stringify(parseCards());
+  const response = await fetch("/game/trade/maritime", {
+    headers: {
+      "content-type": "application/json",
+    },
+    method: "POST",
+    body,
+  });
+
+  if (response.status == 200) {
+    document.querySelector("#floating-trade-menu").style.display = "none";
+    const MTtrade = document.querySelector("#MTtrade-container");
+    console.log(MTtrade);
+    MTtrade.remove();
+    globalThis.location = "#button-container";
+  }
+};
+
+const navigateToMaritimeTrade = () => {
+  const maritimeTraderContainer = createMaritimeTradeCenter();
+  const tradesContents = document.querySelector("#trade-contents");
+
+  tradesContents.appendChild(maritimeTraderContainer);
+  globalThis.location = "#MTtrade-container";
+  const confirmBtn = document.querySelector("#trade-confirm-btn");
+  addListenerToCard();
+  confirmBtn.addEventListener("click", tradeWithBank);
+};
+
+const openTradeCenter = () => {
+  const tradesMenu = document.querySelector("#floating-trade-menu");
+  tradesMenu.style.display = "block";
+};
+
+const attachOpenTrade = () => {
+  const tradeButtton = document.querySelector("#trade");
+  tradeButtton.addEventListener("click", openTradeCenter);
+};
+
 const rollDiceHandler = async () => {
   const dice = await fetch('/game/dice/can-roll').then((res) => res.json());
-
   if (!dice.canRoll) return notYourTurn();
   await fetch('game/roll-dice', { method: 'POST' });
 };
 
+
 const addRollDiceEvent = () => {
   const diceContainer = document.querySelector('.dice-container');
-
   diceContainer.addEventListener('click', rollDiceHandler);
 };
+
 
 const buildAt = async (targetElementId, pieceType) => {
   const fd = new FormData();
@@ -248,6 +387,7 @@ const buildAt = async (targetElementId, pieceType) => {
     method: 'POST',
   });
 };
+
 
 const isValidBuilt = async (pieceType, fd) => {
   const { canBuild } = await fetch(`/game/can-build/${pieceType}`, {
@@ -287,27 +427,30 @@ const getBuildValidationData = async (event) => {
   const canBuild = await isValidBuilt(pieceType, formData);
 
   if (!canBuild) return null;
-
   return { element, targetElementId, pieceType };
 };
 
 const build = async (event) => {
   const validationData = await getBuildValidationData(event);
-  if (!validationData) return notifyInValid('You Cannot Build There');
+  if (!validationData) return notifyInValid('You Cannot Build There')
 
   const { targetElementId, pieceType } = validationData;
   return buildAt(targetElementId, pieceType);
 };
 
+
 const canBuildHandler = (currentPlayer) => async (event) => {
   const validationData = await getBuildValidationData(event);
   if (!validationData) return;
 
+
   const { element } = validationData;
+
 
   highlightElement(element, currentPlayer);
   setTimeout(lowLightElement(element, 'highlight'), 1000);
 };
+
 
 const addBuildEvent = (currentPlayer) => {
   const svg = document.getElementById('svg20');
@@ -315,10 +458,23 @@ const addBuildEvent = (currentPlayer) => {
   svg.addEventListener('mouseover', canBuildHandler(currentPlayer));
 };
 
+
 const addEventListeners = (gameState) => {
+  attachOpenTrade();
   addRollDiceEvent();
   addBuildEvent(gameState.players.me);
+
+  const backBtn = document.querySelector("#back-btn");
+  const maritimeTradeBtn = document.querySelector("#maritime-btn");
+
+  backBtn.addEventListener(
+    "click",
+    () => globalThis.location = "#button-container",
+  );
+  maritimeTradeBtn.addEventListener("click", navigateToMaritimeTrade);
 };
+
+
 
 const renderStructures = (structures) => {
   structures.forEach(({ color, id }) => {
@@ -328,12 +484,15 @@ const renderStructures = (structures) => {
   });
 };
 
+
 const renderPieces = (gameState) => {
   const { vertices, edges } = gameState;
+
 
   renderStructures(vertices);
   renderStructures(edges);
 };
+
 
 const renderElements = (gameState) => {
   renderPieces(gameState);
@@ -342,26 +501,26 @@ const renderElements = (gameState) => {
   displayPlayerTurn(gameState);
 };
 
+
 const poll = () => {
   setInterval(async () => {
     const response = await fetch('/game/gameData');
     const gameState = await response.json();
-
+   globalThis.gameState = gameState;
     renderElements(gameState);
   }, 2000);
 };
+
 
 const main = async () => {
   const response = await fetch('/game/gameState');
   const gameState = await response.json();
 
+  globalThis.gameState = gameState;
   addEventListeners(gameState);
   renderBoard(gameState.board.hexes);
-  renderElements(gameState);
-  addEventListeners(gameState);
   poll();
 };
 
+
 globalThis.onload = main;
-
-

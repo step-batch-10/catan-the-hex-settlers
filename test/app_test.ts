@@ -120,5 +120,43 @@ describe('Catan App Routes', () => {
 
     assertEquals(gameState.vertices.length, 0);
   });
+
+  it('should Update the players resources', async () => {
+    const player = _.find(catan.players, { id: 'p1' })
+    player.resources.wood = 3;
+
+    const tradeResource = {
+      outgoingResources:
+      {
+        wood: 2,
+        brick: 0,
+        sheep: 0,
+        wheat: 0,
+        ore: 0
+      },
+
+      incomingResources: {
+        wood: 0,
+        brick: 0,
+        sheep: 0,
+        wheat: 1,
+        ore: 0
+      }
+    };
+    
+    await app.request('http://localhost/game/trade/maritime', {
+      method: 'POST',
+      headers: { Cookie: 'player-id=p1', 'content-type': 'application/json' },
+      body: JSON.stringify(tradeResource),
+    },
+    );
+    assertEquals((player.resources), {
+      brick: 0,
+      wood: 1,
+      sheep: 0,
+      wheat: 1,
+      ore: 0
+    })
+  });
 });
 
