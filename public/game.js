@@ -33,41 +33,48 @@ const createImageTag = (imageFile, { x, y, width, height, transform }) => {
   return image;
 };
 
+const createTerrainImage = (terrain) => {
+  const terrainImage = getTerrainImageFile(terrain);
+  return createImageTag(terrainImage, {
+    x: 10,
+    y: 10,
+    width: 90,
+    height: 110,
+    transform: 'translate(-155,-237.5)',
+  });
+};
+
+const createTokenImage = (terrainNumber) => {
+  const tokenImage = getTokenImageFile(terrainNumber);
+  return createImageTag(tokenImage, {
+    x: 0,
+    y: 0,
+    width: 36,
+    height: 36,
+    transform: 'translate(-120,-190)',
+  });
+};
+
+const createTileElement = (tile, coord) => {
+  const header = createSvgElement('g');
+  header.setAttribute('transform', `translate(${coord.x}, ${coord.y})`);
+
+  const terrainImg = createTerrainImage(tile.terrain);
+  header.appendChild(terrainImg);
+
+  if (tile.terrainNumber) {
+    const tokenImg = createTokenImage(tile.terrainNumber);
+    header.appendChild(tokenImg);
+  }
+
+  return header;
+};
+
 const generateTiles = (tiles) => {
   const ar = [3, 4, 5, 4, 3];
   const coordinate = coordinates(ar);
 
-  return tiles.map((tile) => {
-    const coord = coordinate.next().value;
-    const header = createSvgElement('g');
-    header.setAttribute('transform', `translate(${coord.x}, ${coord.y})`);
-
-    const terrainImage = getTerrainImageFile(tile.terrain);
-    const tilesImage = createImageTag(terrainImage, {
-      x: 10,
-      y: 10,
-      width: 90,
-      height: 110,
-      transform: 'translate(-155,-237.5)',
-    });
-
-    if (!tile.terrainNumber) {
-      header.appendChild(tilesImage);
-      return header;
-    }
-
-    const tokenImage = getTokenImageFile(tile.terrainNumber);
-    const resourceNumber = createImageTag(tokenImage, {
-      x: 0,
-      y: 0,
-      width: 36,
-      height: 36,
-      transform: 'translate(-120,-190)',
-    });
-
-    header.append(tilesImage, resourceNumber);
-    return header;
-  });
+  return tiles.map((tile) => createTileElement(tile, coordinate.next().value));
 };
 
 const appendText = (template, elementId, text) => {
@@ -80,9 +87,9 @@ const textDecStyle = (hasSpecialCard) =>
 
 const setSpecialCardsStyles = (cloneTemplate, player) => {
   const largestArmy = cloneTemplate.getElementById('largest-army');
-  const longestRoad = cloneTemplate.getElementById('longest-road');
-
   largestArmy.classList.add(textDecStyle(player.hasLargestArmy));
+
+  const longestRoad = cloneTemplate.getElementById('longest-road');
   longestRoad.classList.add(textDecStyle(player.hasLongestRoad));
 };
 
@@ -146,26 +153,38 @@ const diceDotMap = {
   6: [0, 2, 3, 5, 6, 8],
 };
 
+const restartAnimation = (dice, className) => {
+  dice.classList.remove(className);
+  void dice.offsetWidth;
+  dice.classList.add(className);
+};
+
+const createDotGrid = (positions) => {
+  const grid = [];
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement('div');
+    if (positions.includes(i)) {
+      cell.classList.add('dot');
+    }
+    grid.push(cell);
+  }
+  return grid;
+};
+
+const renderDotGrid = (dice, grid) => {
+  grid.forEach((cell) => dice.appendChild(cell));
+};
+
 const renderDice = (diceId, value) => {
   const dice = document.getElementById(diceId);
   dice.innerHTML = '';
 
   const positions = diceDotMap[value];
 
-  for (let i = 0; i < 9; i++) {
-    const dot = document.createElement('div');
-    dot.classList.add('dot');
-    if (positions.includes(i)) {
-      dice.appendChild(dot);
-    } else {
-      const spacer = document.createElement('div');
-      dice.appendChild(spacer);
-    }
-  }
+  const dotGrid = createDotGrid(positions);
+  renderDotGrid(dice, dotGrid);
 
-  dice.classList.remove('dice');
-  void dice.offsetWidth;
-  dice.classList.add('dice');
+  restartAnimation(dice, 'dice');
 };
 
 const renderBoard = (hexes) => {
@@ -179,41 +198,32 @@ const renderBothDice = (diceRoll) => {
   ['dice1', 'dice2'].forEach((diceId, i) => renderDice(diceId, diceRoll[i]));
 };
 
-const renderToast = (gameState) => {
-  const toastDiv =
-    document.querySelector('.toast') ||
-    cloneTemplateElement('#player-status').querySelector('.toast');
+const showMessage = (templateId, elementId, msg) => {
+  const container =
+    document.querySelector(elementId) ||
+    cloneTemplateElement(templateId).querySelector(elementId);
 
+  container.textContent = msg;
+  document.body.appendChild(container);
+  return container;
+};
+
+const displayPlayerTurn = (gameState) => {
   const isCurrentPlayer = gameState.currentPlayer !== gameState.players.me.name;
   const msg = isCurrentPlayer
     ? `current player - ${gameState.currentPlayer}`
     : `your turn`;
 
-  toastDiv.textContent = msg;
-  toastDiv.style.display = 'block';
-  document.body.appendChild(toastDiv);
+  showMessage('#current-player', '.player-turn', msg);
 };
 
-const renderMsg = (msg) => {
-  const msgBox =
-    document.querySelector('.msg') ||
-    cloneTemplateElement('#message-container').querySelector('.msg');
-
-  msgBox.textContent = msg;
-  document.body.appendChild(msgBox);
-
+const notifyValid = (msg) => {
+  const msgBox = showMessage('#message-container', '.invalid-msg', msg);
   setTimeout(() => msgBox.remove(), 1000);
 };
 
-const renderElements = (gameState) => {
-  renderPieces(gameState);
-  renderPlayersData(gameState.players);
-  renderBothDice(gameState.diceRoll);
-  renderToast(gameState);
-};
-
 const notYourTurn = () => {
-  renderMsg('Not your turn');
+  notifyValid('Not your turn');
 };
 
 const rollDiceHandler = async () => {
@@ -259,7 +269,7 @@ const build = async (event) => {
   formData.set('id', targetElementId);
   const canBuild = await isValidBuilt(pieceType, formData);
 
-  if (!canBuild) return renderMsg('You Cannot Build There');
+  if (!canBuild) return notifyValid('You Cannot Build There');
 
   return buildAt(targetElementId, pieceType);
 };
@@ -326,6 +336,13 @@ const renderPieces = (gameState) => {
 
   renderVertices(vertices);
   renderEdges(edges);
+};
+
+const renderElements = (gameState) => {
+  renderPieces(gameState);
+  renderPlayersData(gameState.players);
+  renderBothDice(gameState.diceRoll);
+  displayPlayerTurn(gameState);
 };
 
 const poll = () => {

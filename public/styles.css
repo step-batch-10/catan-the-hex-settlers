@@ -164,7 +164,7 @@ body {
   text-decoration: line-through;
 }
 
-.msg {
+.invalid-msg {
   position: fixed;
   top: 40%;
   left: 50%;
@@ -178,7 +178,7 @@ body {
   z-index: 1000;
 }
 
-.toast {
+.player-turn {
   position: fixed;
   top: 5%;
   left: 50%;
@@ -189,7 +189,6 @@ body {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   font-size: 28px;
   z-index: 9999;
-  display: none;
 }
 
 .highlight {
