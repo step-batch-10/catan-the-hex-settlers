@@ -277,29 +277,52 @@ const tradeParser = (parsedCards, card) => {
   return parsedCards;
 }
 
-const parseCards = () => {
-  const selectedCards = [...document.querySelectorAll('.card-selected')];
-
-  return selectedCards
+const parseCards = (cards) => {
+  return cards
     .reduce(tradeParser, { outgoingResources: {}, incomingResources: {} },
     );
 };
 
-const tradeWithBank = async (_e) => {
-  const body = JSON.stringify(parseCards());
-  const response = await fetch('/game/trade/maritime', {
-    headers: {
-      'content-type': 'application/json',
-    },
-    method: 'POST',
-    body,
-  });
+const isValidTrade = (trades) => {
+  const { outgoingResources, incomingResources } = trades;
+  const outgoingResourcesCount = Object.keys(outgoingResources).length;
+  const incomingResourcesCount = Object.keys(incomingResources).length;
 
-  if (response.status === 200) {
-    document.querySelector('#floating-trade-menu').style.display = 'none';
-    const MTtrade = document.querySelector('#MTtrade-container');
-    MTtrade.remove();
-    globalThis.location = '#button-container';
+  if (outgoingResourcesCount <= 0)
+    throw new Error("Please select a resource to trade away...")
+  if (incomingResourcesCount <= 0)
+    throw new Error("Please select a resource in return...")
+}
+
+const tradeWithBank = async (_e) => {
+  
+  try {
+    const selectedCards = [...document.querySelectorAll('.card-selected')];
+    const trades = parseCards(selectedCards)
+    isValidTrade(trades)
+
+    const body = JSON.stringify(trades);
+    const response = await fetch('/game/trade/maritime', {
+      headers: {
+        'content-type': 'application/json',
+      },
+      method: 'POST',
+      body,
+    });
+
+    if (response.status === 200) {
+      document.querySelector('#floating-trade-menu').style.display = 'none';
+      const MTtrade = document.querySelector('#MTtrade-container');
+      MTtrade.remove();
+      globalThis.location = '#button-container';
+    }
+  }
+  catch (e) {
+    console.log("showing message")
+    const msg = showMessage('#message-container', '.invalid-msg', e.message);
+    setTimeout(() => {
+      msg.remove();
+    }, 2 * 1000);
   }
 };
 
