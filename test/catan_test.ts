@@ -5,6 +5,7 @@ import { Catan } from '../src/models/catan.ts';
 import { Player } from '../src/models/player.ts';
 import { Board } from '../src/models/board.ts';
 import _ from 'lodash';
+import { Vertex } from '../src/models/vertex.ts';
 
 describe('Catan', () => {
   let catan: Catan;
@@ -43,13 +44,6 @@ describe('Catan', () => {
 
     catan.changeTurn();
     assertEquals(catan.currentPlayerIndex, 2);
-  });
-
-  it('should correctly handle setup phase', () => {
-    assertEquals(catan.phase, 'setup');
-    catan.turns = 4;
-    catan.changePhase();
-    assertEquals(catan.phase, 'setup');
   });
 
   it('should check if player can roll', () => {
@@ -123,20 +117,19 @@ describe('Catan', () => {
     assert(gameState.board.hexes.length > 0, 'Board hexes should be present.');
     assert(
       gameState.board.vertices.length > 0,
-      'Board vertices should be present.',
+      'Board vertices should be present.'
     );
     assert(gameState.board.edges.length > 0, 'Board edges should be present.');
     assert(
       gameState.availableActions.canRoll === false,
-      'Player should be able to roll.',
+      'Player should be able to roll.'
     );
   });
 
   it('should correctly change the game phase from setup to main', () => {
-    catan.turns = 4;
-    catan.changePhase();
+    catan.changePhaseToMain();
 
-    assertEquals(catan.phase, 'setup');
+    assertEquals(catan.phase, 'main');
   });
 
   it('should reverse turn order correctly after turn 8', () => {
@@ -164,24 +157,24 @@ describe('Catan', () => {
 
     assert(
       newResourceCount > initialResourceCount,
-      'Player should receive resources after building a settlement.',
+      'Player should receive resources after building a settlement.'
     );
     assertEquals(vertices, [{ id: 'v0,0|1,-1|1,0', color: 'red' }]);
   });
 
   it('should change the phase to main', () => {
     catan.turns = 16;
-    catan.changePhase();
+    catan.changePhaseToMain();
 
     assertEquals(catan.phase, 'main');
   });
 
   it('should be able to roll', () => {
     catan.turns = 16;
-    catan.changePhase();
+    catan.changePhaseToMain();
 
     assertEquals(catan.phase, 'main');
-
+    catan.changeTurn();
     catan.players[0] = new Player('p1', 'Adil', 'red');
     catan.canRoll('p1');
   });
@@ -278,6 +271,28 @@ describe('buildSettlement ', () => {
     catan.buildRoad(roadId2);
     catan.currentPlayerIndex = 0;
     catan.phase = 'main';
+    catan.turn.hasRolled = true;
+    const canBuild = catan.validateBuildSettlement(secondSettlementId, 'p1');
+    assertFalse(canBuild);
+  });
+
+  it("shouldn't build settlement when the vertex doesn't have connected edges", () => {
+    const settlementId = 'v0,-2|0,-3|1,-3';
+    const roadId1 = 'e-v-1,-2|0,-2|0,-3_v0,-2|0,-3|1,-3';
+    const roadId2 = 'e-v-1,-1|-1,-2|0,-2_v-1,-2|0,-2|0,-3';
+    const secondSettlementId = 'v-1,-1|-1,-2|0,-2';
+    catan.buildSettlement(settlementId);
+    catan.buildRoad(roadId1);
+    catan.currentPlayerIndex = 0;
+
+    catan.buildRoad(roadId2);
+    catan.currentPlayerIndex = 0;
+    catan.phase = 'main';
+    catan.turn.hasRolled = true;
+    const vtx = catan.board.vertices.get(secondSettlementId) || {
+      connectedEdges: '',
+    };
+    vtx.connectedEdges = '';
     const canBuild = catan.validateBuildSettlement(secondSettlementId, 'p1');
     assertFalse(canBuild);
   });
@@ -403,6 +418,12 @@ describe('buildRoad', () => {
     catan.buildRoad(roadId1);
 
     catan.currentPlayerIndex = 0;
+    catan.turn.hasRolled = true;
+    catan.validateBuildRoad('r1', 'p1');
+    const vertex = new Vertex('s1', null);
+    catan.board.vertices.set('s1', vertex);
+    catan.validateBuildSettlement('s1', 'p1');
+    catan.validateBuildSettlement('v0,-2|0,-3|1,-3', 'p1');
     const canBuild = catan.validateBuildRoad(roadId2, playerId);
     const road1 = catan.board.edges.get(roadId1);
 

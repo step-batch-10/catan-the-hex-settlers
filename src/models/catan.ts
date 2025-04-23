@@ -30,12 +30,13 @@ export class Catan {
     settlement: { brick: 1, wood: 1, wheat: 1, sheep: 1 },
     city: { wheat: 2, ore: 3 },
   };
+  turn: { hasRolled: boolean };
 
   constructor(
     gameId: string,
     players: Player[],
     board: Board,
-    diceFn: (start?: number, end?: number) => number,
+    diceFn: (start?: number, end?: number) => number
   ) {
     this.diceFn = diceFn;
     this.gameId = gameId;
@@ -46,10 +47,12 @@ export class Catan {
     this.diceRoll = [1, 1];
     this.board = board;
     this.turns = 0;
+    this.turn = { hasRolled: false };
   }
 
-  changePhase(): void {
-    if (this.turns >= 16) this.phase = 'main';
+  changePhaseToMain(): void {
+    this.phase = 'main';
+    this.currentPlayerIndex = -1;
   }
 
   reverseOrder(): void {
@@ -62,21 +65,22 @@ export class Catan {
   }
 
   changeTurn(): void {
-    this.changePhase();
+    if (this.turns === 16) this.changePhaseToMain();
 
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
-      this.players.length;
+    this.turn = { hasRolled: false };
+    this.currentPlayerIndex =
+      (this.currentPlayerIndex + 1) % this.players.length;
   }
 
   private getProducedResources(
     terrains: string[] | undefined,
-    rolledNumber: number,
+    rolledNumber: number
   ) {
     const { board } = this;
     const { hexes } = board;
     const producedTerrains = terrains?.filter(
-      (hex) => hexes.get(hex)?.terrainNumber === rolledNumber,
+      (hex) => hexes.get(hex)?.terrainNumber === rolledNumber
     );
 
     return producedTerrains?.map((terrain) => hexes.get(terrain)?.resource);
@@ -85,7 +89,7 @@ export class Catan {
   private addProducedResource(
     playerId: string,
     resource: keyof Resources | undefined,
-    buildingType: string,
+    buildingType: string
   ) {
     return { playerId, resource, buildingType };
   }
@@ -93,11 +97,11 @@ export class Catan {
   private addProducedResources(
     resources: ResourceProduction,
     resourcesProduced: object[],
-    player: Player,
+    player: Player
   ) {
     resources?.forEach((resource) =>
       resourcesProduced.push(
-        this.addProducedResource(player.id, resource, 'settlement'),
+        this.addProducedResource(player.id, resource, 'settlement')
       )
     );
   }
@@ -131,6 +135,7 @@ export class Catan {
   distributeResources(resourcesToBeDistributed: DistributeResourceData[]) {
     resourcesToBeDistributed.forEach((resourceData) =>
       this.updateResource(resourceData)
+      this.updateResource(resourceData)
     );
   }
 
@@ -145,6 +150,7 @@ export class Catan {
     const dice2 = this.diceFn(1, 6);
     this.diceRoll = [dice1, dice2];
     this.turns++;
+    this.turn.hasRolled = true;
     this.distributeResourcesForDiceRoll();
     // this.changeTurn();
     return this.diceRoll;
@@ -162,8 +168,16 @@ export class Catan {
     return this.getCurrentPlayer().id === playerId;
   }
 
+  private hasAlreadyRolled() {
+    return this.turn.hasRolled;
+  }
+
   canRoll(playerId: string): boolean {
-    return !this.isInitialSetup() && this.isCurrentPlayer(playerId);
+    return (
+      !this.isInitialSetup() &&
+      this.isCurrentPlayer(playerId) &&
+      !this.hasAlreadyRolled()
+    );
   }
 
   private getEdge(id: string): Edge | undefined {
@@ -203,7 +217,7 @@ export class Catan {
     const adjacentVertexIds = edge?.vertices || [];
 
     return [...adjacentVertexIds].some(
-      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId,
+      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId
     );
   }
 
@@ -275,11 +289,11 @@ export class Catan {
   distributeInitialResources(
     vertexId: string,
     player: Player,
-    count: number,
+    count: number
   ): void {
     const hexes = this.getVertex(vertexId)?.adjacentHexes;
     const resources = hexes?.map(
-      (hexId) => this.board.hexes.get(hexId)?.resource,
+      (hexId) => this.board.hexes.get(hexId)?.resource
     );
 
     resources?.forEach((resource) => {
@@ -315,11 +329,12 @@ export class Catan {
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId,
+      (p: Player) => p.id === playerId
     );
 
     const me = player.getPlayerData();
     const othersData = others.map((other: Player) =>
+      this.abstractPlayerData(other)
       this.abstractPlayerData(other)
     );
     return { me, others: othersData };
@@ -351,7 +366,7 @@ export class Catan {
 
   private extractOccupiedComponents(
     componentsMap: Map<string, Vertex | Edge>,
-    occupiedComponents: Components[],
+    occupiedComponents: Components[]
   ) {
     componentsMap.forEach((component: Vertex | Edge, key: string) => {
       if (component.owner) {
@@ -387,7 +402,7 @@ export class Catan {
     const currentPlayerId = this.getCurrentPlayer().id;
 
     return [...adjacentEdges].some(
-      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId,
+      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId
     );
   }
 
@@ -403,13 +418,17 @@ export class Catan {
     if (!this.isCurrentPlayer(playerId)) return false;
     if (this.isInitialSetup()) return this.canBuildInitialSettlement(vertexId);
 
-    return this.canBuildSettlement(vertexId);
+    return this.turn.hasRolled && this.canBuildSettlement(vertexId);
   }
 
   validateBuildRoad(edgeId: string, playerId: string): boolean {
     if (!this.isCurrentPlayer(playerId)) return false;
     if (this.isInitialSetup()) return this.canBuildInitialRoad(edgeId);
 
-    return this.canBuildRoad(edgeId) && this.hasEnoughResources('road');
+    return (
+      this.turn.hasRolled &&
+      this.canBuildRoad(edgeId) &&
+      this.hasEnoughResources('road')
+    );
   }
 }
