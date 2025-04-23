@@ -252,11 +252,22 @@ export class Catan {
     );
   }
 
+  private deductResources(structure: Structures) {
+    const playerResources = this.getCurrentPlayer().resources;
+
+    for (const [res, count] of _.entries(Catan.structuresCost[structure])) {
+      playerResources[res] -= count;
+    }
+
+    return playerResources;
+  }
+
   buildRoad(edgeId: string): boolean {
     const currentPlayer = this.getCurrentPlayer();
     this.getEdge(edgeId)?.occupy(currentPlayer.id, currentPlayer.color);
     currentPlayer.roads.push(edgeId);
     this.turns++;
+    if (!this.isInitialSetup()) this.deductResources('road');
     this.changeTurn();
 
     return true;
@@ -287,6 +298,7 @@ export class Catan {
       this.distributeInitialResources(vertexId, currentPlayer, 1);
     }
 
+    if (!this.isInitialSetup()) this.deductResources('settlement');
     currentPlayer.victoryPoints += 1;
     this.turns++;
 
@@ -379,7 +391,11 @@ export class Catan {
   }
 
   private canBuildSettlement(vertexId: string): boolean {
-    return this.setupValidation(vertexId) && this.hasConnectedRoad(vertexId);
+    return (
+      this.setupValidation(vertexId) &&
+      this.hasConnectedRoad(vertexId) &&
+      this.hasEnoughResources('settlement')
+    );
   }
 
   validateBuildSettlement(vertexId: string, playerId: string): boolean {

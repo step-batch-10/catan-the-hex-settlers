@@ -266,6 +266,22 @@ describe('buildSettlement ', () => {
     assert(settlement2?.isOccupied());
   });
 
+  it("shouldn't build settlement when there is connected road and follows distance rule but not enough resources", () => {
+    const settlementId = 'v0,-2|0,-3|1,-3';
+    const roadId1 = 'e-v-1,-2|0,-2|0,-3_v0,-2|0,-3|1,-3';
+    const roadId2 = 'e-v-1,-1|-1,-2|0,-2_v-1,-2|0,-2|0,-3';
+    const secondSettlementId = 'v-1,-1|-1,-2|0,-2';
+    catan.buildSettlement(settlementId);
+    catan.buildRoad(roadId1);
+    catan.currentPlayerIndex = 0;
+
+    catan.buildRoad(roadId2);
+    catan.currentPlayerIndex = 0;
+    catan.phase = 'main';
+    const canBuild = catan.validateBuildSettlement(secondSettlementId, 'p1');
+    assertFalse(canBuild);
+  });
+
   it('should not build settlement if the phase is invalid', () => {
     catan.phase = 'end';
     const settlementId = 'v0,-1|0,0|1,-1';
@@ -430,7 +446,7 @@ describe('buildRoad', () => {
     assert(canBuild);
   });
 
-  it('should not build road in main phase if player doesnot have enough resources', () => {
+  it("shouldn't build road in main phase if player has enough resources", () => {
     const settlementId = 'v0,-1|0,0|1,-1';
     const roadId1 = 'e-v0,-1|0,0|1,-1_v0,0|1,-1|1,0';
 
