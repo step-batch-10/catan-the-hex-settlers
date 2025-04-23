@@ -1,4 +1,4 @@
-import { createApp } from './src/app.js';
+import { createApp } from './src/app.ts';
 import { Board } from './src/models/board.ts';
 import { Catan } from './src/models/catan.ts';
 import { Player } from './src/models/player.ts';

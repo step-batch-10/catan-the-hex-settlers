@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
+import type { Context, Next } from 'hono';
+
 import {
   buildRoad,
   buildSettlement,
@@ -14,13 +16,20 @@ import {
   serveGamePage,
   serveGameState,
 } from './handlers/dynamicHandlers.ts';
+import { Player } from './models/player.ts';
+import { Board } from './models/board.ts';
 
-const inject = (game) => async (c, next) => {
+type Game = {
+  players: Player[];
+  board: Board;
+};
+
+const inject = (game: Game) => async (c: Context, next: Next) => {
   c.set('game', game);
   await next();
 };
 
-const gameRoutes = (game) => {
+const gameRoutes = (game: Game): Hono => {
   const gameApp = new Hono();
 
   gameApp.use(inject(game));
@@ -39,7 +48,7 @@ const gameRoutes = (game) => {
   return gameApp;
 };
 
-export const createApp = (game) => {
+export const createApp = (game: Game): Hono => {
   const app = new Hono();
 
   app.use(logger());

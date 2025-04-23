@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { createApp } from '../src/app.js';
+import { createApp } from '../src/app.ts';
 import { describe, it, beforeEach } from 'testing/bdd';
 import { assertEquals, assert, assertNotEquals, assertFalse } from 'assert';
 import { Catan } from '../src/models/catan.ts';
