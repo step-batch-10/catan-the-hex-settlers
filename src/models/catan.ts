@@ -52,7 +52,7 @@ export class Catan {
 
   changePhaseToMain(): void {
     this.phase = 'main';
-    this.currentPlayerIndex = -1;
+    this.currentPlayerIndex = 0;
   }
 
   reverseOrder(): void {
@@ -68,6 +68,7 @@ export class Catan {
     if (this.turns === 16) this.changePhaseToMain();
 
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
+    if (!this.isInitialSetup() && !this.turn.hasRolled) return;
     this.turn = { hasRolled: false };
     this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
       this.players.length;

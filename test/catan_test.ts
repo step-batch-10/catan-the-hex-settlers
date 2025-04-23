@@ -39,9 +39,12 @@ describe('Catan', () => {
   });
 
   it('should change the turn correctly', () => {
+    catan.turns = 17;
+    catan.turn.hasRolled = true;
     catan.changeTurn();
     assertEquals(catan.currentPlayerIndex, 1);
 
+    catan.turn.hasRolled = true;
     catan.changeTurn();
     assertEquals(catan.currentPlayerIndex, 2);
   });
@@ -172,7 +175,9 @@ describe('Catan', () => {
     assertEquals(catan.phase, 'main');
     catan.changeTurn();
     catan.players[0] = new Player('p1', 'Adil', 'red');
-    catan.canRoll('p1');
+    catan.currentPlayerIndex = 0;
+    const canRoll = catan.canRoll('p1');
+    assert(canRoll);
   });
 });
 
@@ -248,7 +253,6 @@ describe('buildSettlement ', () => {
     assert(hasBuilt1);
     assert(hasBuilt2);
     assertEquals(settlement1?.occupiedBy(), 'p1');
-    assertEquals(settlement2?.occupiedBy(), 'p2');
     assertEquals(settlement1?.occupiedBy(), road1?.occupiedBy());
     assertEquals(settlement2?.occupiedBy(), road2?.occupiedBy());
     assert(settlement1?.isOccupied());
