@@ -90,6 +90,9 @@ describe('Catan', () => {
 
   it('should build a road correctly', () => {
     const edgeId = 'e-v0,-1|0,0|1,-1_v0,-1|1,-1|1,-2';
+    const gameState = catan.getGameState('p1');
+    gameState.players.me.resources.brick = 1;
+    gameState.players.me.resources.wood = 1;
     const result = catan.buildRoad(edgeId);
     const edges = catan.getOccupiedEdges();
 
@@ -120,12 +123,12 @@ describe('Catan', () => {
     assert(gameState.board.hexes.length > 0, 'Board hexes should be present.');
     assert(
       gameState.board.vertices.length > 0,
-      'Board vertices should be present.'
+      'Board vertices should be present.',
     );
     assert(gameState.board.edges.length > 0, 'Board edges should be present.');
     assert(
       gameState.availableActions.canRoll === false,
-      'Player should be able to roll.'
+      'Player should be able to roll.',
     );
   });
 
@@ -161,7 +164,7 @@ describe('Catan', () => {
 
     assert(
       newResourceCount > initialResourceCount,
-      'Player should receive resources after building a settlement.'
+      'Player should receive resources after building a settlement.',
     );
     assertEquals(vertices, [{ id: 'v0,0|1,-1|1,0', color: 'red' }]);
   });
@@ -298,6 +301,14 @@ describe('buildSettlement ', () => {
     assert(canBuild);
   });
 
+  it("shouldn't build the settlement if doesn't have enough resources", () => {
+    const settlementId = 'v0,-1|0,0|1,-1';
+    catan.phase = 'main';
+    const canBuild = catan.validateBuildSettlement(settlementId, 'p1');
+
+    assertFalse(canBuild);
+  });
+
   it('should be false if the there are no connected edges', () => {
     catan.turns = 0;
     const settlementId = 'v0,-1|0,0|1,-1';
@@ -364,6 +375,11 @@ describe('buildRoad', () => {
     const settlementId = 'v0,-1|0,0|1,-1';
     const roadId1 = 'e-v0,-1|0,0|1,-1_v0,0|1,-1|1,0';
     const roadId2 = 'e-v0,0|0,1|1,0_v0,0|1,-1|1,0';
+    const gameState = catan.getGameState('p1');
+    gameState.players.me.resources.brick = 5;
+    gameState.players.me.resources.wood = 5;
+    gameState.players.me.resources.sheep = 5;
+    gameState.players.me.resources.wheat = 5;
 
     catan.phase = 'main';
     catan.buildSettlement(settlementId);
@@ -412,6 +428,18 @@ describe('buildRoad', () => {
     const canBuild = catan.validateBuildRoad(roadId1, 'p1');
 
     assert(canBuild);
+  });
+
+  it('should not build road in main phase if player doesnot have enough resources', () => {
+    const settlementId = 'v0,-1|0,0|1,-1';
+    const roadId1 = 'e-v0,-1|0,0|1,-1_v0,0|1,-1|1,0';
+
+    catan.phase = 'main';
+    catan.buildSettlement(settlementId);
+
+    const canBuild = catan.validateBuildRoad(roadId1, 'p1');
+
+    assertFalse(canBuild);
   });
 });
 

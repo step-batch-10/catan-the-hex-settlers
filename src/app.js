@@ -31,7 +31,6 @@ const gameRoutes = (game) => {
   gameApp.post('/can-build/vertex', canBuildSettlement);
   gameApp.post('/can-build/edge', canBuildRoad);
   gameApp.get('/:playerId', serveGamePage);
-  // gameApp.get('/build/valid-positions', serveValidPositions);
 
   return gameApp;
 };

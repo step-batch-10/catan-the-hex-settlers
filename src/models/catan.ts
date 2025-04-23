@@ -11,6 +11,8 @@ import type {
   PlayersList,
   Resources,
   RollDice,
+  ResourceProduction,
+  Structures,
 } from '../types.ts';
 
 export class Catan {
@@ -23,6 +25,11 @@ export class Catan {
   board: Board;
   turns: number;
   diceFn: RollDice;
+  private static structuresCost = {
+    road: { brick: 1, wood: 1 },
+    settlement: { brick: 1, wood: 1, wheat: 1, sheep: 1 },
+    city: { wheat: 2, ore: 3 },
+  };
 
   constructor(
     gameId: string,
@@ -42,7 +49,7 @@ export class Catan {
   }
 
   changePhase(): void {
-    if (this.turns === 16) this.phase = 'main';
+    if (this.turns >= 16) this.phase = 'main';
   }
 
   reverseOrder(): void {
@@ -58,8 +65,8 @@ export class Catan {
     this.changePhase();
 
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
-      this.players.length;
+    this.currentPlayerIndex =
+      (this.currentPlayerIndex + 1) % this.players.length;
   }
 
   private getProducedResources(
@@ -84,14 +91,14 @@ export class Catan {
   }
 
   private addProducedResources(
-    resources: (keyof Resources | undefined)[] | undefined,
+    resources: ResourceProduction,
     resourcesProduced: object[],
     player: Player,
   ) {
     resources?.forEach((resource) =>
       resourcesProduced.push(
         this.addProducedResource(player.id, resource, 'settlement'),
-      )
+      ),
     );
   }
 
@@ -123,7 +130,7 @@ export class Catan {
 
   distributeResources(resourcesToBeDistributed: DistributeResourceData[]) {
     resourcesToBeDistributed.forEach((resourceData) =>
-      this.updateResource(resourceData)
+      this.updateResource(resourceData),
     );
   }
 
@@ -207,6 +214,16 @@ export class Catan {
     return [...adjacentVertexIds].some((vtxId) => this.hasConnectedRoad(vtxId));
   }
 
+  private hasEnoughResources(structure: Structures) {
+    const playerResources = this.getCurrentPlayer().resources;
+
+    for (const [res, count] of _.entries(Catan.structuresCost[structure])) {
+      if (playerResources[res] < count) return false;
+    }
+
+    return true;
+  }
+
   private canBuildRoad(edge: string) {
     const isRoadOccupied = this.getEdge(edge)?.isOccupied();
     const hasConnectedSettlement = this.hasConnectedSettlement(edge);
@@ -269,6 +286,8 @@ export class Catan {
     if (currentPlayer.settlements.length === 2) {
       this.distributeInitialResources(vertexId, currentPlayer, 1);
     }
+
+    currentPlayer.victoryPoints += 1;
     this.turns++;
 
     return true;
@@ -290,7 +309,7 @@ export class Catan {
 
     const me = player.getPlayerData();
     const othersData = others.map((other: Player) =>
-      this.abstractPlayerData(other)
+      this.abstractPlayerData(other),
     );
     return { me, others: othersData };
   }
@@ -374,6 +393,6 @@ export class Catan {
     if (!this.isCurrentPlayer(playerId)) return false;
     if (this.isInitialSetup()) return this.canBuildInitialRoad(edgeId);
 
-    return this.canBuildRoad(edgeId);
+    return this.canBuildRoad(edgeId) && this.hasEnoughResources('road');
   }
 }

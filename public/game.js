@@ -217,13 +217,13 @@ const displayPlayerTurn = (gameState) => {
   showMessage('#current-player', '.player-turn', msg);
 };
 
-const notifyValid = (msg) => {
+const notifyInValid = (msg) => {
   const msgBox = showMessage('#message-container', '.invalid-msg', msg);
   setTimeout(() => msgBox.remove(), 1000);
 };
 
 const notYourTurn = () => {
-  notifyValid('Not your turn');
+  notifyInValid('Not your turn');
 };
 
 const rollDiceHandler = async () => {
@@ -261,19 +261,6 @@ const isValidBuilt = async (pieceType, fd) => {
 const isPieceTypeValid = (pieceType) =>
   new Set(['vertex', 'edge']).has(pieceType);
 
-const build = async (event) => {
-  const element = event.target;
-  const targetElementId = element.id;
-  const pieceType = element.classList[0];
-  const formData = new FormData();
-  formData.set('id', targetElementId);
-  const canBuild = await isValidBuilt(pieceType, formData);
-
-  if (!canBuild) return notifyValid('You Cannot Build There');
-
-  return buildAt(targetElementId, pieceType);
-};
-
 const highlightElement = (element, currentPlayer) => {
   element.style.fill = currentPlayer.color;
   element.style.opacity = 0.4;
@@ -287,21 +274,39 @@ const lowLightElement = (element, className) => {
   };
 };
 
-const canBuildHandler = (currentPlayer) => async (event) => {
+const getBuildValidationData = async (event) => {
   const element = event.target;
   const targetElementId = element.id;
   const pieceType = element.classList[0];
 
-  if (!isPieceTypeValid(pieceType)) return;
+  if (!isPieceTypeValid(pieceType)) return null;
 
   const formData = new FormData();
   formData.set('id', targetElementId);
+
   const canBuild = await isValidBuilt(pieceType, formData);
 
-  if (!canBuild) return;
+  if (!canBuild) return null;
+
+  return { element, targetElementId, pieceType };
+};
+
+const build = async (event) => {
+  const validationData = await getBuildValidationData(event);
+  if (!validationData) return notifyInValid('You Cannot Build There');
+
+  const { targetElementId, pieceType } = validationData;
+  return buildAt(targetElementId, pieceType);
+};
+
+const canBuildHandler = (currentPlayer) => async (event) => {
+  const validationData = await getBuildValidationData(event);
+  if (!validationData) return;
+
+  const { element } = validationData;
 
   highlightElement(element, currentPlayer);
-  setTimeout(lowLightElement(element, 'highlight'), 500);
+  setTimeout(lowLightElement(element, 'highlight'), 1000);
 };
 
 const addBuildEvent = (currentPlayer) => {
@@ -315,27 +320,19 @@ const addEventListeners = (gameState) => {
   addBuildEvent(gameState.players.me);
 };
 
-const renderEdges = (edges) => {
-  edges.forEach(({ color, id }) => {
-    const edge = document.getElementById(id);
-    edge.style.fill = color;
-    edge.style.opacity = 1;
-  });
-};
-
-const renderVertices = (vertices) => {
-  vertices.forEach(({ color, id }) => {
-    const vertices = document.getElementById(id);
-    vertices.style.fill = color;
-    vertices.style.opacity = 1;
+const renderStructures = (structures) => {
+  structures.forEach(({ color, id }) => {
+    const structure = document.getElementById(id);
+    structure.style.fill = color;
+    structure.style.opacity = 1;
   });
 };
 
 const renderPieces = (gameState) => {
   const { vertices, edges } = gameState;
 
-  renderVertices(vertices);
-  renderEdges(edges);
+  renderStructures(vertices);
+  renderStructures(edges);
 };
 
 const renderElements = (gameState) => {

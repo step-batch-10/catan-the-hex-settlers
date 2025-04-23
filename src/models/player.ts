@@ -1,4 +1,4 @@
-import type { DevCards, Resources } from '../types.ts';
+import type { DevCards, PlayerData, Resources } from '../types.ts';
 
 export class Player {
   id: string;
@@ -50,45 +50,7 @@ export class Player {
     if (cardType in this.resources) this.resources[cardType] += count;
   }
 
-  getPlayerData(): {
-    id: string;
-    name: string;
-    color: string;
-    resources: Resources;
-    roads: string[];
-    settlements: string[];
-    cities: string[];
-    devCards: DevCards;
-    hasLargestArmy: boolean;
-    hasLongestRoad: boolean;
-    victoryPoints: number;
-  } {
-    const {
-      id,
-      name,
-      color,
-      resources,
-      roads,
-      settlements,
-      cities,
-      devCards,
-      hasLargestArmy,
-      hasLongestRoad,
-      victoryPoints,
-    } = this;
-
-    return {
-      id,
-      name,
-      color,
-      resources,
-      roads,
-      settlements,
-      cities,
-      devCards,
-      hasLargestArmy,
-      hasLongestRoad,
-      victoryPoints,
-    };
+  getPlayerData(): PlayerData {
+    return { ...this };
   }
 }
