@@ -265,23 +265,24 @@ const addListenerToCard = () => {
   );
 };
 
+const tradeParser = (parsedCards, card) => {
+  const action =
+    card.parentElement.id === 'return-resource'
+      ? 'incomingResources'
+      : 'outgoingResources';
+  const cardName = card.id.split('-')[1];
+
+  parsedCards[action][cardName] = action === 'outgoingResources' ? 4 : 1;
+
+  return parsedCards;
+}
+
 const parseCards = () => {
   const selectedCards = [...document.querySelectorAll('.card-selected')];
 
-  return selectedCards.reduce(
-    (parsedCards, card) => {
-      const action =
-        card.parentElement.id === 'return-resource'
-          ? 'incomingResources'
-          : 'outgoingResources';
-      const cardName = card.id.split('-')[1];
-
-      parsedCards[action][cardName] = action == 'outgoingResources' ? 4 : 1;
-
-      return parsedCards;
-    },
-    { outgoingResources: {}, incomingResources: {} },
-  );
+  return selectedCards
+    .reduce(tradeParser, { outgoingResources: {}, incomingResources: {} },
+    );
 };
 
 const tradeWithBank = async (_e) => {
@@ -294,10 +295,9 @@ const tradeWithBank = async (_e) => {
     body,
   });
 
-  if (response.status == 200) {
+  if (response.status === 200) {
     document.querySelector('#floating-trade-menu').style.display = 'none';
     const MTtrade = document.querySelector('#MTtrade-container');
-    console.log(MTtrade);
     MTtrade.remove();
     globalThis.location = '#button-container';
   }
@@ -411,19 +411,37 @@ const addBuildEvent = (currentPlayer) => {
   svg.addEventListener('mouseover', canBuildHandler(currentPlayer));
 };
 
-const addEventListeners = (gameState) => {
-  attachOpenTrade();
+const passTurn = async () => 
+    await fetch("/game/changeTurn", { method: "POST" })
+
+const closeTradeOptions = () => 
+    document.querySelector("#floating-trade-menu").style.display = "none";
+
+const addListener = (elementId, listener) => {
+  const element = document.querySelector(elementId);
+  element.addEventListener('click', listener);
+}
+
+
+const playerActions = () => {
+  addListener('#back-btn', () => globalThis.location = "#button-container");
+  addListener('#close-btn', closeTradeOptions);
+
+  const myId = globalThis.gameState.players.me.id;
+  const currentPlayerId = globalThis.gameState.currentPlayerId;
+  const gamePhase = globalThis.gameState.gamePhase
+
+  if (myId === currentPlayerId && gamePhase !== "setup") {
+    attachOpenTrade();
+    addListener('#maritime-btn', navigateToMaritimeTrade);
+    addListener('#pass-btn', passTurn);
+  }
+};
+
+const addEventListeners = (gameState) =>  {
   addRollDiceEvent();
   addBuildEvent(gameState.players.me);
-
-  const backBtn = document.querySelector('#back-btn');
-  const maritimeTradeBtn = document.querySelector('#maritime-btn');
-
-  backBtn.addEventListener(
-    'click',
-    () => (globalThis.location = '#button-container'),
-  );
-  maritimeTradeBtn.addEventListener('click', navigateToMaritimeTrade);
+  playerActions();
 };
 
 const renderStructures = (structures) => {

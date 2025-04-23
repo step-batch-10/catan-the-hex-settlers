@@ -146,7 +146,7 @@ export class Catan {
     this.diceRoll = [dice1, dice2];
     this.turns++;
     this.distributeResourcesForDiceRoll();
-    this.changeTurn();
+    // this.changeTurn();
     return this.diceRoll;
   }
 
@@ -336,6 +336,7 @@ export class Catan {
     const currentPlayerId = this.getCurrentPlayer().id;
     const { gameId, diceRoll } = this;
     const availableActions = this.getAvailableActions(playerId);
+    const gamePhase = this.phase;
 
     const playersData = { playerId, players, currentPlayerId };
     return {
@@ -343,6 +344,7 @@ export class Catan {
       diceRoll,
       board,
       availableActions,
+      gamePhase,
       ...playersData,
     };
   }

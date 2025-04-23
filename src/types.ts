@@ -77,6 +77,7 @@ interface GameState {
   players: { me: { resources: Resources } };
   playerId: string;
   currentPlayerId: string;
+  gamePhase: GamePhase;
 }
 
 interface DistributeResourceData {
@@ -91,7 +92,7 @@ interface PlayersList {
 }
 
 type RollDice = (start?: number, end?: number) => number;
-type GamePhase = 'rolling' | 'setup' | 'main' | 'end';
+type GamePhase = 'setup' | 'main' | 'end';
 type Structures = 'road' | 'settlement' | 'city';
 type ResourceProduction = (keyof Resources | undefined)[] | undefined;
 

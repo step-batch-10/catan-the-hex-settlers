@@ -1,6 +1,8 @@
 import { Context } from 'hono';
 import { getCookie, setCookie } from 'hono/cookie';
 import _ from 'lodash';
+import { TradeResources } from '../types.ts';
+import { updateResources } from '../handlerHelpers.ts';
 
 export const serveGameState = (ctx: Context): Response => {
   const game = ctx.get('game');
@@ -72,4 +74,22 @@ export const canBuildSettlement = async (ctx: Context): Promise<Response> => {
   const canBuild = game.validateBuildSettlement(id, playerId);
 
   return ctx.json({ canBuild });
+};
+
+export const maritimeHandler = async (ctx: Context): Promise<Response> => {
+  const tradeResources: TradeResources = await ctx.req.json();
+  const game = ctx.get('game');
+  const playerId = getCookie(ctx, 'player-id');
+  const player = _.find(game.players, { id: playerId });
+
+  updateResources(player, tradeResources);
+
+  return ctx.json({ status: 'ok' });
+};
+
+export const handleChangeTurn = (ctx: Context): Response => {
+  const game = ctx.get('game');
+  game.changeTurn();
+
+  return ctx.json(game);
 };
