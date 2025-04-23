@@ -7,7 +7,6 @@ import {
   canBuildRoad,
   canBuildSettlement,
   canRoll,
-  maritimeHandler,
   rollDice,
   serveGameData,
   serveGamePage,
@@ -27,7 +26,6 @@ const gameRoutes = (game) => {
   gameApp.get('/gameData', serveGameData);
   gameApp.post('/roll-dice', rollDice);
   gameApp.post('/build/vertex', buildSettlement);
-  gameApp.post('/trade/maritime', maritimeHandler);
   gameApp.post('/build/edge', buildRoad);
   gameApp.get('/dice/can-roll', canRoll);
   gameApp.post('/can-build/vertex', canBuildSettlement);

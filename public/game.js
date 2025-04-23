@@ -396,6 +396,7 @@ const build = async (event) => {
 
 const canBuildHandler = (currentPlayer) => async (event) => {
   const validationData = await getBuildValidationData(event);
+  if (!validationData) return;
   if (!validationData) return element.classList.add('block');
 
   const { element } = validationData;

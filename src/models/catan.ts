@@ -9,9 +9,9 @@ import type {
   GamePhase,
   GameState,
   PlayersList,
-  ResourceProduction,
   Resources,
   RollDice,
+  ResourceProduction,
   Structures,
 } from '../types.ts';
 
@@ -65,8 +65,8 @@ export class Catan {
     this.changePhase();
 
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
-      this.players.length;
+    this.currentPlayerIndex =
+      (this.currentPlayerIndex + 1) % this.players.length;
   }
 
   private getProducedResources(
@@ -98,7 +98,7 @@ export class Catan {
     resources?.forEach((resource) =>
       resourcesProduced.push(
         this.addProducedResource(player.id, resource, 'settlement'),
-      )
+      ),
     );
   }
 
@@ -130,7 +130,7 @@ export class Catan {
 
   distributeResources(resourcesToBeDistributed: DistributeResourceData[]) {
     resourcesToBeDistributed.forEach((resourceData) =>
-      this.updateResource(resourceData)
+      this.updateResource(resourceData),
     );
   }
 
@@ -321,7 +321,7 @@ export class Catan {
 
     const me = player.getPlayerData();
     const othersData = others.map((other: Player) =>
-      this.abstractPlayerData(other)
+      this.abstractPlayerData(other),
     );
     return { me, others: othersData };
   }
