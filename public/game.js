@@ -454,11 +454,12 @@ const applyPlayerActions = () => {
 
   const myId = globalThis.gameState.players.me.id;
   const currentPlayerId = globalThis.gameState.currentPlayerId;
-  const gamePhase = globalThis.gameState.gamePhase
-  console.log("game state", gamePhase)
-  console.log(myId, currentPlayerId)
+  const gamePhase = globalThis.gameState.gamePhase;
+  const isDiceRolled = !globalThis.gameState.availableActions?.canRoll
+  console.log()
+  
 
-  if (myId === currentPlayerId && gamePhase !== "setup") {
+  if (myId === currentPlayerId && gamePhase !== "setup" && isDiceRolled) {
     addListener("#trade", openTradeCenter)
     addListener('#maritime-btn', navigateToMaritimeTrade);
     addListener('#pass-btn', passTurn);
