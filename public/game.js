@@ -219,15 +219,6 @@ const displayPlayerTurn = (gameState) => {
   showMessage('#current-player', '.player-turn', msg);
 };
 
-const notifyInValid = (msg) => {
-  const msgBox = showMessage('#message-container', '.invalid-msg', msg);
-  setTimeout(() => msgBox.remove(), 1000);
-};
-
-const notYourTurn = () => {
-  notifyInValid('Not your turn');
-};
-
 const createMaritimeTradeCenter = () => {
   const resources = globalThis.gameState.players.me.resources;
   const available = Object.entries(resources).filter(
@@ -342,14 +333,10 @@ const openTradeCenter = () => {
   tradesMenu.style.display = 'block';
 };
 
-const attachOpenTrade = () => {
-  const tradeButtton = document.querySelector('#trade');
-  tradeButtton.addEventListener('click', openTradeCenter);
-};
 
 const rollDiceHandler = async () => {
   const dice = await fetch('/game/dice/can-roll').then((res) => res.json());
-  if (!dice.canRoll) return notYourTurn();
+  if (!dice.canRoll) return;
   await fetch('game/roll-dice', { method: 'POST' });
 };
 
@@ -433,8 +420,8 @@ const addBuildEvent = (currentPlayer) => {
   svg.addEventListener('mouseover', canBuildHandler(currentPlayer));
 };
 
-const passTurn = async () => 
-    await fetch("/game/changeTurn", { method: "POST" })
+const passTurn = async () => await fetch("/game/changeTurn", { method: "POST" })
+  
 
 const closeTradeOptions = () => 
     document.querySelector("#floating-trade-menu").style.display = "none";
@@ -444,17 +431,35 @@ const addListener = (elementId, listener) => {
   element.addEventListener('click', listener);
 }
 
+const goBack = () => globalThis.location = "#button-container";
 
-const playerActions = () => {
-  addListener('#back-btn', () => globalThis.location = "#button-container");
+const removeListener = (elementId, listener) => {
+  const element = document.querySelector(elementId);
+  element.removeEventListener('click', listener);
+}
+
+const removeAllPlayerListener = () => {
+  removeListener('#back-btn', goBack);
+  removeListener('#close-btn', closeTradeOptions);
+  removeListener('#maritime-btn', navigateToMaritimeTrade);
+  removeListener('#pass-btn', passTurn);
+  removeListener("#trade", openTradeCenter)
+}
+
+
+const applyPlayerActions = () => {
+  removeAllPlayerListener();
+  addListener('#back-btn', goBack);
   addListener('#close-btn', closeTradeOptions);
 
   const myId = globalThis.gameState.players.me.id;
   const currentPlayerId = globalThis.gameState.currentPlayerId;
   const gamePhase = globalThis.gameState.gamePhase
+  console.log("game state", gamePhase)
+  console.log(myId, currentPlayerId)
 
   if (myId === currentPlayerId && gamePhase !== "setup") {
-    attachOpenTrade();
+    addListener("#trade", openTradeCenter)
     addListener('#maritime-btn', navigateToMaritimeTrade);
     addListener('#pass-btn', passTurn);
   }
@@ -463,7 +468,7 @@ const playerActions = () => {
 const addEventListeners = (gameState) =>  {
   addRollDiceEvent();
   addBuildEvent(gameState.players.me);
-  playerActions();
+  applyPlayerActions();
 };
 
 const renderStructures = (structures) => {
@@ -494,6 +499,7 @@ const poll = () => {
     const gameState = await response.json();
     globalThis.gameState = gameState;
     renderElements(gameState);
+    applyPlayerActions();
   }, 2000);
 };
 
