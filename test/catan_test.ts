@@ -105,11 +105,11 @@ describe('Catan', () => {
 
   it('should provide game state correctly', () => {
     const player1 = catan.players[0];
+    catan.turn.hasRolled = true;
     const gameState: {
       gameId: string;
       diceRoll: number[];
       board: { hexes: object[]; vertices: VertexData[]; edges: EdgeData[] };
-      availableActions: { canRoll: boolean };
     } = catan.getGameState(player1.id);
 
     assertEquals(gameState.gameId, 'game123');
@@ -120,10 +120,6 @@ describe('Catan', () => {
       'Board vertices should be present.'
     );
     assert(gameState.board.edges.length > 0, 'Board edges should be present.');
-    assert(
-      gameState.availableActions.canRoll === false,
-      'Player should be able to roll.'
-    );
   });
 
   it('should correctly change the game phase from setup to main', () => {

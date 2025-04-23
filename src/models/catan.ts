@@ -135,7 +135,6 @@ export class Catan {
   distributeResources(resourcesToBeDistributed: DistributeResourceData[]) {
     resourcesToBeDistributed.forEach((resourceData) =>
       this.updateResource(resourceData)
-      this.updateResource(resourceData)
     );
   }
 
@@ -152,7 +151,7 @@ export class Catan {
     this.turns++;
     this.turn.hasRolled = true;
     this.distributeResourcesForDiceRoll();
-    // this.changeTurn();
+
     return this.diceRoll;
   }
 
@@ -335,13 +334,13 @@ export class Catan {
     const me = player.getPlayerData();
     const othersData = others.map((other: Player) =>
       this.abstractPlayerData(other)
-      this.abstractPlayerData(other)
     );
     return { me, others: othersData };
   }
 
   getAvailableActions(playerId: string) {
-    const canRoll = this.isCurrentPlayer(playerId) && !this.isInitialSetup();
+    const canRoll =
+      this.getCurrentPlayer().id === playerId && !this.turn.hasRolled;
     return { canRoll };
   }
 
@@ -350,7 +349,6 @@ export class Catan {
     const board = this.board.getBoard();
     const currentPlayerId = this.getCurrentPlayer().id;
     const { gameId, diceRoll } = this;
-    const availableActions = this.getAvailableActions(playerId);
     const gamePhase = this.phase;
 
     const playersData = { playerId, players, currentPlayerId };
@@ -358,7 +356,6 @@ export class Catan {
       gameId,
       diceRoll,
       board,
-      availableActions,
       gamePhase,
       ...playersData,
     };
@@ -393,7 +390,16 @@ export class Catan {
     const diceRoll = this.diceRoll;
     const players = this.getPlayersInfo(playerId);
     const currentPlayer = this.players[this.currentPlayerIndex].name;
-    return { vertices, edges, diceRoll, players, currentPlayer };
+    const availableActions = this.getAvailableActions(playerId);
+
+    return {
+      vertices,
+      edges,
+      diceRoll,
+      players,
+      currentPlayer,
+      availableActions,
+    };
   }
 
   private hasConnectedRoad(vertexId: string): boolean {

@@ -71,9 +71,6 @@ interface GameState {
     vertices: VertexData[];
     edges: EdgeData[];
   };
-  availableActions: {
-    canRoll: boolean;
-  };
   players: { me: { resources: Resources } };
   playerId: string;
   currentPlayerId: string;
