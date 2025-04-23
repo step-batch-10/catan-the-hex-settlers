@@ -382,7 +382,7 @@ const getBuildValidationData = async (event) => {
 
   const canBuild = await isValidBuilt(pieceType, formData);
 
-  if (!canBuild) return null;
+  if (!canBuild) return element.classList.add('block');
   return { element, targetElementId, pieceType };
 };
 
@@ -397,7 +397,6 @@ const build = async (event) => {
 const canBuildHandler = (currentPlayer) => async (event) => {
   const validationData = await getBuildValidationData(event);
   if (!validationData) return;
-  if (!validationData) return element.classList.add('block');
 
   const { element } = validationData;
 
