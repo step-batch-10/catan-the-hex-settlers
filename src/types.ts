@@ -97,7 +97,7 @@ interface PlayersList {
 
 type RollDice = (start?: number, end?: number) => number;
 type GamePhase = 'setup' | 'main' | 'end';
-type Structures = 'road' | 'settlement' | 'city';
+type PlayerAssets = 'road' | 'settlement' | 'city' | 'devCard';
 type ResourceProduction = (keyof Resources | undefined)[] | undefined;
 
 interface TradeResources {
@@ -128,13 +128,13 @@ export type {
   GamePhase,
   GameState,
   HexData,
+  PlayerAssets,
   PlayerData,
   PlayersList,
   ResourceProduction,
   Resources,
   RollDice,
   SpecialCardOwners,
-  Structures,
   TradeResources,
   VertexData,
 };

@@ -9,12 +9,12 @@ import type {
   DistributeResourceData,
   GamePhase,
   GameState,
+  PlayerAssets,
   PlayersList,
   ResourceProduction,
   Resources,
   RollDice,
   SpecialCardOwners,
-  Structures,
 } from '../types.ts';
 
 export class Catan {
@@ -27,10 +27,11 @@ export class Catan {
   board: Board;
   turns: number;
   diceFn: RollDice;
-  private static structuresCost = {
+  private static playerAssets = {
     road: { brick: 1, lumber: 1 },
     settlement: { brick: 1, lumber: 1, grain: 1, wool: 1 },
     city: { grain: 2, ore: 3 },
+    devCard: { ore: 1, grain: 1, wool: 1 },
   };
   turn: { hasRolled: boolean };
   supply: { resources: Resources; devCards: [] };
@@ -249,10 +250,10 @@ export class Catan {
     return [...adjacentVertexIds].some((vtxId) => this.hasConnectedRoad(vtxId));
   }
 
-  private hasEnoughResources(structure: Structures) {
+  private hasEnoughResources(structure: PlayerAssets) {
     const playerResources = this.getCurrentPlayer().resources;
 
-    for (const [res, count] of _.entries(Catan.structuresCost[structure])) {
+    for (const [res, count] of _.entries(Catan.playerAssets[structure])) {
       if (playerResources[res] < count) return false;
     }
 
@@ -287,10 +288,9 @@ export class Catan {
     );
   }
 
-  private deductResources(structure: Structures) {
+  private deductResources(asset: PlayerAssets) {
     const playerResources = this.getCurrentPlayer().resources;
-
-    for (const [res, count] of _.entries(Catan.structuresCost[structure])) {
+    for (const [res, count] of _.entries(Catan.playerAssets[asset])) {
       playerResources[res] -= count;
     }
 
