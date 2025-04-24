@@ -59,7 +59,7 @@ export class Catan {
     if (this.turns === 8) this.currentPlayerIndex = 4;
     this.currentPlayerIndex--;
   }
-
+  //rename
   private arePlacingSecondSettlement() {
     return this.turns >= 8 && this.turns < 16;
   }
@@ -86,7 +86,7 @@ export class Catan {
 
     return producedTerrains?.map((terrain) => hexes.get(terrain)?.resource);
   }
-
+  //rename
   private addProducedResource(
     playerId: string,
     resource: keyof Resources | undefined,
@@ -116,13 +116,15 @@ export class Catan {
     });
     return resourcesProduced;
   }
-
+  //rename
   private toBeDistributed(rolledNumber: number): DistributeResourceData[] {
     const resourcesProduced: DistributeResourceData[] = [];
+
     this.players.forEach((player) => {
       const settlements = this.resourcesForSettlement(player, rolledNumber);
       resourcesProduced.push(...settlements);
     });
+
     return resourcesProduced;
   }
 
@@ -174,8 +176,8 @@ export class Catan {
 
   canRoll(playerId: string): boolean {
     return (
-      !this.isInitialSetup() &&
       this.isCurrentPlayer(playerId) &&
+      !this.isInitialSetup() &&
       !this.hasAlreadyRolled()
     );
   }
@@ -340,8 +342,11 @@ export class Catan {
   }
 
   getAvailableActions(playerId: string) {
-    const canRoll = this.isCurrentPlayer(playerId) && !this.turn.hasRolled;
-    return { canRoll };
+    const canTrade = this.isCurrentPlayer(playerId) &&
+      !this.isInitialSetup() &&
+      this.hasAlreadyRolled();
+
+    return { canTrade };
   }
 
   getGameState(playerId: string): GameState {
@@ -350,6 +355,7 @@ export class Catan {
     const currentPlayerId = this.getCurrentPlayer().id;
     const { gameId, diceRoll } = this;
     const gamePhase = this.phase;
+    const availableActions = this.getAvailableActions(playerId);
 
     const playersData = { playerId, players, currentPlayerId };
     return {
@@ -357,6 +363,7 @@ export class Catan {
       diceRoll,
       board,
       gamePhase,
+      availableActions,
       ...playersData,
     };
   }

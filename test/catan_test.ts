@@ -179,6 +179,42 @@ describe("Catan", () => {
     const canRoll = catan.canRoll("p1");
     assert(canRoll);
   });
+
+  it("should not trade in setup phase", () => {
+    const availableActions = catan.getAvailableActions("p1");
+
+    assertFalse(availableActions.canTrade);
+  });
+
+  it("should not trade in main phase", () => {
+    catan.phase = "main";
+    const availableActions = catan.getAvailableActions("p1");
+
+    assertFalse(availableActions.canTrade);
+  });
+
+  it("should not trade if not current player in main phase", () => {
+    catan.phase = "main";
+    const availableActions = catan.getAvailableActions("p2");
+
+    assertFalse(availableActions.canTrade);
+  });
+
+  it("should not trade if current player in main phase and hasn't rolled the dice", () => {
+    catan.phase = "main";
+    catan.turn.hasRolled = false;
+    const availableActions = catan.getAvailableActions("p2");
+
+    assertFalse(availableActions.canTrade);
+  });
+
+  it("should  trade if current player in main phase and has rolled the dice", () => {
+    catan.phase = "main";
+    catan.turn.hasRolled = true;
+    const availableActions = catan.getAvailableActions("p1");
+
+    assert(availableActions.canTrade);
+  });
 });
 
 describe("buildSettlement ", () => {

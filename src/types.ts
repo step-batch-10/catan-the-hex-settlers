@@ -74,6 +74,7 @@ interface GameState {
   players: { me: { resources: Resources } };
   playerId: string;
   currentPlayerId: string;
+  availableActions: object;
   gamePhase: GamePhase;
 }
 

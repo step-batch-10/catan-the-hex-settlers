@@ -132,11 +132,11 @@ const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
 
   const list = document.querySelector("#player-list");
-  list.innerHTML = "";
-  players.others.forEach((player) => {
-    const template = createProfileCard(player);
-    list.append(template);
-  });
+  const profileCards = players.others.map((player) =>
+    createProfileCard(player)
+  );
+
+  list.replaceChildren(...profileCards);
 };
 
 const diceDotMap = {
@@ -148,38 +148,26 @@ const diceDotMap = {
   6: [0, 2, 3, 5, 6, 8],
 };
 
-const restartAnimation = (dice, className) => {
-  dice.classList.remove(className);
-  void dice.offsetWidth;
-  dice.classList.add(className);
-};
-
 const createDotGrid = (positions) => {
   const grid = [];
+
   for (let i = 0; i < 9; i++) {
     const cell = document.createElement("div");
-    if (positions.includes(i)) {
-      cell.classList.add("dot");
-    }
+
+    if (positions.includes(i)) cell.classList.add("dot");
+
     grid.push(cell);
   }
+
   return grid;
 };
 
-const renderDotGrid = (dice, grid) => {
-  grid.forEach((cell) => dice.appendChild(cell));
-};
-
-const renderDice = (diceId, value) => {
+const renderDie = (diceId, value) => {
   const dice = document.getElementById(diceId);
-  dice.innerHTML = "";
-
   const positions = diceDotMap[value];
-
   const dotGrid = createDotGrid(positions);
-  renderDotGrid(dice, dotGrid);
 
-  restartAnimation(dice, "dice");
+  dice.replaceChildren(...dotGrid);
 };
 
 const renderBoard = (hexes) => {
@@ -189,8 +177,8 @@ const renderBoard = (hexes) => {
   tilescontainer.replaceChildren(...tiles);
 };
 
-const renderBothDice = (diceRoll) => {
-  ["dice1", "dice2"].forEach((diceId, i) => renderDice(diceId, diceRoll[i]));
+const renderDice = (diceRoll) => {
+  ["dice1", "dice2"].forEach((diceId, i) => renderDie(diceId, diceRoll[i]));
 };
 
 const cloneTemplateElement = (id) => {
@@ -431,41 +419,43 @@ const addListener = (elementId, listener) => {
 
 const goBack = () => (globalThis.location = "#button-container");
 
-const removeListener = (elementId, listener) => {
+const addClassToElement = (elementId, className) => {
   const element = document.querySelector(elementId);
-  element.removeEventListener("click", listener);
+  element.classList.add(className);
 };
 
-const removeAllPlayerListener = () => {
-  removeListener("#back-btn", goBack);
-  removeListener("#close-btn", closeTradeOptions);
-  removeListener("#maritime-btn", navigateToMaritimeTrade);
-  removeListener("#pass-btn", passTurn);
-  removeListener("#trade", openTradeCenter);
+const removeClassFromElement = (elementId, className) => {
+  const element = document.querySelector(elementId);
+  element.classList.remove(className);
 };
 
-const applyPlayerActions = () => {
-  removeAllPlayerListener();
+const applyPlayerActions = ({ canTrade }) => {
+  const playerActionIcons = ["#trade", "#pass-btn"];
+
+  if (canTrade) {
+    playerActionIcons.forEach((id) => removeClassFromElement(id, "disable"));
+    return;
+  }
+
+  playerActionIcons.forEach((id) => addClassToElement(id, "disable"));
+};
+
+const addTradeListeners = () => {
+  addListener("#trade", openTradeCenter);
+  addListener("#maritime-btn", navigateToMaritimeTrade);
+};
+
+const addNavigation = () => {
+  addListener("#pass-btn", passTurn);
   addListener("#back-btn", goBack);
   addListener("#close-btn", closeTradeOptions);
-
-  const myId = globalThis.gameState.players.me.id;
-  const currentPlayerId = globalThis.gameState.currentPlayerId;
-  const gamePhase = globalThis.gameState.gamePhase;
-  const isDiceRolled = !globalThis.gameState.availableActions?.canRoll;
-  
-
-  if (myId === currentPlayerId && gamePhase !== "setup" && isDiceRolled) {
-    addListener("#trade", openTradeCenter)
-    addListener('#maritime-btn', navigateToMaritimeTrade);
-    addListener('#pass-btn', passTurn);
-  }
 };
 
 const addEventListeners = (gameState) => {
   addRollDiceEvent();
   addBuildEvent(gameState.players.me);
-  applyPlayerActions();
+  addNavigation();
+  addTradeListeners();
 };
 
 const renderStructures = (structures) => {
@@ -486,7 +476,7 @@ const renderPieces = (gameState) => {
 const renderElements = (gameState) => {
   renderPieces(gameState);
   renderPlayersData(gameState.players);
-  renderBothDice(gameState.diceRoll);
+  renderDice(gameState.diceRoll);
   displayPlayerTurn(gameState);
 };
 
@@ -495,9 +485,10 @@ const poll = () => {
     const response = await fetch("/game/gameData");
     const gameState = await response.json();
     globalThis.gameState = gameState;
+
     renderElements(gameState);
-    applyPlayerActions();
-  }, 2000);
+    applyPlayerActions(gameState.availableActions);
+  }, 1000);
 };
 
 const main = async () => {
@@ -507,6 +498,7 @@ const main = async () => {
   globalThis.gameState = gameState;
   addEventListeners(gameState);
   renderBoard(gameState.board.hexes);
+  applyPlayerActions(gameState.availableActions);
   poll();
 };
 

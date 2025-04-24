@@ -1,3 +1,6 @@
+set -e
+git stash
+
 deno task lint
 lintStatus=$?
 if [ $lintStatus -ne 0 ]; then
@@ -13,3 +16,6 @@ if [ $fmtStatus -ne 0 ]; then
 fi
 
 deno task coverage
+set +e
+git stash pop
+echo "Done"
