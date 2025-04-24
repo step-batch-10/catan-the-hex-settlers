@@ -17,20 +17,20 @@ function* coordinates(ar) {
 }
 
 const createSvgElement = (svgElement) => {
-  const svgNS = 'http://www.w3.org/2000/svg';
+  const svgNS = "http://www.w3.org/2000/svg";
 
   return document.createElementNS(svgNS, svgElement);
 };
 
 const createImageTag = (imageFile, { x, y, width, height, transform }) => {
-  const image = createSvgElement('image');
+  const image = createSvgElement("image");
 
-  image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', imageFile);
-  image.setAttribute('x', x);
-  image.setAttribute('y', y);
-  image.setAttribute('width', width);
-  image.setAttribute('height', height);
-  image.setAttribute('transform', transform);
+  image.setAttributeNS("http://www.w3.org/1999/xlink", "href", imageFile);
+  image.setAttribute("x", x);
+  image.setAttribute("y", y);
+  image.setAttribute("width", width);
+  image.setAttribute("height", height);
+  image.setAttribute("transform", transform);
 
   return image;
 };
@@ -42,7 +42,7 @@ const createTerrainImage = (terrain) => {
     y: 10,
     width: 90,
     height: 110,
-    transform: 'translate(-155,-237.5)',
+    transform: "translate(-155,-237.5)",
   });
 };
 
@@ -53,13 +53,13 @@ const createTokenImage = (terrainNumber) => {
     y: 0,
     width: 36,
     height: 36,
-    transform: 'translate(-120,-190)',
+    transform: "translate(-120,-190)",
   });
 };
 
 const createTileElement = (tile, coord) => {
-  const header = createSvgElement('g');
-  header.setAttribute('transform', `translate(${coord.x}, ${coord.y})`);
+  const header = createSvgElement("g");
+  header.setAttribute("transform", `translate(${coord.x}, ${coord.y})`);
 
   const terrainImg = createTerrainImage(tile.terrain);
   header.appendChild(terrainImg);
@@ -85,44 +85,44 @@ const appendText = (template, elementId, text) => {
 };
 
 const textDecStyle = (hasSpecialCard) =>
-  (hasSpecialCard ? 'no-' : '') + 'line-through';
+  (hasSpecialCard ? "no-" : "") + "line-through";
 
 const setSpecialCardsStyles = (cloneTemplate, player) => {
-  const largestArmy = cloneTemplate.getElementById('largest-army');
+  const largestArmy = cloneTemplate.getElementById("largest-army");
   largestArmy.classList.add(textDecStyle(player.hasLargestArmy));
 
-  const longestRoad = cloneTemplate.getElementById('longest-road');
+  const longestRoad = cloneTemplate.getElementById("longest-road");
   longestRoad.classList.add(textDecStyle(player.hasLongestRoad));
 };
 
 const createProfileCard = (player) => {
-  const cloneTemplate = cloneTemplateElement('#info-box-template');
-  const color = cloneTemplate.querySelector('#color');
+  const cloneTemplate = cloneTemplateElement("#info-box-template");
+  const color = cloneTemplate.querySelector("#color");
   const resourceCount = player.resources;
 
   color.style.backgroundColor = player.color;
 
   setSpecialCardsStyles(cloneTemplate, player);
-  appendText(cloneTemplate, '#player-name', player.name);
-  appendText(cloneTemplate, '#vp', player.victoryPoints);
-  appendText(cloneTemplate, '#dev-cards', player.devCards);
-  appendText(cloneTemplate, '#resources', resourceCount);
+  appendText(cloneTemplate, "#player-name", player.name);
+  appendText(cloneTemplate, "#vp", player.victoryPoints);
+  appendText(cloneTemplate, "#dev-cards", player.devCards);
+  appendText(cloneTemplate, "#resources", resourceCount);
 
   return cloneTemplate;
 };
 
-const displayResourceCount = ({ sheep, wood, brick, ore, wheat }) => {
-  appendText(document, '#ore', ore);
-  appendText(document, '#wood', wood);
-  appendText(document, '#sheep', sheep);
-  appendText(document, '#brick', brick);
-  appendText(document, '#wheat', wheat);
+const displayResourceCount = ({ wool, lumber, brick, ore, grain }) => {
+  appendText(document, "#ore", ore);
+  appendText(document, "#lumber", lumber);
+  appendText(document, "#wool", wool);
+  appendText(document, "#brick", brick);
+  appendText(document, "#grain", grain);
 };
 
 const renderPlayerPanel = (player) => {
-  appendText(document, '#player-name', player.name);
+  appendText(document, "#player-name", player.name);
 
-  const color = document.querySelector('#color');
+  const color = document.querySelector("#color");
   color.style.backgroundColor = player.color;
 
   displayResourceCount(player.resources);
@@ -131,8 +131,8 @@ const renderPlayerPanel = (player) => {
 const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
 
-  const list = document.querySelector('#player-list');
-  list.innerHTML = '';
+  const list = document.querySelector("#player-list");
+  list.innerHTML = "";
   players.others.forEach((player) => {
     const template = createProfileCard(player);
     list.append(template);
@@ -157,9 +157,9 @@ const restartAnimation = (dice, className) => {
 const createDotGrid = (positions) => {
   const grid = [];
   for (let i = 0; i < 9; i++) {
-    const cell = document.createElement('div');
+    const cell = document.createElement("div");
     if (positions.includes(i)) {
-      cell.classList.add('dot');
+      cell.classList.add("dot");
     }
     grid.push(cell);
   }
@@ -172,25 +172,25 @@ const renderDotGrid = (dice, grid) => {
 
 const renderDice = (diceId, value) => {
   const dice = document.getElementById(diceId);
-  dice.innerHTML = '';
+  dice.innerHTML = "";
 
   const positions = diceDotMap[value];
 
   const dotGrid = createDotGrid(positions);
   renderDotGrid(dice, dotGrid);
 
-  restartAnimation(dice, 'dice');
+  restartAnimation(dice, "dice");
 };
 
 const renderBoard = (hexes) => {
-  const tilescontainer = document.querySelector('#tilesContainer');
+  const tilescontainer = document.querySelector("#tilesContainer");
   const tiles = generateTiles(hexes);
 
   tilescontainer.replaceChildren(...tiles);
 };
 
 const renderBothDice = (diceRoll) => {
-  ['dice1', 'dice2'].forEach((diceId, i) => renderDice(diceId, diceRoll[i]));
+  ["dice1", "dice2"].forEach((diceId, i) => renderDice(diceId, diceRoll[i]));
 };
 
 const cloneTemplateElement = (id) => {
@@ -216,26 +216,26 @@ const displayPlayerTurn = (gameState) => {
     ? `current player - ${gameState.currentPlayer}`
     : `your turn`;
 
-  showMessage('#current-player', '.player-turn', msg);
+  showMessage("#current-player", ".player-turn", msg);
 };
 
 const createMaritimeTradeCenter = () => {
   const resources = globalThis.gameState.players.me.resources;
   const available = Object.entries(resources).filter(
-    (resource) => resource[1] >= 4,
+    (resource) => resource[1] >= 4
   );
 
-  const tradeContainer = cloneTemplateElement('#tradeWithBank');
+  const tradeContainer = cloneTemplateElement("#tradeWithBank");
 
-  const resourceContainer = tradeContainer.querySelector('#available-resource');
+  const resourceContainer = tradeContainer.querySelector("#available-resource");
   const className =
-    available.length > 3 ? `items-${available.length}` : 'items-3';
+    available.length > 3 ? `items-${available.length}` : "items-3";
 
   resourceContainer.classList.add(className);
 
   const availableElements = available.map(([resourceName]) => {
-    const image = document.createElement('img');
-    image.classList.add('card');
+    const image = document.createElement("img");
+    image.classList.add("card");
     image.id = `resource-${resourceName}`;
     image.src = resourceCards(resourceName);
 
@@ -248,30 +248,31 @@ const createMaritimeTradeCenter = () => {
 };
 
 const addListenerToCard = () => {
-  const cards = document.querySelectorAll('.card');
+  const cards = document.querySelectorAll(".card");
   cards.forEach((card) =>
-    card.addEventListener('click', (e) =>
-      e.target.classList.toggle('card-selected'),
-    ),
+    card.addEventListener("click", (e) =>
+      e.target.classList.toggle("card-selected")
+    )
   );
 };
 
 const tradeParser = (parsedCards, card) => {
   const action =
-    card.parentElement.id === 'return-resource'
-      ? 'incomingResources'
-      : 'outgoingResources';
-  const cardName = card.id.split('-')[1];
+    card.parentElement.id === "return-resource"
+      ? "incomingResources"
+      : "outgoingResources";
+  const cardName = card.id.split("-")[1];
 
-  parsedCards[action][cardName] = action === 'outgoingResources' ? 4 : 1;
+  parsedCards[action][cardName] = action === "outgoingResources" ? 4 : 1;
 
   return parsedCards;
-}
+};
 
 const parseCards = (cards) => {
-  return cards
-    .reduce(tradeParser, { outgoingResources: {}, incomingResources: {} },
-    );
+  return cards.reduce(tradeParser, {
+    outgoingResources: {},
+    incomingResources: {},
+  });
 };
 
 const isValidTrade = (trades) => {
@@ -280,37 +281,35 @@ const isValidTrade = (trades) => {
   const incomingResourcesCount = Object.keys(incomingResources).length;
 
   if (outgoingResourcesCount <= 0)
-    throw new Error("Please select a resource to trade away...")
+    throw new Error("Please select a resource to trade away...");
   if (incomingResourcesCount <= 0)
-    throw new Error("Please select a resource in return...")
-}
+    throw new Error("Please select a resource in return...");
+};
 
 const tradeWithBank = async (_e) => {
-  
   try {
-    const selectedCards = [...document.querySelectorAll('.card-selected')];
-    const trades = parseCards(selectedCards)
-    isValidTrade(trades)
+    const selectedCards = [...document.querySelectorAll(".card-selected")];
+    const trades = parseCards(selectedCards);
+    isValidTrade(trades);
 
     const body = JSON.stringify(trades);
-    const response = await fetch('/game/trade/maritime', {
+    const response = await fetch("/game/trade/maritime", {
       headers: {
-        'content-type': 'application/json',
+        "content-type": "application/json",
       },
-      method: 'POST',
+      method: "POST",
       body,
     });
 
     if (response.status === 200) {
-      document.querySelector('#floating-trade-menu').style.display = 'none';
-      const MTtrade = document.querySelector('#MTtrade-container');
+      document.querySelector("#floating-trade-menu").style.display = "none";
+      const MTtrade = document.querySelector("#MTtrade-container");
       MTtrade.remove();
-      globalThis.location = '#button-container';
+      globalThis.location = "#button-container";
     }
-  }
-  catch (e) {
-    console.log("showing message")
-    const msg = showMessage('#message-container', '.invalid-msg', e.message);
+  } catch (e) {
+    console.log("showing message");
+    const msg = showMessage("#message-container", ".invalid-msg", e.message);
     setTimeout(() => {
       msg.remove();
     }, 2 * 1000);
@@ -319,58 +318,57 @@ const tradeWithBank = async (_e) => {
 
 const navigateToMaritimeTrade = () => {
   const maritimeTraderContainer = createMaritimeTradeCenter();
-  const tradesContents = document.querySelector('#trade-contents');
+  const tradesContents = document.querySelector("#trade-contents");
 
   tradesContents.appendChild(maritimeTraderContainer);
-  globalThis.location = '#MTtrade-container';
-  const confirmBtn = document.querySelector('#trade-confirm-btn');
+  globalThis.location = "#MTtrade-container";
+  const confirmBtn = document.querySelector("#trade-confirm-btn");
   addListenerToCard();
-  confirmBtn.addEventListener('click', tradeWithBank);
+  confirmBtn.addEventListener("click", tradeWithBank);
 };
 
 const openTradeCenter = () => {
-  const tradesMenu = document.querySelector('#floating-trade-menu');
-  tradesMenu.style.display = 'block';
+  const tradesMenu = document.querySelector("#floating-trade-menu");
+  tradesMenu.style.display = "block";
 };
 
-
 const rollDiceHandler = async () => {
-  const dice = await fetch('/game/dice/can-roll').then((res) => res.json());
+  const dice = await fetch("/game/dice/can-roll").then((res) => res.json());
   if (!dice.canRoll) return;
-  await fetch('game/roll-dice', { method: 'POST' });
+  await fetch("game/roll-dice", { method: "POST" });
 };
 
 const addRollDiceEvent = () => {
-  const diceContainer = document.querySelector('.dice-container');
-  diceContainer.addEventListener('click', rollDiceHandler);
+  const diceContainer = document.querySelector(".dice-container");
+  diceContainer.addEventListener("click", rollDiceHandler);
 };
 
 const buildAt = async (targetElementId, pieceType) => {
   const fd = new FormData();
-  fd.set('id', targetElementId);
+  fd.set("id", targetElementId);
 
   return await fetch(`/game/build/${pieceType}`, {
     body: fd,
-    method: 'POST',
+    method: "POST",
   });
 };
 
 const isValidBuilt = async (pieceType, fd) => {
   const { canBuild } = await fetch(`/game/can-build/${pieceType}`, {
     body: fd,
-    method: 'POST',
+    method: "POST",
   }).then((r) => r.json());
 
   return canBuild;
 };
 
 const isPieceTypeValid = (pieceType) =>
-  new Set(['vertex', 'edge']).has(pieceType);
+  new Set(["vertex", "edge"]).has(pieceType);
 
 const highlightElement = (element, currentPlayer) => {
   element.style.fill = currentPlayer.color;
   element.style.opacity = 0.4;
-  element.classList.add('highlight');
+  element.classList.add("highlight");
 };
 
 const lowLightElement = (element, className) => {
@@ -388,11 +386,11 @@ const getBuildValidationData = async (event) => {
   if (!isPieceTypeValid(pieceType)) return null;
 
   const formData = new FormData();
-  formData.set('id', targetElementId);
+  formData.set("id", targetElementId);
 
   const canBuild = await isValidBuilt(pieceType, formData);
 
-  if (!canBuild) return element.classList.add('block');
+  if (!canBuild) return element.classList.add("block");
   return { element, targetElementId, pieceType };
 };
 
@@ -411,46 +409,45 @@ const canBuildHandler = (currentPlayer) => async (event) => {
   const { element } = validationData;
 
   highlightElement(element, currentPlayer);
-  setTimeout(lowLightElement(element, 'highlight'), 1000);
+  setTimeout(lowLightElement(element, "highlight"), 1000);
 };
 
 const addBuildEvent = (currentPlayer) => {
-  const svg = document.getElementById('svg20');
-  svg.addEventListener('click', build);
-  svg.addEventListener('mouseover', canBuildHandler(currentPlayer));
+  const svg = document.getElementById("svg20");
+  svg.addEventListener("click", build);
+  svg.addEventListener("mouseover", canBuildHandler(currentPlayer));
 };
 
-const passTurn = async () => await fetch("/game/changeTurn", { method: "POST" })
-  
+const passTurn = async () =>
+  await fetch("/game/changeTurn", { method: "POST" });
 
-const closeTradeOptions = () => 
-    document.querySelector("#floating-trade-menu").style.display = "none";
+const closeTradeOptions = () =>
+  (document.querySelector("#floating-trade-menu").style.display = "none");
 
 const addListener = (elementId, listener) => {
   const element = document.querySelector(elementId);
-  element.addEventListener('click', listener);
-}
+  element.addEventListener("click", listener);
+};
 
-const goBack = () => globalThis.location = "#button-container";
+const goBack = () => (globalThis.location = "#button-container");
 
 const removeListener = (elementId, listener) => {
   const element = document.querySelector(elementId);
-  element.removeEventListener('click', listener);
-}
+  element.removeEventListener("click", listener);
+};
 
 const removeAllPlayerListener = () => {
-  removeListener('#back-btn', goBack);
-  removeListener('#close-btn', closeTradeOptions);
-  removeListener('#maritime-btn', navigateToMaritimeTrade);
-  removeListener('#pass-btn', passTurn);
-  removeListener("#trade", openTradeCenter)
-}
-
+  removeListener("#back-btn", goBack);
+  removeListener("#close-btn", closeTradeOptions);
+  removeListener("#maritime-btn", navigateToMaritimeTrade);
+  removeListener("#pass-btn", passTurn);
+  removeListener("#trade", openTradeCenter);
+};
 
 const applyPlayerActions = () => {
   removeAllPlayerListener();
-  addListener('#back-btn', goBack);
-  addListener('#close-btn', closeTradeOptions);
+  addListener("#back-btn", goBack);
+  addListener("#close-btn", closeTradeOptions);
 
   const myId = globalThis.gameState.players.me.id;
   const currentPlayerId = globalThis.gameState.currentPlayerId;
@@ -465,7 +462,7 @@ const applyPlayerActions = () => {
   }
 };
 
-const addEventListeners = (gameState) =>  {
+const addEventListeners = (gameState) => {
   addRollDiceEvent();
   addBuildEvent(gameState.players.me);
   applyPlayerActions();
@@ -495,7 +492,7 @@ const renderElements = (gameState) => {
 
 const poll = () => {
   setInterval(async () => {
-    const response = await fetch('/game/gameData');
+    const response = await fetch("/game/gameData");
     const gameState = await response.json();
     globalThis.gameState = gameState;
     renderElements(gameState);
@@ -504,7 +501,7 @@ const poll = () => {
 };
 
 const main = async () => {
-  const response = await fetch('/game/gameState');
+  const response = await fetch("/game/gameState");
   const gameState = await response.json();
 
   globalThis.gameState = gameState;
