@@ -37,11 +37,16 @@ interface Resources {
   [key: string]: number;
 }
 
-interface DevCards {
+interface DevCardTypes {
   knight: number;
   'road-building': number;
   'year-of-plenty': number;
   monopoly: number;
+}
+
+interface DevCards {
+  owned: DevCardTypes;
+  played: DevCardTypes;
 }
 
 interface Components {
@@ -80,7 +85,7 @@ interface GameState {
 
 interface DistributeResourceData {
   playerId: string;
-  resource: string;
+  resource: keyof Resources;
   buildingType: string;
 }
 
@@ -99,9 +104,18 @@ interface TradeResources {
   outgoingResources: Resources;
 }
 
+export const defaultResources: Resources = {
+  wool: 0,
+  grain: 0,
+  ore: 0,
+  lumber: 0,
+  brick: 0,
+};
+
 export type {
   Components,
   DevCards,
+  DevCardTypes,
   DistributeResourceData,
   EdgeData,
   GameBoard,

@@ -31,12 +31,14 @@ export class Catan {
     city: { grain: 2, ore: 3 },
   };
   turn: { hasRolled: boolean };
+  supply: { resources: Resources; devCards: [] };
 
   constructor(
     gameId: string,
     players: Player[],
     board: Board,
     diceFn: (start?: number, end?: number) => number,
+    supply: { resources: Resources; devCards: [] },
   ) {
     this.diceFn = diceFn;
     this.gameId = gameId;
@@ -48,6 +50,7 @@ export class Catan {
     this.board = board;
     this.turns = 0;
     this.turn = { hasRolled: false };
+    this.supply = supply;
   }
 
   changePhaseToMain(): void {
@@ -133,6 +136,7 @@ export class Catan {
     const player = _.find(this.players, { id: playerId });
     const count = buildingType === 'city' ? 2 : 1;
     player.addResource(resource, count);
+    this.supply.resources[resource] -= count;
   }
 
   distributeResources(resourcesToBeDistributed: DistributeResourceData[]) {
@@ -447,5 +451,9 @@ export class Catan {
       this.canBuildRoad(edgeId) &&
       this.hasEnoughResources('road')
     );
+  }
+
+  playDevCard(cardType: string): void {
+    console.log(cardType);
   }
 }

@@ -276,7 +276,7 @@ const isValidTrade = (trades) => {
 
 const tradeWithBank = async (_e) => {
   try {
-    const selectedCards = [...document.querySelectorAll(".card-selected")];
+    const selectedCards = [...document.querySelectorAll('.card-selected')];
     const trades = parseCards(selectedCards);
     isValidTrade(trades);
 
@@ -298,6 +298,7 @@ const tradeWithBank = async (_e) => {
   } catch (e) {
     console.log("showing message");
     const msg = showMessage("#message-container", ".invalid-msg", e.message);
+
     setTimeout(() => {
       msg.remove();
     }, 2 * 1000);

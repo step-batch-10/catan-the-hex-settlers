@@ -16,7 +16,7 @@ describe("Player", () => {
     assertEquals(player.settlements.length, 0);
     assertEquals(player.cities.length, 0);
     assertEquals(player.resources.lumber, 0);
-    assertEquals(player.devCards.knight, 0);
+    assertEquals(player.devCards.owned.knight, 0);
   });
 
   it("should return win status", () => {
@@ -24,8 +24,9 @@ describe("Player", () => {
     assertEquals(player.hasWon(), true);
   });
 
-  it("should add resource", () => {
-    player.addResource("lumber", 2);
+
+  it('should add resource', () => {
+    player.addResource('lumber', 2);
     assertEquals(player.resources.lumber, 2);
 
     player.addResource("brick", 1);
@@ -42,6 +43,6 @@ describe("Player", () => {
     assertEquals(data.name, "Alice");
     assertEquals(data.color, "red");
     assertEquals(data.roads.length, 0);
-    assertEquals(data.devCards.knight, 0);
+    assertEquals(data.devCards.owned.knight, 0);
   });
 });

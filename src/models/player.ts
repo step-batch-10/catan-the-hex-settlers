@@ -31,10 +31,18 @@ export class Player {
     this.cities = [];
 
     this.devCards = {
-      knight: 0,
-      'road-building': 0,
-      'year-of-plenty': 0,
-      monopoly: 0,
+      owned: {
+        knight: 0,
+        'road-building': 0,
+        'year-of-plenty': 0,
+        monopoly: 0,
+      },
+      played: {
+        knight: 0,
+        'road-building': 0,
+        'year-of-plenty': 0,
+        monopoly: 0,
+      },
     };
 
     this.hasLongestRoad = false;
@@ -47,6 +55,7 @@ export class Player {
   }
 
   addResource(cardType: keyof Resources | string, count: number): void {
+    console.log(cardType, '----', cardType in this.resources);
     if (cardType in this.resources) this.resources[cardType] += count;
   }
 

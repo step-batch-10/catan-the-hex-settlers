@@ -1,11 +1,13 @@
-import { assertEquals, assert, assertFalse } from "assert";
-import { describe, it, beforeEach } from "testing/bdd";
-import type { VertexData, EdgeData } from "../src/types.ts";
-import { Catan } from "../src/models/catan.ts";
-import { Player } from "../src/models/player.ts";
-import { Board } from "../src/models/board.ts";
 import _ from "lodash";
 import { Vertex } from "../src/models/vertex.ts";
+import { assertEquals, assert, assertFalse } from 'assert';
+import { describe, it, beforeEach } from 'testing/bdd';
+import type { VertexData, EdgeData, Resources } from '../src/types.ts';
+import { Catan } from '../src/models/catan.ts';
+import { Player } from '../src/models/player.ts';
+import { Board } from '../src/models/board.ts';
+import { defaultResources } from "../src/types.ts";
+
 
 describe("Catan", () => {
   let catan: Catan;
@@ -18,7 +20,12 @@ describe("Catan", () => {
     players.push(new Player("p4", "Shalu", "white"));
     const board = new Board();
     board.createBoard();
-    catan = new Catan("game123", players, board, _.random);
+
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
+    };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it("should initialize the game correctly", () => {
@@ -228,7 +235,12 @@ describe("buildSettlement ", () => {
     players.push(new Player("p4", "Shalu", "white"));
     const board = new Board();
     board.createBoard();
-    catan = new Catan("game123", players, board, _.random);
+
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
+    };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it("should build the settlement for setup mode", () => {
@@ -410,7 +422,11 @@ describe("buildRoad", () => {
     players.push(new Player("p4", "Shalu", "white"));
     const board = new Board();
     board.createBoard();
-    catan = new Catan("game123", players, board, _.random);
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
+    };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it("should not be able to build road near other than the latest settlement", () => {
@@ -527,7 +543,11 @@ describe("distribute Resources", () => {
     players.push(new Player("p4", "Shalu", "white"));
     const board = new Board();
     board.createBoard();
-    catan = new Catan("game123", players, board, _.random);
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
+    };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it("should distribute resources for player1", () => {
@@ -536,6 +556,7 @@ describe("distribute Resources", () => {
     const diceRoll = catan.rollDice();
 
     assertEquals(diceRoll, [5, 5]);
+    console.log('added the resource');
     assertEquals(catan.players[0].resources.lumber, 1);
   });
 
@@ -547,5 +568,35 @@ describe("distribute Resources", () => {
     });
 
     assertEquals(catan.players[0].resources.lumber, 2);
+  });
+});
+
+describe('longest army', () => {
+  let catan: Catan;
+
+  beforeEach(() => {
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
+    };
+    catan = new Catan('game123', players, board, _.random, supply);
+  });
+
+  it('should get the largest army card', () => {
+    const player = catan.players[0];
+    catan.currentPlayerIndex = 0;
+    catan.playDevCard('knight');
+    catan.currentPlayerIndex = 0;
+    catan.playDevCard('knight');
+    catan.currentPlayerIndex = 0;
+    catan.playDevCard('knight');
+    console.log(player.id);
   });
 });

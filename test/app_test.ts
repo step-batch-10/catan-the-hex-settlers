@@ -1,11 +1,12 @@
-import { Hono } from "hono";
-import { createApp } from "../src/app.ts";
-import { describe, it, beforeEach } from "testing/bdd";
-import { assertEquals, assert, assertNotEquals, assertFalse } from "assert";
-import { Catan } from "../src/models/catan.ts";
-import { Board } from "../src/models/board.ts";
-import { Player } from "../src/models/player.ts";
-import _ from "lodash";
+import { Hono } from 'hono';
+import { createApp } from '../src/app.ts';
+import { describe, it, beforeEach } from 'testing/bdd';
+import { assertEquals, assert, assertNotEquals, assertFalse } from 'assert';
+import { Catan } from '../src/models/catan.ts';
+import { Board } from '../src/models/board.ts';
+import { Player } from '../src/models/player.ts';
+import _ from 'lodash';
+import { defaultResources, Resources } from '../src/types.ts';
 
 describe("Catan App Routes", () => {
   let catan: Catan;
@@ -19,7 +20,11 @@ describe("Catan App Routes", () => {
     players.push(new Player("p4", "Shalu", "white"));
     const board = new Board();
     board.createBoard();
-    catan = new Catan("game123", players, board, _.random);
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
+    };
+    catan = new Catan('game123', players, board, _.random, supply);
     app = createApp(catan);
   });
 
@@ -123,6 +128,7 @@ describe("Catan App Routes", () => {
 
   it("should Update the players resources", async () => {
     const player = _.find(catan.players, { id: "p1" });
+
     player.resources.lumber = 3;
 
     const tradeResource = {

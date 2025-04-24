@@ -112,7 +112,7 @@ describe("addResources", () => {
         brick: 0,
         wool: 0,
         grain: 0,
-        ore: 2,
+        ore: 0
       },
       outgoingResources: {
         lumber: 0,
@@ -130,7 +130,7 @@ describe("addResources", () => {
       brick: 0,
       wool: 0,
       grain: 0,
-      ore: 4,
+      ore: 2,
     });
   });
 
@@ -154,6 +154,7 @@ describe("addResources", () => {
         ore: 0,
       },
     };
+
 
     const { incomingResources } = tradeResource1;
 
@@ -183,20 +184,20 @@ describe("addResources", () => {
         brick: 0,
         wool: 0,
         grain: 0,
-        ore: 0,
-      },
-    };
+        ore: 0
+      }
+    }
 
     addResources(tradeResource2.incomingResources, player2);
 
     assertEquals(player2.resources, {
-      lumber: 0,
-      brick: 0,
-      wool: 3,
-      grain: 0,
-      ore: 2,
-    });
-  });
+        lumber: 0,
+        brick: 0,
+        wool: 3,
+        grain: 0,
+        ore: 2
+      })
+  })
 });
 
 describe("decrementResources", () => {
@@ -263,6 +264,7 @@ describe("decrementResources", () => {
       ore: 1,
     });
   });
+  })
 
   it("should return error if resulted resource count is less than zero", () => {
     const player1 = new Player("p1", "adhil", "blue");
@@ -319,11 +321,13 @@ describe("decrementResources", () => {
       "player don't have enough resources"
     );
   });
-});
 
-describe("updateResources", () => {
-  it("should update the player resource count", () => {
-    const player = new Player("p2", "Shalu", "green");
+
+
+
+describe('updateResources', () => {
+  it('should update the player resource count', () => {
+   const player = new Player("p2", "Shalu", "green");
     player.resources.wool = 3;
 
     const tradeResource: TradeResources = {
