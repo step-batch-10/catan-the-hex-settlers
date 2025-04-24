@@ -83,14 +83,22 @@ export class Catan {
       this.players.length;
   }
 
+  private canProduce(hexId: string, rolledNumber: number): boolean {
+    const { hexes } = this.board;
+    const hex = hexes.get(hexId);
+    const isProducingTerrain = hex?.terrainNumber === rolledNumber;
+    const hasRobber = hex?.hasRobber;
+
+    return isProducingTerrain && !hasRobber;
+  }
+
   private getProducedResources(
     terrains: string[] | undefined,
     rolledNumber: number,
   ) {
-    const { board } = this;
-    const { hexes } = board;
-    const producedTerrains = terrains?.filter(
-      (hex) => hexes.get(hex)?.terrainNumber === rolledNumber,
+    const { hexes } = this.board;
+    const producedTerrains = terrains?.filter((hexId) =>
+      this.canProduce(hexId, rolledNumber)
     );
 
     return producedTerrains?.map((terrain) => hexes.get(terrain)?.resource);
@@ -157,15 +165,16 @@ export class Catan {
     this.distributeResources(needToDistributed);
   }
 
-  rollDice(): [number, number] {
-    const dice1 = this.diceFn(1, 6);
-    const dice2 = this.diceFn(1, 6);
-    this.diceRoll = [dice1, dice2];
+  rollDice(): object {
+    const dice1Value = this.diceFn(1, 6);
+    const dice2Value = this.diceFn(1, 6);
+    this.diceRoll = [dice1Value, dice2Value];
+    const isRobber = dice1Value + dice2Value === 7;
     this.turns++;
     this.turn.hasRolled = true;
     this.distributeResourcesForDiceRoll();
 
-    return this.diceRoll;
+    return { rolled: this.diceRoll, isRobber };
   }
 
   isInitialSetup(): boolean {
@@ -357,6 +366,23 @@ export class Catan {
       this.hasAlreadyRolled();
 
     return { canTrade };
+  }
+
+  private isDesert(hexId: string) {
+    return this.board.hexes.get(hexId)?.terrain === 'desert';
+  }
+
+  validateRobberPosition(hexId: string): boolean {
+    const isSameHex = this.board.robberPosition === hexId;
+    const isDesert = this.isDesert(hexId);
+
+    return !(isSameHex && isDesert);
+  }
+
+  blockResource(hexId: string) {
+    const hex = this.board.updateRobber(hexId);
+
+    return { hex };
   }
 
   getGameState(playerId: string): GameState {

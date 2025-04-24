@@ -84,6 +84,17 @@ const appendText = (template, elementId, text) => {
   element.textContent = text;
 };
 
+const textDecStyle = (hasSpecialCard) =>
+  (hasSpecialCard ? 'no-' : '') + 'line-through';
+
+const setSpecialCardsStyles = (cloneTemplate, player) => {
+  const largestArmy = cloneTemplate.getElementById('largest-army');
+  largestArmy.classList.add(textDecStyle(player.hasLargestArmy));
+
+  const longestRoad = cloneTemplate.getElementById('longest-road');
+  longestRoad.classList.add(textDecStyle(player.hasLongestRoad));
+};
+
 const createProfileCard = (player) => {
   const cloneTemplate = cloneTemplateElement('#info-box-template');
   const color = cloneTemplate.querySelector('#color');
@@ -91,12 +102,11 @@ const createProfileCard = (player) => {
 
   color.style.backgroundColor = player.color;
 
+  setSpecialCardsStyles(cloneTemplate, player);
   appendText(cloneTemplate, '#player-name', player.name);
   appendText(cloneTemplate, '#vp', player.victoryPoints);
   appendText(cloneTemplate, '#dev-cards', player.devCards);
   appendText(cloneTemplate, '#resources', resourceCount);
-  appendText(cloneTemplate, '#largest-army', player.largestArmyCount);
-  appendText(cloneTemplate, '#longest-road', player.longestRoadCount);
 
   return cloneTemplate;
 };
@@ -107,26 +117,6 @@ const displayResourceCount = ({ wool, lumber, brick, ore, grain }) => {
   appendText(document, '#wool', wool);
   appendText(document, '#brick', brick);
   appendText(document, '#grain', grain);
-};
-
-const displaySpecialCardStat = (id, count) => {
-  const counter = document.querySelector(`#${id}`);
-  counter.textContent = count;
-};
-
-const updateSpecialCardsStats = (largestArmyCount, longestRoadCount) => {
-  displaySpecialCardStat('largest-army-count', largestArmyCount);
-  displaySpecialCardStat('longest-road-count', longestRoadCount);
-};
-
-const disableElement = (id) => {
-  const element = document.querySelector(`#${id}`);
-  element.classList.add('disable');
-};
-
-const renderSpecialCards = (hasLongestRoad, hasLargestArmy) => {
-  if (!hasLargestArmy) disableElement('largest-army-icon');
-  if (!hasLongestRoad) disableElement('longest-road-icon');
 };
 
 const renderPlayerPanel = (player) => {
@@ -145,7 +135,7 @@ const renderPlayersData = (players) => {
 
   const list = document.querySelector('#player-list');
   const profileCards = players.others.map((player) =>
-    createProfileCard(player)
+    createProfileCard(player),
   );
 
   list.replaceChildren(...profileCards);
@@ -222,7 +212,7 @@ const displayPlayerTurn = (gameState) => {
 const createMaritimeTradeCenter = () => {
   const resources = globalThis.gameState.players.me.resources;
   const available = Object.entries(resources).filter(
-    (resource) => resource[1] >= 4
+    (resource) => resource[1] >= 4,
   );
 
   const tradeContainer = cloneTemplateElement('#tradeWithBank');
@@ -262,6 +252,7 @@ const tradeParser = (parsedCards, card) => {
       ? 'incomingResources'
       : 'outgoingResources';
   const cardName = card.id.split('-')[1];
+  
 
   parsedCards[action][cardName] = action === 'outgoingResources' ? 4 : 1;
 
@@ -333,10 +324,18 @@ const openTradeCenter = () => {
   tradesMenu.style.display = 'block';
 };
 
+const handleRobberCase = () => {
+  addDisableClass(['#trade', '#pass-btn']);
+};
+
 const rollDiceHandler = async () => {
   const dice = await fetch('/game/dice/can-roll').then((res) => res.json());
   if (!dice.canRoll) return;
-  await fetch('game/roll-dice', { method: 'POST' });
+  const res = await fetch('game/roll-dice', { method: 'POST' });
+
+  const { isRobber } = await res.json();
+
+  if (isRobber) handleRobberCase();
 };
 
 const addRollDiceEvent = () => {
@@ -442,15 +441,23 @@ const removeClassFromElement = (elementId, className) => {
   element.classList.remove(className);
 };
 
+const addDisableClass = (playerActionIcons) => {
+  playerActionIcons.forEach((id) => addClassToElement(id, 'disable'));
+};
+
+const removeDisableClass = (playerActionIcons) => {
+  playerActionIcons.forEach((id) => removeClassFromElement(id, 'disable'));
+};
+
 const applyPlayerActions = ({ canTrade }) => {
   const playerActionIcons = ['#trade', '#pass-btn'];
 
   if (canTrade) {
-    playerActionIcons.forEach((id) => removeClassFromElement(id, 'disable'));
+    removeDisableClass(playerActionIcons);
     return;
   }
 
-  playerActionIcons.forEach((id) => addClassToElement(id, 'disable'));
+  addDisableClass(playerActionIcons);
 };
 
 const addTradeListeners = () => {

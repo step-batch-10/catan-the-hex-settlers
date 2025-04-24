@@ -40,7 +40,7 @@ describe('Catan', () => {
     catan.diceFn = () => 5;
     const diceRoll = catan.rollDice();
 
-    assertEquals(diceRoll, [5, 5]);
+    assertEquals(diceRoll, { isRobber: false, rolled: [5, 5] });
     assertEquals(catan.turns, 1);
   });
 
@@ -220,6 +220,25 @@ describe('Catan', () => {
     const availableActions = catan.getAvailableActions('p1');
 
     assert(availableActions.canTrade);
+  });
+
+  it('should block resource if valid hex', () => {
+  const hexId = 'h0_1';
+    const { hex } = catan.blockResource(hexId);
+
+    assert(catan.board.hexes.get(hexId)?.hasRobber);
+    assertEquals(catan.board.robberPosition, hexId);
+    assertEquals(hex, hexId);
+  });
+
+  it('should be true if robber placement is in different hex', () => {
+    const canPlace = catan.validateRobberPosition('h0_1');
+    assert(canPlace);
+  });
+
+  it('should be false if robber placement is in same hex', () => {
+    const canPlace = catan.validateRobberPosition('h0_2');
+    assertFalse(canPlace);
   });
 });
 
@@ -554,7 +573,7 @@ describe('distribute Resources', () => {
     catan.players[0].settlements.push('v-1,1|-1,2|0,1');
     const diceRoll = catan.rollDice();
 
-    assertEquals(diceRoll, [5, 5]);
+    assertEquals(diceRoll, { isRobber: false, rolled: [5, 5] });
     assertEquals(catan.players[0].resources.lumber, 1);
   });
 

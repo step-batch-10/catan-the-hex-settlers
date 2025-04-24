@@ -1,4 +1,4 @@
-import { assertEquals, assert } from 'assert';
+import { assertEquals, assert, assertFalse } from 'assert';
 import { Board } from '../src/models/board.ts';
 import { describe, it } from 'testing/bdd';
 
@@ -41,5 +41,19 @@ describe('Board', () => {
     assert(boardData.hexes.length > 0, 'Hexes data should be returned.');
     assert(boardData.vertices.length > 0, 'Vertices data should be returned.');
     assert(boardData.edges.length > 0, 'Edges data should be returned.');
+  });
+
+  it('should update the robber for terrain hex', () => {
+    const isUpdated = board.updateRobber('h0_1');
+    assert(isUpdated);
+    assert(board.hexes.get('h0_1')?.hasRobber);
+    assertFalse(board.hexes.get('h0_2')?.hasRobber);
+  });
+
+  it('should not update the robber for terrain hex if id invlaid', () => {
+    board.updateRobber('h0');
+
+    assertEquals(board.robberPosition, 'h0_1')
+    assertFalse(board.hexes.get('h0_2')?.hasRobber);
   });
 });

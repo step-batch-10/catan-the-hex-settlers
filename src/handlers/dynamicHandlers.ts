@@ -21,7 +21,7 @@ export const rollDice = (ctx: Context): Response => {
   const game = ctx.get('game');
   const rolled = game.rollDice();
 
-  return ctx.json({ rolled });
+  return ctx.json({ ...rolled });
 };
 
 export const canRoll = (ctx: Context): Response => {

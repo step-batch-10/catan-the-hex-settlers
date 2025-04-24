@@ -3,6 +3,7 @@ import { Vertex } from './vertex.ts';
 import { hexes } from '../data/hexes.ts';
 import { Edge } from './edge.ts';
 import type { EdgeData, GameBoard, HexData, VertexData } from '../types.ts';
+import _ from 'lodash';
 
 export class Board {
   hexes: Map<string, Hex>;
@@ -10,6 +11,7 @@ export class Board {
   edges: Map<string, Edge>;
   settlements: Map<string, string>;
   roads: Map<string, string>;
+  robberPosition: string;
 
   constructor() {
     this.hexes = new Map();
@@ -17,6 +19,7 @@ export class Board {
     this.edges = new Map();
     this.settlements = new Map();
     this.roads = new Map();
+    this.robberPosition = 'h0_2';
   }
 
   private createVertex(q: number, r: number, cornerIndex: number): Vertex {
@@ -93,7 +96,22 @@ export class Board {
     const hexesData = this.getHexes();
     const vertices = this.getVertices();
     const edges = this.getEdges();
+    const robber = this.robberPosition;
 
-    return { hexes: hexesData, vertices, edges };
+    return { hexes: hexesData, vertices, edges, robber };
+  }
+
+  updateRobber(hexId: string): string {
+    const currentHex = this.hexes.get(hexId) || { hasRobber: 'No' };
+    const hexesObj = Object.fromEntries(this.hexes);
+    const previoushex = _.find(hexesObj, { hasRobber: true });
+
+    if (!currentHex.hasRobber) {
+      this.robberPosition = hexId;
+      previoushex.hasRobber = false;
+      currentHex.hasRobber = true;
+    }
+
+    return hexId;
   }
 }

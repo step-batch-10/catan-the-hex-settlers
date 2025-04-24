@@ -26,6 +26,7 @@ interface GameBoard {
   hexes: object[];
   vertices: VertexData[];
   edges: EdgeData[];
+  robber: string;
 }
 
 interface Resources {
