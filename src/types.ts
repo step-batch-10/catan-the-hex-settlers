@@ -29,10 +29,10 @@ interface GameBoard {
 }
 
 interface Resources {
-  wood: number;
+  lumber: number;
   brick: number;
-  sheep: number;
-  wheat: number;
+  wool: number;
+  grain: number;
   ore: number;
   [key: string]: number;
 }

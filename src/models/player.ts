@@ -19,10 +19,10 @@ export class Player {
     this.color = color;
 
     this.resources = {
-      wood: 0,
+      lumber: 0,
       brick: 0,
-      sheep: 0,
-      wheat: 0,
+      wool: 0,
+      grain: 0,
       ore: 0,
     };
 

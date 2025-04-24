@@ -26,9 +26,9 @@ export class Catan {
   turns: number;
   diceFn: RollDice;
   private static structuresCost = {
-    road: { brick: 1, wood: 1 },
-    settlement: { brick: 1, wood: 1, wheat: 1, sheep: 1 },
-    city: { wheat: 2, ore: 3 },
+    road: { brick: 1, lumber: 1 },
+    settlement: { brick: 1, lumber: 1, grain: 1, wool: 1 },
+    city: { grain: 2, ore: 3 },
   };
   turn: { hasRolled: boolean };
 
