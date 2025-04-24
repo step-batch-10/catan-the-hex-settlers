@@ -43,6 +43,7 @@ interface DevCardTypes {
   'road-building': number;
   'year-of-plenty': number;
   monopoly: number;
+  'victory-point': number;
 }
 
 interface DevCards {
@@ -99,7 +100,7 @@ type RollDice = (start?: number, end?: number) => number;
 type GamePhase = 'setup' | 'main' | 'end';
 type PlayerAssets = 'road' | 'settlement' | 'city' | 'devCard';
 type ResourceProduction = (keyof Resources | undefined)[] | undefined;
-
+type RandomCard = (availableCards: object[]) => string;
 interface TradeResources {
   incomingResources: Resources;
   outgoingResources: Resources;
@@ -108,6 +109,11 @@ interface TradeResources {
 interface SpecialCardOwners {
   largestArmy: number | null;
   longestRoad: number | null;
+}
+
+interface Supply {
+  resources: Resources;
+  devCards: DevCardTypes;
 }
 
 export const defaultResources: Resources = {
@@ -131,10 +137,12 @@ export type {
   PlayerAssets,
   PlayerData,
   PlayersList,
+  RandomCard,
   ResourceProduction,
   Resources,
   RollDice,
   SpecialCardOwners,
+  Supply,
   TradeResources,
   VertexData,
 };

@@ -11,10 +11,12 @@ import type {
   GameState,
   PlayerAssets,
   PlayersList,
+  RandomCard,
   ResourceProduction,
   Resources,
   RollDice,
   SpecialCardOwners,
+  Supply,
 } from '../types.ts';
 
 export class Catan {
@@ -27,6 +29,8 @@ export class Catan {
   board: Board;
   turns: number;
   diceFn: RollDice;
+  randomCard: RandomCard;
+
   private static playerAssets = {
     road: { brick: 1, lumber: 1 },
     settlement: { brick: 1, lumber: 1, grain: 1, wool: 1 },
@@ -34,24 +38,26 @@ export class Catan {
     devCard: { ore: 1, grain: 1, wool: 1 },
   };
   turn: { hasRolled: boolean };
-  supply: { resources: Resources; devCards: [] };
   largestArmyCount: number;
   specialCardOwners: SpecialCardOwners;
+  supply: Supply;
 
   constructor(
     gameId: string,
     players: Player[],
     board: Board,
     diceFn: (start?: number, end?: number) => number,
-    supply: { resources: Resources; devCards: [] },
+    supply: Supply,
+    randomCard: RandomCard,
   ) {
-    this.diceFn = diceFn;
     this.gameId = gameId;
     this.players = players;
     this.currentPlayerIndex = 0;
     this.phase = 'setup';
     this.winner = null;
     this.diceRoll = [1, 1];
+    this.diceFn = diceFn;
+    this.randomCard = randomCard;
     this.board = board;
     this.turns = 0;
     this.turn = { hasRolled: false };
@@ -260,6 +266,15 @@ export class Catan {
     return true;
   }
 
+  private hasDevCards() {
+    const devCards = this.supply.devCards;
+    const totalCards = _.values(devCards).reduce(
+      (sum: number, count: number) => count + sum,
+    );
+
+    return totalCards > 0;
+  }
+
   private canBuildRoad(edge: string) {
     const isRoadOccupied = this.getEdge(edge)?.isOccupied();
     const hasConnectedSettlement = this.hasConnectedSettlement(edge);
@@ -289,7 +304,12 @@ export class Catan {
   }
 
   private deductResources(asset: PlayerAssets) {
+    if (!this.hasEnoughResources(asset)) {
+      throw new Error("You don't have enough resources");
+    }
+
     const playerResources = this.getCurrentPlayer().resources;
+
     for (const [res, count] of _.entries(Catan.playerAssets[asset])) {
       playerResources[res] -= count;
     }
@@ -305,6 +325,53 @@ export class Catan {
     this.isInitialSetup() ? this.changeTurn() : this.deductResources('road');
 
     return true;
+  }
+
+  validateBuyDevCard(playerId: string) {
+    if (!this.isCurrentPlayer(playerId)) {
+      throw new Error('You are not the current player');
+    }
+
+    if (!this.hasAlreadyRolled()) {
+      throw new Error("You haven't rolled the dice");
+    }
+
+    if (!this.hasDevCards()) throw new Error('There is no Development Card');
+  }
+
+  private updateSupply(randomCard: keyof DevCardTypes) {
+    const developmentCards = this.supply.devCards;
+    developmentCards[randomCard] -= 1;
+  }
+
+  private updatePlayerDevCards(randomCard: keyof DevCardTypes) {
+    const developmentCards = this.getCurrentPlayer().devCards.owned;
+    developmentCards[randomCard] += 1;
+  }
+
+  private getRandomDevCard() {
+    const availableCards = _.pickBy(
+      this.supply.devCards,
+      (count: number) => count > 0,
+    );
+    const randomCard = this.randomCard(_.keys(availableCards));
+
+    return randomCard;
+  }
+
+  buyDevCard(playerId: string) {
+    try {
+      this.validateBuyDevCard(playerId);
+      this.deductResources('devCard');
+      const randomCard = this.getRandomDevCard();
+      this.updateSupply(randomCard as keyof DevCardTypes);
+      this.updatePlayerDevCards(randomCard as keyof DevCardTypes);
+
+      return { isSucceed: true, result: randomCard, message: '' };
+    } catch (e) {
+      const error = e as Error;
+      return { isSucceed: false, result: '', message: error.message };
+    }
   }
 
   distributeInitialResources(

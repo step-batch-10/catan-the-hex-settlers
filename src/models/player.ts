@@ -43,12 +43,14 @@ export class Player {
         'road-building': 0,
         'year-of-plenty': 0,
         monopoly: 0,
+        'victory-point': 0,
       },
       played: {
         knight: 0,
         'road-building': 0,
         'year-of-plenty': 0,
         monopoly: 0,
+        'victory-point': 0,
       },
     };
 

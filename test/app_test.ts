@@ -6,7 +6,7 @@ import { Catan } from '../src/models/catan.ts';
 import { Board } from '../src/models/board.ts';
 import { Player } from '../src/models/player.ts';
 import _ from 'lodash';
-import { defaultResources, Resources } from '../src/types.ts';
+import { defaultResources, Supply } from '../src/types.ts';
 
 describe('Catan App Routes', () => {
   let catan: Catan;
@@ -18,13 +18,23 @@ describe('Catan App Routes', () => {
     players.push(new Player('p2', 'Aman', 'blue'));
     players.push(new Player('p3', 'Vineet', 'orange'));
     players.push(new Player('p4', 'Shalu', 'white'));
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const supply: { resources: Resources; devCards: [] } = {
+    const supply: Supply = {
       resources: defaultResources,
-      devCards: [],
+      devCards: {
+        knight: 0,
+        'road-building': 0,
+        'year-of-plenty': 0,
+        monopoly: 0,
+        'victory-point': 0,
+      },
     };
-    catan = new Catan('game123', players, board, _.random, supply);
+    catan = new Catan('game123', players, board, _.random, supply, _.sample);
     app = createApp(catan);
   });
 
@@ -92,7 +102,7 @@ describe('Catan App Routes', () => {
     assertNotEquals(
       res.headers.get('Location'),
       null,
-      'Response should redirect.',
+      'Response should redirect.'
     );
   });
 
@@ -102,7 +112,7 @@ describe('Catan App Routes', () => {
     const cookies = res.headers.get('Set-Cookie');
     assert(
       cookies?.includes('player-id=p1'),
-      "Cookie 'player-id' should be set.",
+      "Cookie 'player-id' should be set."
     );
   });
 
@@ -186,5 +196,16 @@ describe('Catan App Routes', () => {
 
     // const res = await app.request(req);
     // assert(res.blocked);
+  });
+
+  it('should buy development card', async () => {
+    const request = new Request('http://localhost:3000/game/buy/dev-card', {
+      headers: { Cookie: 'player-id=p1' },
+      method: 'PATCH',
+    });
+    const res = await app.request(request);
+    const result = await res.json();
+
+    assertFalse(result.isSucceed);
   });
 });

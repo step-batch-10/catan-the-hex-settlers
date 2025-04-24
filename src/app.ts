@@ -9,6 +9,7 @@ import {
   canBuildRoad,
   canBuildSettlement,
   canRoll,
+  handleBuyDevCards,
   handleChangeTurn,
   maritimeHandler,
   rollDice,
@@ -39,6 +40,7 @@ const gameRoutes = (game: Game): Hono => {
   gameApp.post('/build/vertex', buildSettlement);
   gameApp.post('/changeTurn', handleChangeTurn);
   gameApp.post('/trade/maritime', maritimeHandler);
+  gameApp.patch('/buy/dev-card', handleBuyDevCards);
   gameApp.post('/build/edge', buildRoad);
   gameApp.get('/dice/can-roll', canRoll);
   gameApp.post('/can-build/vertex', canBuildSettlement);

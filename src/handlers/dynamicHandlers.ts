@@ -93,3 +93,11 @@ export const handleChangeTurn = (ctx: Context): Response => {
 
   return ctx.json(game);
 };
+
+export const handleBuyDevCards = (ctx: Context): Response => {
+  const playerId = getCookie(ctx, 'player-id');
+  const game = ctx.get('game');
+  const outcome = game.buyDevCard(playerId);
+
+  return ctx.json(outcome);
+};
