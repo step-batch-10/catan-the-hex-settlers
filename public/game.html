@@ -1491,13 +1491,34 @@
               <div class="vp-cards-played"></div>
             </div>
             <div class="special-cards">
-              <div id="longest-army-badge"></div>
-              <div id="longest-road-badge"></div>
+              <div id="largest-army-icon">
+                <img
+                  src="images/special-cards/largest-army.png"
+                  class="special-cards-icon"
+                  alt="largest-army"
+                />
+                <span id="largest-army-count"></span>
+              </div>
+              <div id="longest-road-icon">
+                <img
+                  src="images/special-cards/longest-road.png"
+                  class="special-cards-icon"
+                  alt="longest-road"
+                />
+                <span id="longest-road-count"></span>
+              </div>
             </div>
             <div class="player-actions">
               <button id="trade">Trade</button>
               <button id="pass-btn">Pass</button>
             </div>
+
+            <!-- <div class="special-cards-icon">
+              <img
+                src="images/special-cards/longest-road.png"
+                alt="longest-road"
+              />
+            </div> -->
             <div id="floating-trade-menu">
               <div id="navigation-container">
                 <button class="navigate-btn" id="close-btn">❌</button>
@@ -1535,12 +1556,8 @@
           <p><span>VP: </span><span id="vp"></span></p>
           <p><span>Resources: </span><span id="resources"></span></p>
           <p><span>Dev Cards: </span><span id="dev-cards"></span></p>
-          <div>
-            <div>
-              <p id="largest-army">LargestArmy</p>
-            </div>
-            <div><p id="longest-road">LongestRoad</p></div>
-          </div>
+          <p><span>Largest-Army size: </span><span id="largest-army"></span></p>
+          <p><span>Longest-road size: </span><span id="longest-road"></span></p>
         </div>
       </div>
     </template>

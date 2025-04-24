@@ -1,4 +1,9 @@
-import type { DevCards, PlayerData, Resources } from '../types.ts';
+import type {
+  DevCards,
+  DevCardTypes,
+  PlayerData,
+  Resources,
+} from '../types.ts';
 
 export class Player {
   id: string;
@@ -12,6 +17,8 @@ export class Player {
   hasLongestRoad: boolean;
   hasLargestArmy: boolean;
   victoryPoints: number;
+  largestArmyCount: number;
+  longestRoadCount: number;
 
   constructor(id: string, name: string, color: string) {
     this.id = id;
@@ -48,6 +55,8 @@ export class Player {
     this.hasLongestRoad = false;
     this.hasLargestArmy = false;
     this.victoryPoints = 0;
+    this.largestArmyCount = 0;
+    this.longestRoadCount = 0;
   }
 
   hasWon(): boolean {
@@ -55,11 +64,24 @@ export class Player {
   }
 
   addResource(cardType: keyof Resources | string, count: number): void {
-    console.log(cardType, '----', cardType in this.resources);
     if (cardType in this.resources) this.resources[cardType] += count;
   }
 
   getPlayerData(): PlayerData {
     return { ...this };
+  }
+
+  addSpecialCard(cardType: string): void {
+    if (cardType === 'largestArmy') this.hasLargestArmy = true;
+    this.victoryPoints += 2;
+  }
+
+  deductSpecialCard(cardType: string): void {
+    if (cardType === 'largestArmy') this.hasLargestArmy = false;
+    this.victoryPoints -= 2;
+  }
+
+  playDevCard(cardType: keyof DevCardTypes) {
+    this.devCards.played[cardType] += 1;
   }
 }

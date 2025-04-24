@@ -327,3 +327,20 @@ body {
   opacity: 0.5;
   pointer-events: none;
 }
+
+.special-cards-icon {
+  width: 80px;
+  height: 80px;
+}
+
+.special-cards {
+  display: flex;
+  flex-direction: column;
+}
+
+#largest-army-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}

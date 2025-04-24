@@ -5,6 +5,7 @@ import { Vertex } from './vertex.ts';
 import { Edge } from './edge.ts';
 import type {
   Components,
+  DevCardTypes,
   DistributeResourceData,
   GamePhase,
   GameState,
@@ -12,6 +13,7 @@ import type {
   ResourceProduction,
   Resources,
   RollDice,
+  SpecialCardOwners,
   Structures,
 } from '../types.ts';
 
@@ -32,6 +34,8 @@ export class Catan {
   };
   turn: { hasRolled: boolean };
   supply: { resources: Resources; devCards: [] };
+  largestArmyCount: number;
+  specialCardOwners: SpecialCardOwners;
 
   constructor(
     gameId: string,
@@ -51,6 +55,8 @@ export class Catan {
     this.turns = 0;
     this.turn = { hasRolled: false };
     this.supply = supply;
+    this.largestArmyCount = 2;
+    this.specialCardOwners = { largestArmy: null, longestRoad: null };
   }
 
   changePhaseToMain(): void {
@@ -89,7 +95,7 @@ export class Catan {
 
     return producedTerrains?.map((terrain) => hexes.get(terrain)?.resource);
   }
-  //rename
+
   private addProducedResource(
     playerId: string,
     resource: keyof Resources | undefined,
@@ -119,7 +125,7 @@ export class Catan {
     });
     return resourcesProduced;
   }
-  //rename
+
   private toBeDistributed(rolledNumber: number): DistributeResourceData[] {
     const resourcesProduced: DistributeResourceData[] = [];
 
@@ -327,7 +333,7 @@ export class Catan {
   abstractPlayerData(player: Player): object {
     const data = player.getPlayerData();
     const resources = _.sum(_.values(data.resources));
-    const devCards = _.sum(_.values(data.devCards));
+    const devCards = _.sum(_.values(data.devCards.owned));
 
     return { ...data, resources, devCards };
   }
@@ -453,7 +459,26 @@ export class Catan {
     );
   }
 
-  playDevCard(cardType: string): void {
-    console.log(cardType);
+  private handleSpecialCard(cardType: keyof SpecialCardOwners) {
+    const player = this.getCurrentPlayer();
+    const oldHolderIndex = this.specialCardOwners[cardType];
+    if (oldHolderIndex !== null) {
+      this.players[oldHolderIndex].deductSpecialCard(cardType);
+    }
+    this.updateCardInfo(player, cardType);
+  }
+
+  private updateCardInfo(player: Player, cardType: keyof SpecialCardOwners) {
+    player.addSpecialCard(cardType);
+    this.largestArmyCount = player.devCards.played.knight;
+    this.specialCardOwners[cardType] = this.currentPlayerIndex;
+  }
+
+  playDevCard(cardType: keyof DevCardTypes): void {
+    const player = this.getCurrentPlayer();
+    player.playDevCard(cardType);
+    if (player.devCards.played.knight > this.largestArmyCount) {
+      this.handleSpecialCard('largestArmy');
+    }
   }
 }

@@ -104,6 +104,11 @@ interface TradeResources {
   outgoingResources: Resources;
 }
 
+interface SpecialCardOwners {
+  largestArmy: number | null;
+  longestRoad: number | null;
+}
+
 export const defaultResources: Resources = {
   wool: 0,
   grain: 0,
@@ -127,6 +132,7 @@ export type {
   ResourceProduction,
   Resources,
   RollDice,
+  SpecialCardOwners,
   Structures,
   TradeResources,
   VertexData,
