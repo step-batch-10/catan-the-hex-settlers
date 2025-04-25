@@ -90,13 +90,19 @@ const appendText = (template, elementId, text) => {
   element.textContent = text;
 };
 
+const assignPlayerId = (player, element) => {
+  element.setAttribute('id', player.id);
+}
+
 const createProfileCard = (player) => {
   const cloneTemplate = cloneTemplateElement('#info-box-template');
+  const playerInfoCard = cloneTemplate.querySelector('.player-info');
   const color = cloneTemplate.querySelector('#color');
   const resourceCount = player.resources;
-
+  
   color.style.backgroundColor = player.color;
-
+  
+  assignPlayerId(player, playerInfoCard);
   appendText(cloneTemplate, '#player-name', player.name);
   appendText(cloneTemplate, '#vp', player.victoryPoints);
   appendText(cloneTemplate, '#dev-cards', player.devCards);
@@ -148,10 +154,10 @@ const renderPlayerPanel = (player) => {
 
 const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
-
+  
   const list = document.querySelector('#player-list');
-  const profileCards = players.others.map((player) =>
-    createProfileCard(player),
+  const profileCards = players.playersInfo.map((player) =>
+    createProfileCard(player)
   );
 
   list.replaceChildren(...profileCards);
@@ -291,7 +297,7 @@ const isValidTrade = (trades) => {
     throw new Error('Please select a resource in return...');
 };
 
-const tradeWithBank = async (_e) => {
+const tradeWithBank = async (_e) => { // requires refactoring 
   try {
     const selectedCards = [...document.querySelectorAll('.card-selected')];
     const trades = parseCards(selectedCards);
@@ -527,11 +533,18 @@ const renderPieces = (gameState) => {
   renderStructures(edges);
 };
 
+const highlightPlayersTurn = (currentPlayerId) => {
+  const playerInfoCard = document.getElementById(currentPlayerId);
+  
+  playerInfoCard.classList.add('turn-indicator');
+};
+
 const renderElements = (gameState) => {
   renderPieces(gameState);
   renderPlayersData(gameState.players);
   renderDice(gameState.diceRoll);
   displayPlayerTurn(gameState);
+  highlightPlayersTurn(gameState.currentPlayerId);
 };
 
 const poll = () => {

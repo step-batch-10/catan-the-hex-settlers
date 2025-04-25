@@ -392,16 +392,17 @@ export class Catan {
   }
 
   getPlayersInfo(playerId: string): PlayersList {
-    const [[player], others] = _.partition(
+    const [[player], _others] = _.partition(
       this.players,
       (p: Player) => p.id === playerId,
     );
 
     const me = player.getPlayerData();
-    const othersData = others.map((other: Player) =>
-      this.abstractPlayerData(other),
+    const playersInfo = this.players.map((other: Player) =>
+      this.abstractPlayerData(other)
     );
-    return { me, others: othersData };
+
+    return { me, playersInfo };
   }
 
   getAvailableActions(playerId: string) {

@@ -93,7 +93,7 @@ interface DistributeResourceData {
 
 interface PlayersList {
   me: ReturnType<Player['getPlayerData']>;
-  others: object[];
+  playersInfo: object[];
 }
 
 type RollDice = (start?: number, end?: number) => number;

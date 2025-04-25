@@ -74,7 +74,7 @@ body {
 
 .dice-container {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   margin: 2px;
 }
 
@@ -173,13 +173,24 @@ body {
   padding: 10px;
 }
 
-#player-info {
+.player-info {
   display: flex;
   justify-content: space-between;
-  background-color: #f5f5f5;
+  background-color: #efefef;
   padding: 10px;
   border-radius: 6px;
   margin-bottom: 10px;
+}
+
+.turn-indicator {
+  border: 3px solid rgb(50, 118, 177);
+  transform: scale(1.04);
+}
+
+.player-info div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 #color {
@@ -425,22 +436,12 @@ body {
 }
 
 .dev-types {
-  width: 80px;
-  height: 100px;
-  cursor: pointer;
+  width: 60px;
+  height: 85px;
 }
 
-.close-btn {
-  position: absolute;
-  top: 2px;
-  right: 5px;
-  cursor: pointer;
-  font-size: 15px;
-}
-
-.dev-card.selected {
-  border: 2px solid green;
-  border-radius: 5px;
+.dice.roll {
+ animation: roll 0.4s ease-in-out;
 }
 
 @keyframes roll {
@@ -453,8 +454,4 @@ body {
   100% {
     transform: rotate(360deg) scale(1);
   }
-}
-
-.dice.roll {
-  animation: roll 0.4s ease-in-out;
 }
