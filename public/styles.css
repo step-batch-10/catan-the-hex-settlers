@@ -129,15 +129,22 @@ body {
   flex-direction: column;
 }
 
-#trade,
-#pass-btn {
+.actions-btn {
   background-color: green;
-  margin: 4px;
   border-radius: 5px;
   color: white;
-  font-size: 22px;
+  margin: 4px;
   width: 100%;
-  height: 40px;
+}
+
+#trade, 
+#pass-btn {
+  font-size: 22px;
+  height: 2rem;
+}
+
+#buy-dev-card {
+  font-size: 16px;
 }
 
 .resource-cards {

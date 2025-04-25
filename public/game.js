@@ -98,19 +98,22 @@ const createProfileCard = (player) => {
   const cloneTemplate = cloneTemplateElement('#info-box-template');
   const playerInfoCard = cloneTemplate.querySelector('.player-info');
   const color = cloneTemplate.querySelector('#color');
-  const resourceCount = player.resources;
-  
+
   color.style.backgroundColor = player.color;
   
   assignPlayerId(player, playerInfoCard);
   appendText(cloneTemplate, '#player-name', player.name);
   appendText(cloneTemplate, '#vp', player.victoryPoints);
   appendText(cloneTemplate, '#dev-cards', player.devCards);
-  appendText(cloneTemplate, '#resources', resourceCount);
+  appendText(cloneTemplate, '#resources', player.resources);
   appendText(cloneTemplate, '#largest-army', player.largestArmyCount);
   appendText(cloneTemplate, '#longest-road', player.longestRoadCount);
 
   return cloneTemplate;
+};
+
+const updateDevCardsByType = (_devCards) => {
+  
 };
 
 const displayResourceCount = ({ wool, lumber, brick, ore, grain }) => {
@@ -120,6 +123,15 @@ const displayResourceCount = ({ wool, lumber, brick, ore, grain }) => {
   appendText(document, '#brick', brick);
   appendText(document, '#grain', grain);
 };
+
+const displayDevCardsCount = (devCards) => {
+  const totalCards = Object.values(devCards.owned)
+    .reduce((sum, count) => sum + Number(count),
+      0);
+  
+  appendText(document, '#dev-count', totalCards);
+  updateDevCardsByType(devCards);
+}
 
 const displaySpecialCardStat = (id, count) => {
   const counter = document.querySelector(`#${id}`);
@@ -143,11 +155,8 @@ const renderSpecialCards = (hasLongestRoad, hasLargestArmy) => {
 
 const renderPlayerPanel = (player) => {
   appendText(document, '#player-name', player.name);
-
-  const color = document.querySelector('#color');
-  color.style.backgroundColor = player.color;
-
   displayResourceCount(player.resources);
+  displayDevCardsCount(player.devCards);
   updateSpecialCardsStats(player.largestArmyCount, player.longestRoadCount);
   renderSpecialCards(player.hasLongestRoad, player.hasLargestArmy);
 };
@@ -368,13 +377,13 @@ const openTradeCenter = () => {
 };
 
 const rollDiceHandler = async () => {
-  const outcome = await fetch('/game/dice/can-roll').then((res) => res.json());
+  const outcome = await fetch('/game/dice/can-roll')
+    .then((res) => res.json());
 
   if (!outcome.canRoll) return;
 
-  const response = await fetch('/game/dice/roll', { method: 'POST' }).then(
-    (res) => res.json(),
-  );
+  const response = await fetch('/game/dice/roll', { method: 'POST' })
+    .then((res) => res.json());
 
   const dice = document.querySelectorAll('.dice');
   dice.forEach((die) => restartAnimation(die, 'roll'));
@@ -478,7 +487,7 @@ const removeClassFromElement = (elementId, className) => {
 };
 
 const applyPlayerActions = ({ canTrade, canRoll }) => {
-  const playerActionIcons = ['#trade', '#pass-btn'];
+  const playerActionIcons = ['#trade', '#pass-btn', '#buy-dev-card'];
   const dice = ['#dice1', '#dice2'];
 
   dice.forEach((id) => addClassToElement(id, 'disable'));
@@ -495,7 +504,30 @@ const applyPlayerActions = ({ canTrade, canRoll }) => {
   }
 };
 
-const addTradeListeners = () => {
+const renderMsg = (msg) => {
+  const msgBox =
+    document.querySelector('invalid-msg') ||
+    cloneTemplateElement('#message-container').querySelector('.invalid-msg');
+
+  msgBox.textContent = msg;
+  document.body.appendChild(msgBox);
+
+  setTimeout(() => msgBox.remove(), 1000);
+};
+
+const buyDevCard = async () => {
+  const response = await fetch('/game/buy/dev-card', { method: "PATCH" });
+  const outcome = await response.json();
+  
+  if (!outcome.isSucceed) {
+    return renderMsg(outcome.message);
+  }
+
+  renderMsg(outcome.result);
+}
+
+const addPlayerActionsListeners = () => {
+  addListener('#buy-dev-card', buyDevCard);
   addListener('#trade', openTradeCenter);
   addListener('#maritime-btn', navigateToMaritimeTrade);
 };
@@ -529,7 +561,7 @@ const addEventListeners = (gameState) => {
   addRollDiceEvent();
   addBuildEvent(gameState.players.me);
   addNavigation();
-  addTradeListeners();
+  addPlayerActionsListeners();
   addListener('#unplayed-dev', showDevCards);
 };
 
