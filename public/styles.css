@@ -111,33 +111,64 @@ body {
 }
 
 .player-panel {
-  width: 100%;
+  width: 48%;
   height: 20%;
   background-color: rgba(255, 255, 255, 0.6);
   display: flex;
   flex-direction: row;
-  height: 180px;
+  height: 190px;
   border-radius: 10px;
   padding: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
+.player-panel > * {
+  margin-right: 15px;
+}
+
+.player-actions {
+  width: 100px;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+#user-actions {
+display: flex;
+flex-direction: column;
+}
+
+#trade, #pass-btn {
+  background-color: green;
+  margin: 4px;
+  border-radius: 5px;
+  color: white;
+  font-size: 22px;
+  width: 100%;
+  height: 40px;
+}
 
 .resource-cards {
  width: 500px;
  display: flex;
  justify-content: space-evenly;
  flex-wrap: nowrap;
- gap: 10px;
+ gap: 20px;
 }
+
 .count {
- width: 36px;
- position: relative;
- left: 54px;
- top: 18px;
- text-align: center;
- aspect-ratio: 1;
- border-radius: 50%;
- background-color: rgb(151, 127, 127);
+    width: 42px;
+    position: relative;
+    left: 54px;
+    top: 18px;
+    text-align: center;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    font-size: 29px;
+    color: white;
+    line-height: 40px;
+    background-color: rgb(168, 92, 5);
 }
 .cards {
  width: 80px;
@@ -160,12 +191,6 @@ body {
  padding: 10px;
  border-radius: 6px;
  margin-bottom: 10px;
-}
-
-#player-info div {
- display: flex;
- flex-direction: column;
- gap: 4px;
 }
 
 #color {
@@ -344,6 +369,7 @@ body {
 .disable {
  opacity: 0.5;
  pointer-events: none;
+ user-select: none;
 }
 
 .special-cards-icon {
@@ -360,18 +386,39 @@ body {
 #longest-road-icon {
  display: flex;
  flex-direction: row;
+ font-size: 30px;
+ color: black;
  align-items: center;
  justify-content: center;
 }
 
 .dev-cards {
  width: 100px;
- margin: 14px;
+ margin-left: 15px;
 }
 
+#user-info {
+  margin-left: 12px;
+}
+
+#user-info > * {
+  gap: 1px;
+  margin: 15px;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+#user-info #color{
+  display: flex;
+  flex-direction: column;
+  margin-left: 28px;
+}
+
+
 #unplayed-dev {
- width: 100px;
- height: 120px;
+ width: 80px;
+ height: 96px;
 }
 
 .display-all-dev-card {

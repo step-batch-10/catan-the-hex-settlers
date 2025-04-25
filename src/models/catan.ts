@@ -428,11 +428,12 @@ export class Catan {
   }
 
   getAvailableActions(playerId: string) {
-    const canTrade = this.isCurrentPlayer(playerId) &&
-      !this.isInitialSetup() &&
-      this.hasAlreadyRolled();
+    const isPlayerTurnInMainPhase = this.isCurrentPlayer(playerId) &&
+      !this.isInitialSetup();
+    const canRoll = isPlayerTurnInMainPhase && !this.hasAlreadyRolled();
+    const canTrade = isPlayerTurnInMainPhase && this.hasAlreadyRolled();
 
-    return { canTrade };
+    return { canTrade, canRoll };
   }
 
   private isDesert(hexId: string) {

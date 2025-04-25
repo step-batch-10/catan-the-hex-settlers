@@ -1438,8 +1438,16 @@
        </div>
        <div id="player-panel">
          <div class="player-panel">
+          <div id="user-actions">
+          <div id="user-info">
            <span id="player-name"></span>
            <div id="color"></div>
+          </div>
+          <div class="player-actions">
+           <button id="trade">Trade</button>
+           <button id="pass-btn">Pass</button>
+         </div>
+         </div>
            <div class="status">
              <div class="color">
                <div class="avatar"></div>
@@ -1489,6 +1497,7 @@
              </div>
            </div>
            <div class="dev-cards">
+              <div class="count" id="dev-count">0</div>
              <img
                class="cards"
                id="unplayed-dev"
@@ -1519,10 +1528,7 @@
                <span id="longest-road-count"></span>
              </div>
            </div>
-           <div class="player-actions">
-             <button id="trade">Trade</button>
-             <button id="pass-btn">Pass</button>
-           </div>
+      
            <div id="floating-trade-menu">
              <div id="navigation-container">
                <button class="navigate-btn" id="close-btn">❌</button>
