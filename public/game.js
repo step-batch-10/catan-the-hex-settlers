@@ -471,11 +471,19 @@ const addNavigation = () => {
   addListener('#close-btn', closeTradeOptions);
 };
 
+const showDevCards = () => {
+  const clone = cloneTemplateElement('#all-dev-cards');
+  const allDevCards = clone.querySelector('.display-all-dev-card');
+  
+  allDevCards.style.display = 'flex';
+};
+
 const addEventListeners = (gameState) => {
   addRollDiceEvent();
   addBuildEvent(gameState.players.me);
   addNavigation();
   addTradeListeners();
+  addListener('#unplayed-dev', showDevCards);
 };
 
 const renderStructures = (structures) => {

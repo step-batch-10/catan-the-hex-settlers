@@ -1486,10 +1486,18 @@
                 />
               </div>
             </div>
-            <div class="dev-cards"><div class="show-cards"></div></div>
+            <div class="dev-cards">
+              <img
+                class="cards"
+                id="unplayed-dev"
+                src="images/dev-cards/unplayed-dev.png"
+                alt="unplayed-dev"
+              />
+            </div>
             <div class="played-dev-cards">
               <div class="vp-cards-played"></div>
             </div>
+
             <div class="special-cards">
               <div id="largest-army-icon">
                 <img
@@ -1620,6 +1628,46 @@
 
     <template id="current-player">
       <div class="player-turn"></div>
+    </template>
+
+    <template id="all-dev-cards">
+      <div class="display-all-dev-card">
+        <div id="building-road">
+          <img
+            class="dev-types"
+            src="images/dev-cards/building-road.png"
+            alt="building-road"
+          />
+        </div>
+        <div id="year-of-plenty">
+          <img
+            class="dev-types"
+            src="images/dev-cards/year-of-plenty.png"
+            alt="year-of-plenty"
+          />
+        </div>
+        <div id="monopoly-card">
+          <img
+            class="dev-types"
+            src="images/dev-cards/monopoly-card.png"
+            alt="monopoly-card"
+          />
+        </div>
+        <div id="knight-card">
+          <img
+            class="dev-types"
+            src="images/dev-cards/knight-card.png"
+            alt="knight-card"
+          />
+        </div>
+        <div id="victory-point">
+          <img
+            class="dev-types"
+            src="images/dev-cards/victory-point.png"
+            alt="victory-point"
+          />
+        </div>
+      </div>
     </template>
   </body>
 </html>

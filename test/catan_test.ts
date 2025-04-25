@@ -618,12 +618,14 @@ describe('longest army', () => {
   });
 
   it('should get the largest army card if beaten the player with 3 knight cards', () => {
+    const player = catan.players[0];
     catan.currentPlayerIndex = 0;
     catan.playDevCard('knight');
     catan.currentPlayerIndex = 0;
     catan.playDevCard('knight');
     catan.currentPlayerIndex = 0;
     catan.playDevCard('knight');
+    assertEquals(player.victoryPoints, 2);
 
     const player2 = catan.players[1];
     catan.currentPlayerIndex = 1;
@@ -635,5 +637,7 @@ describe('longest army', () => {
     catan.currentPlayerIndex = 1;
     catan.playDevCard('knight');
     assert(player2.hasLargestArmy);
+    assertEquals(player.victoryPoints, 0);
+    assertEquals(player2.victoryPoints, 2);
   });
 });

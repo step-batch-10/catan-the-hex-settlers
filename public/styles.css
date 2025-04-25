@@ -338,9 +338,41 @@ body {
   flex-direction: column;
 }
 
-#largest-army-icon {
+#largest-army-icon,
+#longest-road-icon {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.dev-cards {
+  width: 100px;
+  margin: 14px;
+}
+
+#unplayed-dev {
+  width: 100px;
+  height: 120px;
+}
+
+.display-all-dev-card {
+  background-color: antiquewhite;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  width: 400px;
+  height: 100px;
+  display: none;
+  position: absolute;
+  right: 500px;
+  top: 640px;
+  /* transform: translateY(-100%) translateX(25%); */
+}
+
+.dev-types {
+  width: 60px;
+  height: 85px;
 }
