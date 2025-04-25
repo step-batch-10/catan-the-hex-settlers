@@ -110,6 +110,9 @@ interface SpecialCardOwners {
   largestArmy: number | null;
   longestRoad: number | null;
 }
+type BuildType = 'settlement' | 'road';
+type Phase = 'initial' | 'main';
+type StringSet = Set<string>;
 
 export type DevelopmentCards =
   | 'knight'
@@ -132,6 +135,7 @@ export const defaultResources: Resources = {
 };
 
 export type {
+  BuildType,
   Components,
   DevCards,
   DevCardTypes,
@@ -141,6 +145,7 @@ export type {
   GamePhase,
   GameState,
   HexData,
+  Phase,
   PlayerAssets,
   PlayerData,
   PlayersList,
@@ -149,6 +154,7 @@ export type {
   Resources,
   RollDice,
   SpecialCardOwners,
+  StringSet,
   Supply,
   TradeResources,
   VertexData,

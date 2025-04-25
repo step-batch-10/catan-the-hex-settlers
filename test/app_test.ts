@@ -183,19 +183,29 @@ describe('Catan App Routes', () => {
     assertEquals(gameState.currentPlayerIndex, 1);
   });
 
-  it('should block resources from producing', async () => {
-    // const hexId = 'h0_0';
-    // const fd = new FormData();
-    // fd.set('hexId', hexId);
-    // const req = new Request('/block/hex', {
-    //   body: fd,
-    //   headers: { Cookie: 'player-id=p1' },
-    //   method: 'POST',
-    // });
-    // const res = await app.request(req);
-    // assert(res.blocked);
+  it('should give all the possible locations to place', async () => {
+    const request = new Request('http:localhost/game/possible-positions', {
+      headers: { Cookie: 'player-id=p1' },
+    });
+
+    const res = await app.request(request);
+    const allPositions = await res.json();
+
+    assertEquals(allPositions.settlements.length, 54);
+    assertEquals(allPositions.roads.length, 0);
   });
 
+  it('should give all the possible locations to place', async () => {
+    const request = new Request('http:localhost/game/possible-positions', {
+      headers: { Cookie: 'player-id=p1' },
+    });
+    catan.buildSettlement('v0,1|0,2|1,1');
+    const res = await app.request(request);
+    const allPositions = await res.json();
+
+    assertEquals(allPositions.settlements.length, 0);
+    assertEquals(allPositions.roads.length, 3);
+  });
   it('should buy development card', async () => {
     const request = new Request('http://localhost:3000/game/buy/dev-card', {
       headers: { Cookie: 'player-id=p1' },
@@ -203,7 +213,6 @@ describe('Catan App Routes', () => {
     });
     const res = await app.request(request);
     const result = await res.json();
-
     assertFalse(result.isSucceed);
   });
 });

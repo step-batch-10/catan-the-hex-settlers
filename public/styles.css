@@ -440,6 +440,51 @@ body {
   height: 85px;
 }
 
+.hover-shadow {
+  filter: url(#hover-shadow);
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+.road {
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-name: expand;
+}
+
+@keyframes expand {
+  0% {
+    width: 10px;
+    height: 38px;
+  }
+  50% {
+    width: 12px;
+    height: 42px;
+  }
+  100% {
+    width: 10px;
+    height: 38px;
+  }
+}
+
+.settlement {
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-name: grow;
+}
+
+@keyframes grow {
+  0% {
+    r: 7;
+  }
+  50% {
+    r: 10;
+  }
+  100% {
+    r: 7;
+  }
+}
+
 .dice.roll {
  animation: roll 0.4s ease-in-out;
 }

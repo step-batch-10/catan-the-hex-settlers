@@ -101,3 +101,13 @@ export const handleBuyDevCards = (ctx: Context): Response => {
 
   return ctx.json(outcome);
 };
+
+export const serveAllPositions = (ctx: Context): Response => {
+  const game = ctx.get('game');
+  const playerId = getCookie(ctx, 'player-id');
+  const pos = game.getAvailableBuilds(playerId);
+  const settlements = pos.get('settlements');
+  const roads = pos.get('roads');
+
+  return ctx.json({ settlements: [...settlements], roads: [...roads] });
+};

@@ -516,7 +516,7 @@ describe('buildRoad', () => {
 
     catan.currentPlayerIndex = 0;
     catan.turn.hasRolled = true;
-    catan.validateBuildRoad('r1', 'p1');
+    catan.validateBuildRoad('r1', playerId);
     const vertex = new Vertex('s1', null);
     catan.board.vertices.set('s1', vertex);
     catan.validateBuildSettlement('s1', 'p1');
@@ -776,5 +776,108 @@ describe('buyDevCard', () => {
 
     assertFalse(result.isSucceed);
     assertEquals(result.message, 'There is no Development Card');
+  });
+});
+
+describe('possible build locations', () => {
+  let catan: Catan;
+
+  beforeEach(() => {
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    const resources = {
+      ore: 25,
+      brick: 25,
+      lumber: 25,
+      wool: 25,
+      grain: 25,
+    };
+    const devCards: DevelopmentCards[] = [
+      'knight',
+      'knight',
+      'monopoly',
+      'knight',
+    ];
+    const supply = { resources, devCards };
+    catan = new Catan('game123', players, board, _.random, supply);
+  });
+
+  it('should get all the valid settlements', () => {
+    const validSettlements = catan.getAvailableBuilds('p1');
+
+    assertEquals(validSettlements.get('settlements')?.size, 54);
+  });
+
+  it('should get rest of the valid settlements', () => {
+    catan.buildSettlement('v0,1|0,2|1,1');
+    catan.turns = 2;
+    const validSettlements = catan.getAvailableBuilds('p1');
+
+    assertEquals(validSettlements.get('settlements')?.size, 50);
+  });
+
+  it('should get all the valid positions for placing settlements in main phase', () => {
+    catan.buildSettlement('v0,1|0,2|1,1');
+    catan.phase = 'main';
+    catan.turn.hasRolled = true;
+    catan.players[0].resources.lumber = 5;
+    catan.players[0].resources.brick = 5;
+
+    const validSettlements = catan.getAvailableBuilds('p1');
+
+    assertEquals(validSettlements.get('settlements')?.size, 0);
+    assertEquals(validSettlements.get('roads')?.size, 3);
+  });
+
+  it('should get all the valid positions for placing settlements in main phase', () => {
+    catan.buildSettlement('v-1,0|0,-1|0,0');
+    catan.phase = 'main';
+    catan.players[0].resources.lumber = 5;
+    catan.players[0].resources.brick = 5;
+    catan.players[0].resources.wool = 2;
+    catan.players[0].resources.grain = 2;
+
+    catan.buildRoad('e-v-1,0|0,-1|0,0_v0,-1|0,0|1,-1');
+    catan.buildRoad('e-v0,-1|0,0|1,-1_v0,0|1,-1|1,0');
+    catan.turn.hasRolled = true;
+    const validSettlements = catan.getAvailableBuilds('p1');
+
+    assertEquals(validSettlements.get('settlements')?.size, 1);
+    assertEquals(validSettlements.get('roads')?.size, 5);
+  });
+
+  it('should get all the valid positions for placing roads in initial setup', () => {
+    catan.buildSettlement('v0,1|0,2|1,1');
+    catan.turns = 1;
+
+    const validRoads = catan.getAvailableBuilds('p1');
+
+    assertEquals(validRoads.get('roads')?.size, 3);
+  });
+
+  it('should get all the valid positions for placing roads in main phase', () => {
+    catan.buildSettlement('v0,1|0,2|1,1');
+    catan.phase = 'main';
+    catan.players[0].resources.lumber = 5;
+    catan.players[0].resources.brick = 5;
+    catan.turn.hasRolled = true;
+
+    const validRoads = catan.getAvailableBuilds('p1');
+
+    assertEquals(validRoads.get('roads')?.size, 3);
+  });
+
+  it('should not get anything if it is not current player', () => {
+    catan.buildSettlement('v0,1|0,2|1,1');
+    catan.phase = 'main';
+
+    const validRoads = catan.getAvailableBuilds('p2');
+
+    assertEquals(validRoads.get('roads')?.size, 0);
   });
 });

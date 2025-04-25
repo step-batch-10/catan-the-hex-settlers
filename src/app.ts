@@ -2,7 +2,6 @@ import { Hono } from 'hono';
 import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
 import type { Context, Next } from 'hono';
-
 import {
   buildRoad,
   buildSettlement,
@@ -13,6 +12,7 @@ import {
   handleChangeTurn,
   maritimeHandler,
   rollDice,
+  serveAllPositions,
   serveGameData,
   serveGamePage,
   serveGameState,
@@ -45,6 +45,7 @@ const gameRoutes = (game: Game): Hono => {
   gameApp.get('/dice/can-roll', canRoll);
   gameApp.post('/can-build/vertex', canBuildSettlement);
   gameApp.post('/can-build/edge', canBuildRoad);
+  gameApp.get('/possible-positions', serveAllPositions);
   gameApp.get('/:playerId', serveGamePage);
 
   return gameApp;

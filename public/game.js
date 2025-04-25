@@ -156,8 +156,8 @@ const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
   
   const list = document.querySelector('#player-list');
-  const profileCards = players.playersInfo.map((player) =>
-    createProfileCard(player)
+  const profileCards = players.others.map((player) =>
+    createProfileCard(player),
   );
 
   list.replaceChildren(...profileCards);
@@ -222,6 +222,27 @@ const showMessage = (templateId, elementId, msg) => {
   return container;
 };
 
+const highlightPosition = (id, className) => {
+  const ele = document.getElementById(`${id}`);
+
+  if (!ele) return;
+
+  ele.style.opacity = 1;
+  ele.classList.add(className);
+};
+
+const showPossibleSettlementsOrRoads = async () => {
+  const res = await fetch('/game/possible-positions').then((i) => i.json());
+
+  if (res.settlements) {
+    res.settlements.forEach((id) => highlightPosition(id, 'settlement'));
+  }
+
+  if (res.roads) {
+    res.roads.forEach((id) => highlightPosition(id, 'road'));
+  }
+};
+
 const displayPlayerTurn = (gameState) => {
   const isCurrentPlayer = gameState.currentPlayer !== gameState.players.me.name;
   const msg = isCurrentPlayer
@@ -229,6 +250,7 @@ const displayPlayerTurn = (gameState) => {
     : `your turn`;
 
   showMessage('#current-player', '.player-turn', msg);
+  showPossibleSettlementsOrRoads();
 };
 
 const createMaritimeTradeCenter = () => {
@@ -386,19 +408,6 @@ const isValidBuilt = async (pieceType, fd) => {
 const isPieceTypeValid = (pieceType) =>
   new Set(['vertex', 'edge']).has(pieceType);
 
-const highlightElement = (element, currentPlayer) => {
-  element.style.fill = currentPlayer.color;
-  element.style.opacity = 0.4;
-  element.classList.add('highlight');
-};
-
-const lowLightElement = (element, className) => {
-  return () => {
-    element.style.opacity = 0;
-    element.classList.remove(className);
-  };
-};
-
 const getBuildValidationData = async (event) => {
   const element = event.target;
   const targetElementId = element.id;
@@ -415,28 +424,33 @@ const getBuildValidationData = async (event) => {
   return { element, targetElementId, pieceType };
 };
 
+const removeSvgAnimation = () => {
+  const allSettlements = document.querySelectorAll('.settlement') || [];
+  const allRoads = document.querySelectorAll('.road') || [];
+
+  for (let i = 0; i < allSettlements.length; i++) {
+    allSettlements[i].style.opacity = 0;
+    allSettlements[i].classList.remove('settlement');
+  }
+
+  for (let i = 0; i < allRoads.length; i++) {
+    allRoads[i].style.opacity = 0;
+    allRoads[i].classList.remove('road');
+  }
+};
+
 const build = async (event) => {
   const validationData = await getBuildValidationData(event);
   if (!validationData) return;
 
   const { targetElementId, pieceType } = validationData;
+  removeSvgAnimation();
   return buildAt(targetElementId, pieceType);
 };
 
-const canBuildHandler = (currentPlayer) => async (event) => {
-  const validationData = await getBuildValidationData(event);
-  if (!validationData) return;
-
-  const { element } = validationData;
-
-  highlightElement(element, currentPlayer);
-  setTimeout(lowLightElement(element, 'highlight'), 1000);
-};
-
-const addBuildEvent = (currentPlayer) => {
+const addBuildEvent = () => {
   const svg = document.getElementById('svg20');
   svg.addEventListener('click', build);
-  svg.addEventListener('mouseover', canBuildHandler(currentPlayer));
 };
 
 const passTurn = async () =>
