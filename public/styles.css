@@ -376,3 +376,20 @@ body {
   width: 60px;
   height: 85px;
 }
+
+@keyframes roll {
+ 0% {
+   transform: rotate(0deg) scale(1);
+ }
+ 50% {
+   transform: rotate(180deg) scale(1.2);
+ }
+ 100% {
+   transform: rotate(360deg) scale(1);
+ }
+}
+
+
+.dice.roll {
+ animation: roll 0.4s ease-in-out;
+}

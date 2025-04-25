@@ -174,6 +174,13 @@ const createDotGrid = (positions) => {
   return grid;
 };
 
+const restartAnimation = (el, className) => {
+ el.classList.remove(className);
+ void el.offsetWidth;
+ el.classList.add(className);
+};
+
+
 const renderDie = (diceId, value) => {
   const dice = document.getElementById(diceId);
   const positions = diceDotMap[value];
@@ -333,10 +340,18 @@ const openTradeCenter = () => {
   tradesMenu.style.display = 'block';
 };
 
-const rollDiceHandler = async () => {
-  const dice = await fetch('/game/dice/can-roll').then((res) => res.json());
-  if (!dice.canRoll) return;
-  await fetch('game/roll-dice', { method: 'POST' });
+const rollDiceHandler = async () => { 
+  const outcome = await fetch('/game/dice/can-roll').then((res) => res.json());
+  
+  if (!outcome.canRoll) return;
+
+  const response = await fetch('game/roll-dice', { method: 'POST' })
+    .then((res) => res.json());
+  
+  const dice = document.querySelectorAll('.dice');
+  dice.forEach((die) => restartAnimation(die, 'roll'));
+
+  renderDice(response.rolled);
 };
 
 const addRollDiceEvent = () => {
