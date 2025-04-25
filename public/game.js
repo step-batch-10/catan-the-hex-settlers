@@ -97,12 +97,6 @@ const createProfileCard = (player) => {
   appendText(cloneTemplate, "#resources", resourceCount);
   appendText(cloneTemplate, "#largest-army", player.largestArmyCount);
   appendText(cloneTemplate, "#longest-road", player.longestRoadCount);
-  appendText(cloneTemplate, "#player-name", player.name);
-  appendText(cloneTemplate, "#vp", player.victoryPoints);
-  appendText(cloneTemplate, "#dev-cards", player.devCards);
-  appendText(cloneTemplate, "#resources", resourceCount);
-  appendText(cloneTemplate, "#largest-army", player.largestArmyCount);
-  appendText(cloneTemplate, "#longest-road", player.longestRoadCount);
 
   return cloneTemplate;
 };
@@ -144,20 +138,11 @@ const renderPlayerPanel = (player) => {
   displayResourceCount(player.resources);
   updateSpecialCardsStats(player.largestArmyCount, player.longestRoadCount);
   renderSpecialCards(player.hasLongestRoad, player.hasLargestArmy);
-  displayResourceCount(player.resources);
-  updateSpecialCardsStats(player.largestArmyCount, player.longestRoadCount);
-  renderSpecialCards(player.hasLongestRoad, player.hasLargestArmy);
 };
 
 const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
 
-  const list = document.querySelector("#player-list");
-  const profileCards = players.others.map((player) =>
-    createProfileCard(player),
-  );
-
-  list.replaceChildren(...profileCards);
   const list = document.querySelector("#player-list");
   const profileCards = players.others.map((player) =>
     createProfileCard(player),
@@ -351,9 +336,6 @@ const rollDiceHandler = async () => {
   const dice = await fetch("/game/dice/can-roll").then((res) => res.json());
   if (!dice.canRoll) return;
   await fetch("game/roll-dice", { method: "POST" });
-  const dice = await fetch("/game/dice/can-roll").then((res) => res.json());
-  if (!dice.canRoll) return;
-  await fetch("game/roll-dice", { method: "POST" });
 };
 
 const addRollDiceEvent = () => {
@@ -438,11 +420,7 @@ const addBuildEvent = (currentPlayer) => {
 
 const passTurn = async () =>
   await fetch("/game/changeTurn", { method: "POST" });
-const passTurn = async () =>
-  await fetch("/game/changeTurn", { method: "POST" });
 
-const closeTradeOptions = () =>
-  (document.querySelector("#floating-trade-menu").style.display = "none");
 const closeTradeOptions = () =>
   (document.querySelector("#floating-trade-menu").style.display = "none");
 
@@ -532,21 +510,9 @@ const renderElements = (gameState) => {
   renderPlayersData(gameState.players);
   renderDice(gameState.diceRoll);
   displayPlayerTurn(gameState);
-  renderPieces(gameState);
-  renderPlayersData(gameState.players);
-  renderDice(gameState.diceRoll);
-  displayPlayerTurn(gameState);
 };
 
 const poll = () => {
-  setInterval(async () => {
-    const response = await fetch("/game/gameData");
-    const gameState = await response.json();
-    globalThis.gameState = gameState;
-
-    renderElements(gameState);
-    applyPlayerActions(gameState.availableActions);
-  }, 1000);
   setInterval(async () => {
     const response = await fetch("/game/gameData");
     const gameState = await response.json();
@@ -561,11 +527,6 @@ const main = async () => {
   const response = await fetch("/game/gameState");
   const gameState = await response.json();
 
-  globalThis.gameState = gameState;
-  addEventListeners(gameState);
-  renderBoard(gameState.board.hexes);
-  applyPlayerActions(gameState.availableActions);
-  poll();
   globalThis.gameState = gameState;
   addEventListeners(gameState);
   renderBoard(gameState.board.hexes);
