@@ -156,8 +156,9 @@ const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
   
   const list = document.querySelector('#player-list');
-  const profileCards = players.others.map((player) =>
-    createProfileCard(player),
+  
+  const profileCards = players.playersInfo.map((player) =>
+    createProfileCard(player)
   );
 
   list.replaceChildren(...profileCards);
