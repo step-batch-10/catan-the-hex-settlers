@@ -12,6 +12,7 @@ body {
   background-color: #4092c9;
   height: 100%;
   background-color: #4092c9;
+  user-select: none;
 }
 
 .container {
@@ -357,7 +358,6 @@ body {
 .disable {
   opacity: 0.5;
   pointer-events: none;
-  user-select: none;
 }
 
 .special-cards-icon {
@@ -441,4 +441,20 @@ body {
 .dev-card.selected {
   border: 2px solid green;
   border-radius: 5px;
+}
+
+@keyframes roll {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.dice.roll {
+  animation: roll 0.4s ease-in-out;
 }
