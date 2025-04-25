@@ -343,7 +343,7 @@ const rollDiceHandler = async () => {
 
   if (!outcome.canRoll) return;
 
-  const response = await fetch('game/roll-dice', { method: 'POST' }).then(
+  const response = await fetch('/game/dice/roll', { method: 'POST' }).then(
     (res) => res.json(),
   );
 

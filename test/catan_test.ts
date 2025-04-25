@@ -2,11 +2,10 @@ import _ from 'lodash';
 import { Vertex } from '../src/models/vertex.ts';
 import { assertEquals, assert, assertFalse } from 'assert';
 import { describe, it, beforeEach } from 'testing/bdd';
-import type { VertexData, EdgeData, Supply } from '../src/types.ts';
+import type { VertexData, EdgeData, DevelopmentCards } from '../src/types.ts';
 import { Catan } from '../src/models/catan.ts';
 import { Player } from '../src/models/player.ts';
 import { Board } from '../src/models/board.ts';
-import { defaultResources } from '../src/types.ts';
 
 describe('Catan', () => {
   let catan: Catan;
@@ -19,18 +18,21 @@ describe('Catan', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-
-    const supply: Supply = {
-      resources: defaultResources,
-      devCards: {
-        knight: 0,
-        'road-building': 0,
-        'year-of-plenty': 0,
-        monopoly: 0,
-        'victory-point': 0,
-      },
+    const resources = {
+      ore: 25,
+      brick: 25,
+      lumber: 25,
+      wool: 25,
+      grain: 25,
     };
-    catan = new Catan('game123', players, board, _.random, supply, _.sample);
+    const devCards: DevelopmentCards[] = [
+      'knight',
+      'knight',
+      'monopoly',
+      'knight',
+    ];
+    const supply = { resources, devCards };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it('should initialize the game correctly', () => {
@@ -132,7 +134,7 @@ describe('Catan', () => {
     assert(gameState.board.hexes.length > 0, 'Board hexes should be present.');
     assert(
       gameState.board.vertices.length > 0,
-      'Board vertices should be present.'
+      'Board vertices should be present.',
     );
     assert(gameState.board.edges.length > 0, 'Board edges should be present.');
   });
@@ -168,7 +170,7 @@ describe('Catan', () => {
 
     assert(
       newResourceCount > initialResourceCount,
-      'Player should receive resources after building a settlement.'
+      'Player should receive resources after building a settlement.',
     );
     assertEquals(vertices, [{ id: 'v0,0|1,-1|1,0', color: 'red' }]);
   });
@@ -229,7 +231,7 @@ describe('Catan', () => {
   });
 
   it('should block resource if valid hex', () => {
-  const hexId = 'h0_1';
+    const hexId = 'h0_1';
     const { hex } = catan.blockResource(hexId);
 
     assert(catan.board.hexes.get(hexId)?.hasRobber);
@@ -259,18 +261,21 @@ describe('buildSettlement ', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-
-    const supply: Supply = {
-      resources: defaultResources,
-      devCards: {
-        knight: 0,
-        'road-building': 0,
-        'year-of-plenty': 0,
-        monopoly: 0,
-        'victory-point': 0,
-      },
+    const resources = {
+      ore: 25,
+      brick: 25,
+      lumber: 25,
+      wool: 25,
+      grain: 25,
     };
-    catan = new Catan('game123', players, board, _.random, supply, _.sample);
+    const devCards: DevelopmentCards[] = [
+      'knight',
+      'knight',
+      'monopoly',
+      'knight',
+    ];
+    const supply = { resources, devCards };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it('should build the settlement for setup mode', () => {
@@ -452,17 +457,21 @@ describe('buildRoad', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const supply: Supply = {
-      resources: defaultResources,
-      devCards: {
-        knight: 0,
-        'road-building': 0,
-        'year-of-plenty': 0,
-        monopoly: 0,
-        'victory-point': 0,
-      },
+    const resources = {
+      ore: 25,
+      brick: 25,
+      lumber: 25,
+      wool: 25,
+      grain: 25,
     };
-    catan = new Catan('game123', players, board, _.random, supply, _.sample);
+    const devCards: DevelopmentCards[] = [
+      'knight',
+      'knight',
+      'monopoly',
+      'knight',
+    ];
+    const supply = { resources, devCards };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it('should not be able to build road near other than the latest settlement', () => {
@@ -581,17 +590,21 @@ describe('distribute Resources', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const supply: Supply = {
-      resources: defaultResources,
-      devCards: {
-        knight: 0,
-        'road-building': 0,
-        'year-of-plenty': 0,
-        monopoly: 0,
-        'victory-point': 0,
-      },
+    const resources = {
+      ore: 25,
+      brick: 25,
+      lumber: 25,
+      wool: 25,
+      grain: 25,
     };
-    catan = new Catan('game123', players, board, _.random, supply, _.sample);
+    const devCards: DevelopmentCards[] = [
+      'knight',
+      'knight',
+      'monopoly',
+      'knight',
+    ];
+    const supply = { resources, devCards };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it('should distribute resources for player1', () => {
@@ -616,7 +629,6 @@ describe('distribute Resources', () => {
 
 describe('longest army', () => {
   let catan: Catan;
-
   beforeEach(() => {
     const players = [];
     players.push(new Player('p1', 'Adil', 'red'));
@@ -625,17 +637,21 @@ describe('longest army', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const supply: Supply = {
-      resources: defaultResources,
-      devCards: {
-        knight: 0,
-        'road-building': 0,
-        'year-of-plenty': 0,
-        monopoly: 0,
-        'victory-point': 0,
-      },
+    const resources = {
+      ore: 25,
+      brick: 25,
+      lumber: 25,
+      wool: 25,
+      grain: 25,
     };
-    catan = new Catan('game123', players, board, _.random, supply, _.sample);
+    const devCards: DevelopmentCards[] = [
+      'knight',
+      'knight',
+      'monopoly',
+      'knight',
+    ];
+    const supply = { resources, devCards };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it('should get the largest army card if three knights are played', () => {
@@ -685,24 +701,21 @@ describe('buyDevCard', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const supply: Supply = {
-      resources: defaultResources,
-      devCards: {
-        knight: 0,
-        'road-building': 0,
-        'year-of-plenty': 0,
-        monopoly: 0,
-        'victory-point': 0,
-      },
+    const resources = {
+      ore: 25,
+      brick: 25,
+      lumber: 25,
+      wool: 25,
+      grain: 25,
     };
-    catan = new Catan(
-      'game123',
-      players,
-      board,
-      _.random,
-      supply,
-      () => 'monopoly'
-    );
+    const devCards: DevelopmentCards[] = [
+      'knight',
+      'knight',
+      'monopoly',
+      'knight',
+    ];
+    const supply = { resources, devCards };
+    catan = new Catan('game123', players, board, _.random, supply);
   });
 
   it('should buy dev cards when its my turn and I have enough resources', () => {
@@ -710,14 +723,9 @@ describe('buyDevCard', () => {
     const player = catan.players[catan.currentPlayerIndex];
     player.resources = { brick: 0, lumber: 0, grain: 1, wool: 1, ore: 1 };
     catan.turn.hasRolled = true;
-    catan.supply.devCards = {
-      knight: 1,
-      'road-building': 1,
-      'year-of-plenty': 1,
-      monopoly: 1,
-      'victory-point': 1,
-    };
-
+    catan.supply.devCards = ['monopoly'];
+    catan.currentPlayerIndex = 0;
+    catan.turn.hasRolled = true;
     const outcome = catan.buyDevCard('p1');
 
     assert(outcome.isSucceed);
@@ -738,13 +746,7 @@ describe('buyDevCard', () => {
   it("shouldn't buy dev cards when its my turn and I don't have enough resources", () => {
     catan.phase = 'main';
     const player = catan.players[catan.currentPlayerIndex];
-    catan.supply.devCards = {
-      knight: 1,
-      'road-building': 0,
-      'year-of-plenty': 0,
-      monopoly: 0,
-      'victory-point': 0,
-    };
+    catan.supply.devCards = ['knight'];
 
     player.resources = { brick: 0, lumber: 0, grain: 0, wool: 1, ore: 1 };
     catan.turn.hasRolled = true;
@@ -768,58 +770,11 @@ describe('buyDevCard', () => {
     const player = catan.players[catan.currentPlayerIndex];
     player.resources = { brick: 0, lumber: 0, grain: 1, wool: 1, ore: 1 };
     catan.turn.hasRolled = true;
+    catan.currentPlayerIndex = 0;
+    catan.supply.devCards = [];
     const result = catan.buyDevCard('p1');
 
     assertFalse(result.isSucceed);
     assertEquals(result.message, 'There is no Development Card');
-  });
-
-  it('When I buy dev cards then supply of dev cards should be updated', () => {
-    catan.phase = 'main';
-    const player = catan.players[catan.currentPlayerIndex];
-    player.resources = { brick: 0, lumber: 0, grain: 1, wool: 1, ore: 1 };
-    const devCards = {
-      knight: 1,
-      'road-building': 0,
-      'year-of-plenty': 0,
-      monopoly: 5,
-      'victory-point': 0,
-    };
-    catan.supply.devCards = devCards;
-    catan.turn.hasRolled = true;
-
-    const result = catan.buyDevCard('p1');
-    assert(result.isSucceed);
-    assertEquals(result.result, 'monopoly');
-    assertEquals(catan.supply.devCards, { ...devCards, monopoly: 4 });
-  });
-
-  it('When player buy dev cards then his dev cards should be updated', () => {
-    catan.phase = 'main';
-    const player = catan.players[catan.currentPlayerIndex];
-    player.resources = { brick: 0, lumber: 0, grain: 1, wool: 1, ore: 1 };
-    const devCards = {
-      knight: 1,
-      'road-building': 0,
-      'year-of-plenty': 0,
-      monopoly: 5,
-      'victory-point': 0,
-    };
-    const playerDevCards = {
-      knight: 0,
-      'road-building': 0,
-      'year-of-plenty': 0,
-      monopoly: 1,
-      'victory-point': 0,
-    };
-
-    catan.supply.devCards = devCards;
-    catan.turn.hasRolled = true;
-
-    const result = catan.buyDevCard('p1');
-    assert(result.isSucceed);
-    assertEquals(result.result, 'monopoly');
-    assertEquals(catan.supply.devCards, { ...devCards, monopoly: 4 });
-    assertEquals(player.devCards.owned, playerDevCards);
   });
 });

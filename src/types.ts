@@ -111,9 +111,16 @@ interface SpecialCardOwners {
   longestRoad: number | null;
 }
 
+export type DevelopmentCards =
+  | 'knight'
+  | 'monopoly'
+  | 'year-of-plenty'
+  | 'road-building'
+  | 'victory-point';
+
 interface Supply {
   resources: Resources;
-  devCards: DevCardTypes;
+  devCards: DevelopmentCards[];
 }
 
 export const defaultResources: Resources = {

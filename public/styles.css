@@ -101,7 +101,7 @@ body {
 }
 
 .player-panel {
-  width: 48%;
+  width: 60%;
   height: 20%;
   background-color: rgba(255, 255, 255, 0.6);
   display: flex;

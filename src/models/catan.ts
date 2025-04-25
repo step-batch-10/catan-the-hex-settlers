@@ -6,12 +6,12 @@ import { Edge } from './edge.ts';
 import type {
   Components,
   DevCardTypes,
+  DevelopmentCards,
   DistributeResourceData,
   GamePhase,
   GameState,
   PlayerAssets,
   PlayersList,
-  RandomCard,
   ResourceProduction,
   Resources,
   RollDice,
@@ -29,7 +29,6 @@ export class Catan {
   board: Board;
   turns: number;
   diceFn: RollDice;
-  randomCard: RandomCard;
 
   private static playerAssets = {
     road: { brick: 1, lumber: 1 },
@@ -48,7 +47,6 @@ export class Catan {
     board: Board,
     diceFn: (start?: number, end?: number) => number,
     supply: Supply,
-    randomCard: RandomCard,
   ) {
     this.gameId = gameId;
     this.players = players;
@@ -57,7 +55,6 @@ export class Catan {
     this.winner = null;
     this.diceRoll = [1, 1];
     this.diceFn = diceFn;
-    this.randomCard = randomCard;
     this.board = board;
     this.turns = 0;
     this.turn = { hasRolled: false };
@@ -86,8 +83,8 @@ export class Catan {
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
     if (!this.isInitialSetup() && !this.turn.hasRolled) return;
     this.turn = { hasRolled: false };
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
-      this.players.length;
+    this.currentPlayerIndex =
+      (this.currentPlayerIndex + 1) % this.players.length;
   }
 
   private canProduce(hexId: string, rolledNumber: number): boolean {
@@ -105,7 +102,7 @@ export class Catan {
   ) {
     const { hexes } = this.board;
     const producedTerrains = terrains?.filter((hexId) =>
-      this.canProduce(hexId, rolledNumber)
+      this.canProduce(hexId, rolledNumber),
     );
 
     return producedTerrains?.map((terrain) => hexes.get(terrain)?.resource);
@@ -127,7 +124,7 @@ export class Catan {
     resources?.forEach((resource) =>
       resourcesProduced.push(
         this.addProducedResource(player.id, resource, 'settlement'),
-      )
+      ),
     );
   }
 
@@ -162,7 +159,7 @@ export class Catan {
 
   distributeResources(resourcesToBeDistributed: DistributeResourceData[]) {
     resourcesToBeDistributed.forEach((resourceData) =>
-      this.updateResource(resourceData)
+      this.updateResource(resourceData),
     );
   }
 
@@ -267,11 +264,7 @@ export class Catan {
   }
 
   private hasDevCards() {
-    const devCards = this.supply.devCards;
-    const totalCards = _.values(devCards).reduce(
-      (sum: number, count: number) => count + sum,
-    );
-
+    const totalCards = this.supply.devCards.length;
     return totalCards > 0;
   }
 
@@ -339,35 +332,19 @@ export class Catan {
     if (!this.hasDevCards()) throw new Error('There is no Development Card');
   }
 
-  private updateSupply(randomCard: keyof DevCardTypes) {
-    const developmentCards = this.supply.devCards;
-    developmentCards[randomCard] -= 1;
-  }
-
-  private updatePlayerDevCards(randomCard: keyof DevCardTypes) {
+  private updatePlayerDevCards(randomCard: DevelopmentCards) {
     const developmentCards = this.getCurrentPlayer().devCards.owned;
     developmentCards[randomCard] += 1;
-  }
-
-  private getRandomDevCard() {
-    const availableCards = _.pickBy(
-      this.supply.devCards,
-      (count: number) => count > 0,
-    );
-    const randomCard = this.randomCard(_.keys(availableCards));
-
-    return randomCard;
   }
 
   buyDevCard(playerId: string) {
     try {
       this.validateBuyDevCard(playerId);
       this.deductResources('devCard');
-      const randomCard = this.getRandomDevCard();
-      this.updateSupply(randomCard as keyof DevCardTypes);
-      this.updatePlayerDevCards(randomCard as keyof DevCardTypes);
+      const topCard = this.supply.devCards.shift();
+      if (topCard) this.updatePlayerDevCards(topCard);
 
-      return { isSucceed: true, result: randomCard, message: '' };
+      return { isSucceed: true, result: topCard, message: '' };
     } catch (e) {
       const error = e as Error;
       return { isSucceed: false, result: '', message: error.message };
@@ -422,14 +399,14 @@ export class Catan {
 
     const me = player.getPlayerData();
     const othersData = others.map((other: Player) =>
-      this.abstractPlayerData(other)
+      this.abstractPlayerData(other),
     );
     return { me, others: othersData };
   }
 
   getAvailableActions(playerId: string) {
-    const isPlayerTurnInMainPhase = this.isCurrentPlayer(playerId) &&
-      !this.isInitialSetup();
+    const isPlayerTurnInMainPhase =
+      this.isCurrentPlayer(playerId) && !this.isInitialSetup();
     const canRoll = isPlayerTurnInMainPhase && !this.hasAlreadyRolled();
     const canTrade = isPlayerTurnInMainPhase && this.hasAlreadyRolled();
 

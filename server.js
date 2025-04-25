@@ -12,7 +12,16 @@ const main = (port) => {
   players.push(new Player('p4', 'Shalu', 'white'));
   const board = new Board();
   board.createBoard();
-  const game = new Catan('game123', players, board, _.random);
+  const resources = {
+    ore: 25,
+    brick: 25,
+    lumber: 25,
+    wool: 25,
+    grain: 25,
+  };
+  const devCards = ['knight', 'knight', 'monopoly', 'knight'];
+  const supply = { resources, devCards };
+  const game = new Catan('game123', players, board, _.random, supply);
 
   Deno.serve({ port }, createApp(game).fetch);
 };

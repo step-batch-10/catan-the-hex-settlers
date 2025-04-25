@@ -6,45 +6,44 @@ import { Catan } from '../src/models/catan.ts';
 import { Board } from '../src/models/board.ts';
 import { Player } from '../src/models/player.ts';
 import _ from 'lodash';
-import { defaultResources, Supply } from '../src/types.ts';
+import { DevelopmentCards } from '../src/types.ts';
 
 describe('Catan App Routes', () => {
   let catan: Catan;
   let app: Hono;
-
   beforeEach(() => {
     const players = [];
     players.push(new Player('p1', 'Adil', 'red'));
     players.push(new Player('p2', 'Aman', 'blue'));
     players.push(new Player('p3', 'Vineet', 'orange'));
     players.push(new Player('p4', 'Shalu', 'white'));
-    players.push(new Player('p1', 'Adil', 'red'));
-    players.push(new Player('p2', 'Aman', 'blue'));
-    players.push(new Player('p3', 'Vineet', 'orange'));
-    players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const supply: Supply = {
-      resources: defaultResources,
-      devCards: {
-        knight: 0,
-        'road-building': 0,
-        'year-of-plenty': 0,
-        monopoly: 0,
-        'victory-point': 0,
-      },
+    const resources = {
+      ore: 25,
+      brick: 25,
+      lumber: 25,
+      wool: 25,
+      grain: 25,
     };
-    catan = new Catan('game123', players, board, _.random, supply, _.sample);
+    const devCards: DevelopmentCards[] = [
+      'knight',
+      'knight',
+      'monopoly',
+      'knight',
+    ];
+    const supply = { resources, devCards };
+    catan = new Catan('game123', players, board, _.random, supply);
     app = createApp(catan);
   });
 
   it('should request dice roll on /roll-dice', async () => {
     catan.diceFn = () => 5;
-    const res = await app.request('/game/roll-dice', { method: 'POST' });
+    const res = await app.request('/game/dice/roll', { method: 'POST' });
     const body = await res.json();
 
     assert(body.rolled.length === 2, 'Dice should return two values.');
-    assertEquals(body, { rolled: [5, 5], isRobber:false });
+    assertEquals(body, { rolled: [5, 5], isRobber: false });
   });
 
   it('should allow building a settlement at a vertex on /build/vertex', async () => {
@@ -102,7 +101,7 @@ describe('Catan App Routes', () => {
     assertNotEquals(
       res.headers.get('Location'),
       null,
-      'Response should redirect.'
+      'Response should redirect.',
     );
   });
 
@@ -112,7 +111,7 @@ describe('Catan App Routes', () => {
     const cookies = res.headers.get('Set-Cookie');
     assert(
       cookies?.includes('player-id=p1'),
-      "Cookie 'player-id' should be set."
+      "Cookie 'player-id' should be set.",
     );
   });
 
@@ -193,7 +192,6 @@ describe('Catan App Routes', () => {
     //   headers: { Cookie: 'player-id=p1' },
     //   method: 'POST',
     // });
-
     // const res = await app.request(req);
     // assert(res.blocked);
   });
