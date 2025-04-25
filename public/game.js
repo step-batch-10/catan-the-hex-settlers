@@ -233,11 +233,10 @@ const showMessage = (templateId, elementId, msg) => {
 };
 
 const highlightPosition = (id, className) => {
-  const ele = document.getElementById(`${id}`);
+  const ele = document.getElementById(id);
 
   if (!ele) return;
 
-  ele.style.opacity = 1;
   ele.classList.add(className);
 };
 
@@ -245,11 +244,11 @@ const showPossibleSettlementsOrRoads = async () => {
   const res = await fetch('/game/possible-positions').then((i) => i.json());
 
   if (res.settlements) {
-    res.settlements.forEach((id) => highlightPosition(id, 'settlement'));
+    res.settlements.forEach((id) => highlightPosition(id, 'available-settlement'));
   }
 
   if (res.roads) {
-    res.roads.forEach((id) => highlightPosition(id, 'road'));
+    res.roads.forEach((id) => highlightPosition(id, 'available-road'));
   }
 };
 
@@ -351,7 +350,6 @@ const tradeWithBank = async (_e) => { // requires refactoring
       globalThis.location = '#button-container';
     }
   } catch (e) {
-    console.log('showing message');
     const msg = showMessage('#message-container', '.invalid-msg', e.message);
 
     setTimeout(() => {
@@ -421,7 +419,7 @@ const isPieceTypeValid = (pieceType) =>
 const getBuildValidationData = async (event) => {
   const element = event.target;
   const targetElementId = element.id;
-  const pieceType = element.classList[0];
+  const pieceType = element.getAttribute('type');
 
   if (!isPieceTypeValid(pieceType)) return null;
 
@@ -435,17 +433,15 @@ const getBuildValidationData = async (event) => {
 };
 
 const removeSvgAnimation = () => {
-  const allSettlements = document.querySelectorAll('.settlement') || [];
-  const allRoads = document.querySelectorAll('.road') || [];
+  const allSettlements = document.querySelectorAll('.available-settlement') || [];
+  const allRoads = document.querySelectorAll('.available-road') || [];
 
   for (let i = 0; i < allSettlements.length; i++) {
-    allSettlements[i].style.opacity = 0;
-    allSettlements[i].classList.remove('settlement');
+    allSettlements[i].classList.remove('available-settlement');
   }
 
   for (let i = 0; i < allRoads.length; i++) {
-    allRoads[i].style.opacity = 0;
-    allRoads[i].classList.remove('road');
+    allRoads[i].classList.remove('available-road');
   }
 };
 
@@ -568,8 +564,8 @@ const addEventListeners = (gameState) => {
 const renderStructures = (structures) => {
   structures.forEach(({ color, id }) => {
     const structure = document.getElementById(id);
-    structure.style.fill = color;
-    structure.style.opacity = 1;
+    structure.classList.add("built")
+    structure.style.setProperty('--color', color)
   });
 };
 

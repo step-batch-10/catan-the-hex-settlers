@@ -453,42 +453,66 @@ body {
   transition: all 0.2s ease;
 }
 
-.road {
-  animation-duration: 1s;
-  animation-iteration-count: infinite;
-  animation-name: expand;
+.road-placeholder {
+  fill: #51acd378;
+  opacity: 0;
+  stroke-width: 0;
+  stroke: #51acd378;
 }
 
-@keyframes expand {
-  0% {
-    width: 10px;
-    height: 38px;
-  }
-  50% {
-    width: 12px;
-    height: 42px;
-  }
-  100% {
-    width: 10px;
-    height: 38px;
-  }
-}
-
-.settlement {
+.available-road {
+  opacity: 1;
+  cursor: pointer;
   animation-duration: 1s;
   animation-iteration-count: infinite;
   animation-name: grow;
 }
 
+.available-road:hover, .available-settlement:hover {
+  stroke: #51acd3;
+  stroke-opacity: 1;
+  stroke-width: 3;
+  transform: translateY(-3px) translateZ(5px);
+}
+
+.settlement {
+  opacity: 0;
+  fill: rgba(128, 128, 128, 0.551);
+  stroke-width: 1;
+  stroke: grey;
+}
+
+.available-settlement {
+  opacity: 1;
+  fill: #4092c9;
+  stroke: #51acd378;
+  cursor: pointer;
+  animation-duration: 1s;
+  /* animation-timing-function: cubic-bezier(0.1, 1, 15.355, 0); */
+  animation-iteration-count: infinite;
+  animation-name: grow;
+}
+
+.built {
+  opacity: 1;
+  --color: #fff;
+  fill-opacity: 1;
+  fill: color-mix(in srgb, var(--color) 70%, rgba(255, 255, 255, 0.877));
+  stroke-width: 1;
+  stop-opacity: 1;
+  stroke: color-mix(in srgb, var(--color) 50%, black)
+}
+
+
 @keyframes grow {
   0% {
-    r: 7;
+    fill-opacity: 0.5;
   }
   50% {
-    r: 10;
+    fill-opacity: 1;
   }
   100% {
-    r: 7;
+    fill-opacity: 0.5;
   }
 }
 
