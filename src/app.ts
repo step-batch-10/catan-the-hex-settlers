@@ -16,6 +16,8 @@ import {
   serveGameData,
   serveGamePage,
   serveGameState,
+  updateRobberPosition,
+  validateRobberPlacement,
 } from './handlers/dynamicHandlers.ts';
 import { Player } from './models/player.ts';
 import { Board } from './models/board.ts';
@@ -43,6 +45,8 @@ const gameRoutes = (game: Game): Hono => {
   gameApp.patch('/buy/dev-card', handleBuyDevCards);
   gameApp.post('/build/edge', buildRoad);
   gameApp.get('/dice/can-roll', canRoll);
+  gameApp.post('/can-place-robber', validateRobberPlacement);
+  gameApp.post('/moveRobber', updateRobberPosition);
   gameApp.post('/can-build/vertex', canBuildSettlement);
   gameApp.post('/can-build/edge', canBuildRoad);
   gameApp.get('/possible-positions', serveAllPositions);

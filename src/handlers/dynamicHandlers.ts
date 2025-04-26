@@ -1,4 +1,5 @@
 import { Context } from 'hono';
+
 import { getCookie, setCookie } from 'hono/cookie';
 import _ from 'lodash';
 import { TradeResources } from '../types.ts';
@@ -110,4 +111,23 @@ export const serveAllPositions = (ctx: Context): Response => {
   const roads = pos.get('roads');
 
   return ctx.json({ settlements: [...settlements], roads: [...roads] });
+};
+
+export const validateRobberPlacement = async (
+  ctx: Context,
+): Promise<Response> => {
+  const game = ctx.get('game');
+  const { id } = await ctx.req.parseBody();
+  const isValid = game.validateRobberPosition(id);
+
+  return ctx.json({ isValid });
+};
+
+export const updateRobberPosition = async (ctx: Context): Promise<Response> => {
+  const game = ctx.get('game');
+
+  const { id } = await ctx.req.parseBody();
+  game.blockResource(id);
+
+  return ctx.text('ok');
 };

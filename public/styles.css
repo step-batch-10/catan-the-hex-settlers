@@ -145,6 +145,7 @@ body {
 }
 
 #trade,
+#trade,
 #pass-btn {
   font-size: 22px;
   height: 2rem;
@@ -545,6 +546,7 @@ body {
 }
 
 .dice.roll {
+  animation: roll 0.4s ease-in-out;
   animation: roll 0.4s ease-in-out;
 }
 
