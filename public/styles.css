@@ -75,8 +75,8 @@ body {
   gap: 10px;
   margin: 2px;
   position: fixed;
-  bottom: 100px;
-  right: 700px;
+  bottom: 190px;
+  right: 770px;
 }
 
 .dice {
@@ -102,21 +102,17 @@ body {
 }
 
 .player-panel {
-  width: 60%;
-  height: 20%;
-  background-color: rgba(255, 255, 255, 0.6);
+  width: 50%;
+  height: 17%;
   display: flex;
   flex-direction: row;
-  height: 190px;
+  flex-wrap: nowrap;
+  background-color: rgba(255, 255, 255, 0.6);
   border-radius: 10px;
   padding: 10px;
-  flex-wrap: nowrap;
   position: fixed;
-  bottom: 0px;
-  right: 0px;
-  position: fixed;
-  bottom: 0px;
-  right: 0px;
+  bottom: 10px;
+  right: 10px;
   overflow-x: auto;
 }
 
@@ -199,23 +195,11 @@ body {
   margin-bottom: 10px;
 }
 
-/* .turn-indicator {
-  border: 3px solid rgb(50, 118, 177);
-  transform: scale(1.04);
-} */
-
 .player-info div {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-/* 
-#color {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: grey;
-} */
 
 .no-line-through {
   text-decoration: none;
@@ -446,15 +430,13 @@ body {
   width: 524px;
   height: 158px;
   line-height: 36px;
-  gap: 30px;
-  width: 524px;
-  height: 158px;
-  line-height: 36px;
   display: none;
   position: absolute;
+  bottom: 10px;
+  right: 10px;
   border: 2px solid #ccc;
   border-radius: 8px;
-  transform: translateY(-100%) translateX(160%);
+  transform: translateY(-130%);
 }
 
 .dev-types {
@@ -603,6 +585,10 @@ body {
   text-align: center;
 }
 
+/* .cell span {
+  display: none;
+} */
+
 .header {
   background: #0077b6;
   color: white;
@@ -619,4 +605,10 @@ body {
 .icons {
   width: 40px;
   height: 30px;
+}
+
+.owned {
+  width: 30%;
+  height: 30%;
+  background-color: gold;
 }

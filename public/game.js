@@ -109,17 +109,18 @@ const assignPlayerId = (player, element) => {
 };
 
 const createProfileCard = (player) => {
-  const cloneTemplate = cloneTemplateElement("#player-row-template");
-  const playerInfoCard = cloneTemplate.querySelector(".player-row");
-  playerInfoCard.style.setProperty("--color", player.color);
-
+  const cloneTemplate = cloneTemplateElement('#player-row-template');
+  const playerInfoCard = cloneTemplate.querySelector('.player-row');
+  playerInfoCard.style.setProperty('--color', player.color)
+  
   assignPlayerId(player, playerInfoCard);
-  appendText(playerInfoCard, ".player-name", player.name);
-  appendText(playerInfoCard, ".vp", player.victoryPoints);
-  appendText(playerInfoCard, ".dev-card", player.devCards);
-  appendText(playerInfoCard, ".resources", player.resources);
-  appendText(playerInfoCard, ".largest-army", player.largestArmyCount);
-  appendText(playerInfoCard, ".longest-road", player.longestRoadCount);
+  appendText(playerInfoCard, '.player-name', player.name);
+  appendText(playerInfoCard, '.vp', player.victoryPoints);
+  appendText(playerInfoCard, '.dev-card', player.devCards);
+  appendText(playerInfoCard, '.resources', player.resources);
+  appendText(playerInfoCard, '.largest-army', player.largestArmyCount);
+  appendText(playerInfoCard, '.longest-road', player.longestRoadCount);
+  addClassToElement('owned', '.largest-army', playerInfoCard)
 
   return playerInfoCard;
 };
@@ -174,9 +175,9 @@ const renderPlayerPanel = (player) => {
 
 const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
-
-  const list = document.querySelector(".players-details");
-
+  
+  const list = document.querySelector('.players-details');
+  
   const profileCards = players.playersInfo.map((player) =>
     createProfileCard(player)
   );
@@ -384,65 +385,8 @@ const navigateToMaritimeTrade = () => {
 };
 
 const openTradeCenter = () => {
-  const tradesMenu = document.querySelector("#floating-trade-menu");
-  tradesMenu.style.display = "block";
-};
-
-const removeClassFromElement = (elementId, className) => {
-  const element = document.querySelector(elementId);
-  element.classList.remove(className);
-};
-
-const applyPlayerActions = ({ canTrade, canRoll }) => {
-  const playerActionIcons = ["#trade", "#pass-btn", "#buy-dev-card"];
-  const dice = ["#dice1", "#dice2"];
-
-  dice.forEach((id) => addClassToElement(id, "disable"));
-  playerActionIcons.forEach((id) => addClassToElement(id, "disable"));
-
-  if (canRoll) {
-    dice.forEach((id) => removeClassFromElement(id, "disable"));
-    return;
-  }
-
-  if (canTrade) {
-    playerActionIcons.forEach((id) => removeClassFromElement(id, "disable"));
-    return;
-  }
-};
-
-const renderBoardHexes = async () => {
-  const response = await fetch("/game/gameState");
-  const gameState = await response.json();
-  renderBoard(gameState.board.hexes);
-};
-
-const moveRobber = async (event) => {
-  const fd = new FormData();
-  fd.set("id", event.target.parentElement.id);
-  console.log(event.target.parentElement.id, "element");
-  const disableElements = ["#trade", "#pass-btn", "#buy-dev-card"];
-
-  const { isValid } = await fetch("/game/can-place-robber", {
-    method: "POST",
-    body: fd,
-  }).then((res) => res.json());
-
-  if (!isValid) return renderMsg("you can't place there");
-
-  await fetch("/game/moveRobber", { method: "POST", body: fd });
-  addBuildEvent();
-  disableElements.forEach((id) => removeClassFromElement(id, "disable"));
-};
-
-const handleRobberCase = () => {
-  const svg = document.getElementById("svg20"); //only terrains
-  const disableElements = ["trade", "pass-btn", "buy-dev-card"];
-
-  disableElements.forEach((id) => disableElement(id));
-  svg.removeEventListener("click", build);
-  console.log(svg);
-  svg.addEventListener("click", moveRobber);
+  const tradesMenu = document.querySelector('#floating-trade-menu');
+  tradesMenu.style.display = 'block';
 };
 
 const rollDiceHandler = async () => {
@@ -547,9 +491,32 @@ const addListener = (elementId, listener) => {
 
 const goBack = () => (globalThis.location = "#button-container");
 
-const addClassToElement = (elementId, className) => {
-  const element = document.querySelector(elementId);
+const addClassToElement = (className, elementId, parent) => {
+  const element = (parent || document).querySelector(elementId);
   element.classList.add(className);
+};
+
+const removeClassFromElement = (elementId, className) => {
+  const element = document.querySelector(elementId);
+  element.classList.remove(className);
+};
+
+const applyPlayerActions = ({ canTrade, canRoll }) => {
+  const playerActionIcons = ['#trade', '#pass-btn', '#buy-dev-card'];
+  const dice = ['#dice1', '#dice2'];
+
+  dice.forEach((id) => addClassToElement('disable', id));
+  playerActionIcons.forEach((id) => addClassToElement('disable', id));
+
+  if (canRoll) {
+    dice.forEach((id) => removeClassFromElement(id, 'disable'));
+    return;
+  }
+
+  if (canTrade) {
+    playerActionIcons.forEach((id) => removeClassFromElement(id, 'disable'));
+    return;
+  }
 };
 
 const renderMsg = (msg) => {
@@ -657,8 +624,8 @@ const renderPieces = (gameState) => {
 
 const highlightPlayersTurn = (currentPlayerId) => {
   const playerInfoCard = document.getElementById(currentPlayerId);
-
-  playerInfoCard.classList.add("current-player");
+  
+  playerInfoCard.classList.add('current-player');
 };
 
 const renderElements = (gameState) => {
