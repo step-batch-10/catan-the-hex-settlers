@@ -2,6 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: sans-serif;
 }
 
 html,
@@ -137,7 +138,7 @@ body {
   width: 100%;
 }
 
-#trade, 
+#trade,
 #pass-btn {
   font-size: 22px;
   height: 2rem;
@@ -468,7 +469,8 @@ body {
   animation-name: grow;
 }
 
-.available-road:hover, .available-settlement:hover {
+.available-road:hover,
+.available-settlement:hover {
   stroke: #51acd3;
   stroke-opacity: 1;
   stroke-width: 3;
@@ -500,9 +502,8 @@ body {
   fill: color-mix(in srgb, var(--color) 70%, rgba(255, 255, 255, 0.877));
   stroke-width: 1;
   stop-opacity: 1;
-  stroke: color-mix(in srgb, var(--color) 50%, black)
+  stroke: color-mix(in srgb, var(--color) 50%, black);
 }
-
 
 @keyframes grow {
   0% {
@@ -517,7 +518,7 @@ body {
 }
 
 .dice.roll {
- animation: roll 0.4s ease-in-out;
+  animation: roll 0.4s ease-in-out;
 }
 
 @keyframes roll {

@@ -333,7 +333,9 @@ export class Catan {
       throw new Error("You haven't rolled the dice");
     }
 
-    if (!this.hasDevCards()) throw new Error('There is no Development Card');
+    if (!this.hasDevCards()) {
+      throw new Error('The development card Deck is empty');
+    }
   }
 
   private updatePlayerDevCards(randomCard: DevelopmentCards) {

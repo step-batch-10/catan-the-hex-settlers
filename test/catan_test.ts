@@ -775,7 +775,7 @@ describe('buyDevCard', () => {
     const result = catan.buyDevCard('p1');
 
     assertFalse(result.isSucceed);
-    assertEquals(result.message, 'There is no Development Card');
+    assertEquals(result.message, 'The development card Deck is empty');
   });
 });
 
