@@ -120,7 +120,10 @@ const createProfileCard = (player) => {
   appendText(playerInfoCard, '.resources', player.resources);
   appendText(playerInfoCard, '.largest-army', player.largestArmyCount);
   appendText(playerInfoCard, '.longest-road', player.longestRoadCount);
-  addClassToElement('owned', '.largest-army', playerInfoCard)
+  if (player.hasLargestArmy)
+    addClassToElement('owned', '.largest-army', playerInfoCard)
+  if (player.hasLongestRoad)
+    addClassToElement('owned', '.longest-road', playerInfoCard)
 
   return playerInfoCard;
 };
@@ -389,6 +392,42 @@ const openTradeCenter = () => {
   tradesMenu.style.display = 'block';
 };
 
+const moveRobber = async (event) => {
+ const fd = new FormData();
+ fd.set('id', event.target.parentElement.id);
+ const disableElements = ['#trade', '#pass-btn', '#buy-dev-card'];
+
+
+ const { isValid } = await fetch('/game/can-place-robber', {
+   method: 'POST',
+   body: fd,
+ }).then((res) => res.json());
+
+
+ if (!isValid) return renderMsg("you can't place there");
+
+
+ await fetch('/game/moveRobber', { method: 'POST', body: fd });
+ addBuildEvent();
+ disableElements.forEach((id) => removeClassFromElement(id, 'disable'));
+};
+
+const renderBoardHexes = async () => {
+   const response = await fetch("/game/gameState");
+   const gameState = await response.json();
+   renderBoard(gameState.board.hexes);
+ };
+
+const handleRobberCase = () => {
+ const svg = document.getElementById('svg20'); //only terrains
+ const disableElements = ['trade', 'pass-btn', 'buy-dev-card'];
+
+
+ disableElements.forEach((id) => disableElement(id));
+ svg.removeEventListener('click', build);
+ svg.addEventListener('click', moveRobber);
+};
+
 const rollDiceHandler = async () => {
   const outcome = await fetch("/game/dice/can-roll").then((res) => res.json());
 
@@ -635,6 +674,7 @@ const renderElements = (gameState) => {
   displayPlayerTurn(gameState);
   highlightPlayersTurn(gameState.currentPlayerId);
 };
+
 
 const poll = () => {
   setInterval(async () => {

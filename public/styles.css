@@ -265,7 +265,7 @@ body {
   background-color: #ffffff;
   border: 2px solid #333;
   padding: 25px;
-  z-index: 20; /* Higher than trade-options */
+  z-index: 20; 
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
@@ -500,7 +500,6 @@ body {
   stroke: #51acd378;
   cursor: pointer;
   animation-duration: 1s;
-  /* animation-timing-function: cubic-bezier(0.1, 1, 15.355, 0); */
   animation-iteration-count: infinite;
   animation-name: grow;
 }
@@ -551,7 +550,6 @@ body {
   width: max-content;
   background: rgba(255, 255, 255, 0.436);
   box-shadow: 4px 4px 8px grey;
-  /* back */
   padding: 10px;
   border-radius: 10px;
   position: fixed;
@@ -608,7 +606,5 @@ body {
 }
 
 .owned {
-  width: 30%;
-  height: 30%;
   background-color: gold;
 }
