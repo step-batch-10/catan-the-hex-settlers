@@ -75,15 +75,25 @@ export class Player {
 
   addSpecialCard(cardType: string): void {
     if (cardType === 'largestArmy') this.hasLargestArmy = true;
+    if (cardType === 'longestRoad') this.hasLongestRoad = true;
     this.victoryPoints += 2;
   }
 
   deductSpecialCard(cardType: string): void {
     if (cardType === 'largestArmy') this.hasLargestArmy = false;
+    if (cardType === 'longestRoad') this.hasLongestRoad = false;
     this.victoryPoints -= 2;
   }
 
   playDevCard(cardType: keyof DevCardTypes) {
     this.devCards.played[cardType] += 1;
+  }
+
+  addRoad(edgeId: string): void {
+    this.roads.push(edgeId);
+  }
+
+  updateLongestRoad(count: number) {
+    this.longestRoadCount = count;
   }
 }

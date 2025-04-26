@@ -41,6 +41,7 @@ export class Catan {
   };
   turn: { hasRolled: boolean };
   largestArmyCount: number;
+  longestRoadCount: number;
   specialCardOwners: SpecialCardOwners;
   supply: Supply;
 
@@ -49,7 +50,7 @@ export class Catan {
     players: Player[],
     board: Board,
     diceFn: (start?: number, end?: number) => number,
-    supply: Supply,
+    supply: { resources: Resources; devCards: DevelopmentCards[] }
   ) {
     this.gameId = gameId;
     this.players = players;
@@ -63,6 +64,7 @@ export class Catan {
     this.turn = { hasRolled: false };
     this.supply = supply;
     this.largestArmyCount = 2;
+    this.longestRoadCount = 4;
     this.specialCardOwners = { largestArmy: null, longestRoad: null };
   }
 
@@ -86,8 +88,8 @@ export class Catan {
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
     if (!this.isInitialSetup() && !this.turn.hasRolled) return;
     this.turn = { hasRolled: false };
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
-      this.players.length;
+    this.currentPlayerIndex =
+      (this.currentPlayerIndex + 1) % this.players.length;
   }
 
   private canProduce(hexId: string, rolledNumber: number): boolean {
@@ -101,7 +103,7 @@ export class Catan {
 
   private getProducedResources(
     terrains: string[] | undefined,
-    rolledNumber: number,
+    rolledNumber: number
   ) {
     const { hexes } = this.board;
     const producedTerrains = terrains?.filter((hexId) =>
@@ -114,7 +116,7 @@ export class Catan {
   private addProducedResource(
     playerId: string,
     resource: keyof Resources | undefined,
-    buildingType: string,
+    buildingType: string
   ) {
     return { playerId, resource, buildingType };
   }
@@ -122,11 +124,11 @@ export class Catan {
   private addProducedResources(
     resources: ResourceProduction,
     resourcesProduced: object[],
-    player: Player,
+    player: Player
   ) {
     resources?.forEach((resource) =>
       resourcesProduced.push(
-        this.addProducedResource(player.id, resource, 'settlement'),
+        this.addProducedResource(player.id, resource, 'settlement')
       )
     );
   }
@@ -246,7 +248,7 @@ export class Catan {
     const adjacentVertexIds = edge?.vertices || [];
 
     return [...adjacentVertexIds].some(
-      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId,
+      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId
     );
   }
 
@@ -317,7 +319,11 @@ export class Catan {
   buildRoad(edgeId: string): boolean {
     const currentPlayer = this.getCurrentPlayer();
     this.getEdge(edgeId)?.occupy(currentPlayer.id, currentPlayer.color);
-    currentPlayer.roads.push(edgeId);
+    currentPlayer.addRoad(edgeId);
+    const longestRoadLength = this.longestRoadOf(currentPlayer.id);
+    currentPlayer.updateLongestRoad(longestRoadLength);
+    if (longestRoadLength > this.longestRoadCount)
+      this.handleSpecialCard('longestRoad');
     this.turns++;
     this.isInitialSetup() ? this.changeTurn() : this.deductResources('road');
 
@@ -360,11 +366,11 @@ export class Catan {
   distributeInitialResources(
     vertexId: string,
     player: Player,
-    count: number,
+    count: number
   ): void {
     const hexes = this.getVertex(vertexId)?.adjacentHexes;
     const resources = hexes?.map(
-      (hexId) => this.board.hexes.get(hexId)?.resource,
+      (hexId) => this.board.hexes.get(hexId)?.resource
     );
 
     resources?.forEach((resource) => {
@@ -400,7 +406,7 @@ export class Catan {
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], _others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId,
+      (p: Player) => p.id === playerId
     );
 
     const me = player.getPlayerData();
@@ -412,8 +418,8 @@ export class Catan {
   }
 
   getAvailableActions(playerId: string) {
-    const isPlayerTurnInMainPhase = this.isCurrentPlayer(playerId) &&
-      !this.isInitialSetup();
+    const isPlayerTurnInMainPhase =
+      this.isCurrentPlayer(playerId) && !this.isInitialSetup();
     const canRoll = isPlayerTurnInMainPhase && !this.hasAlreadyRolled();
     const canTrade = isPlayerTurnInMainPhase && this.hasAlreadyRolled();
 
@@ -459,7 +465,7 @@ export class Catan {
 
   private extractOccupiedComponents(
     componentsMap: Map<string, Vertex | Edge>,
-    occupiedComponents: Components[],
+    occupiedComponents: Components[]
   ) {
     componentsMap.forEach((component: Vertex | Edge, key: string) => {
       if (component.owner) {
@@ -508,7 +514,7 @@ export class Catan {
     const currentPlayerId = this.getCurrentPlayer().id;
 
     return [...adjacentEdges].some(
-      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId,
+      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId
     );
   }
 
@@ -549,7 +555,10 @@ export class Catan {
 
   private updateCardInfo(player: Player, cardType: keyof SpecialCardOwners) {
     player.addSpecialCard(cardType);
-    this.largestArmyCount = player.devCards.played.knight;
+    if (cardType === 'largestArmy')
+      this.largestArmyCount = player.devCards.played.knight;
+    if (cardType === 'longestRoad')
+      this.longestRoadCount = player.longestRoadCount;
     this.specialCardOwners[cardType] = this.currentPlayerIndex;
   }
 
@@ -580,11 +589,10 @@ export class Catan {
   getAvailableLocations(
     type: BuildType,
     phase: Phase,
-    playerId: string,
+    playerId: string
   ): StringSet {
-    const builds = type === 'settlement'
-      ? this.board.vertices
-      : this.board.edges;
+    const builds =
+      type === 'settlement' ? this.board.vertices : this.board.edges;
 
     const conditionMap = {
       settlement: {
@@ -609,7 +617,7 @@ export class Catan {
 
   private createMapOfPieces(
     roads: StringSet,
-    settlement: StringSet,
+    settlement: StringSet
   ): Map<string, StringSet> {
     return new Map([
       ['settlements', settlement],
@@ -636,5 +644,62 @@ export class Catan {
     const roads = this.getAvailableLocations('road', 'main', id);
 
     return this.createMapOfPieces(roads, settlements);
+  }
+
+  private dfs(
+    playerId: string,
+    vertexId: string,
+    length: number,
+    visitedEdges: Set<string>
+  ): number {
+    const vertex = this.getVertex(vertexId);
+    if (!vertex) return length;
+
+    const adjacentEdges = vertex.connectedEdges || [];
+    let maxLength = length;
+
+    for (const edgeId of adjacentEdges) {
+      const edge = this.getEdge(edgeId);
+      if (!edge || edge.owner !== playerId || visitedEdges.has(edgeId)) {
+        continue;
+      }
+
+      visitedEdges.add(edgeId);
+
+      const [v1, v2] = edge.vertices;
+      const nextVertexId = v1 === vertexId ? v2 : v1;
+
+      maxLength = Math.max(
+        maxLength,
+        this.dfs(playerId, nextVertexId, length + 1, visitedEdges)
+      );
+
+      visitedEdges.delete(edgeId);
+    }
+
+    return maxLength;
+  }
+
+  longestRoadOf(playerId: string): number {
+    const player: Player = _.find(this.players, { id: playerId });
+    const visitedEdges = new Set<string>();
+    let longestRoad = 0;
+
+    player.roads.forEach((edgeId) => {
+      const edge: Edge =
+        this.board.edges.get(edgeId) || new Edge('e1', ['', '']);
+      if (!visitedEdges.has(edgeId)) {
+        const [v1, v2] = edge.vertices;
+        visitedEdges.add(edgeId);
+        longestRoad = Math.max(
+          longestRoad,
+          this.dfs(playerId, v1, 1, visitedEdges),
+          this.dfs(playerId, v2, 1, visitedEdges)
+        );
+        visitedEdges.delete(edgeId);
+      }
+    });
+
+    return longestRoad;
   }
 }

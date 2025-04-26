@@ -2,5 +2,11 @@
   // "editor.defaultFormatter": "denoland.vscode-deno",
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
-  "deno.enable": true
+  "deno.enable": true,
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  }
 }

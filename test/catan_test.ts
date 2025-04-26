@@ -2,10 +2,17 @@ import _ from 'lodash';
 import { Vertex } from '../src/models/vertex.ts';
 import { assertEquals, assert, assertFalse } from 'assert';
 import { describe, it, beforeEach } from 'testing/bdd';
-import type { VertexData, EdgeData, DevelopmentCards } from '../src/types.ts';
+import type {
+  VertexData,
+  EdgeData,
+  Resources,
+  DevelopmentCards,
+} from '../src/types.ts';
 import { Catan } from '../src/models/catan.ts';
 import { Player } from '../src/models/player.ts';
 import { Board } from '../src/models/board.ts';
+import { defaultResources } from '../src/types.ts';
+import { Edge } from '../src/models/edge.ts';
 
 describe('Catan', () => {
   let catan: Catan;
@@ -18,20 +25,11 @@ describe('Catan', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const resources = {
-      ore: 25,
-      brick: 25,
-      lumber: 25,
-      wool: 25,
-      grain: 25,
+
+    const supply: { resources: Resources; devCards: DevelopmentCards[] } = {
+      resources: defaultResources,
+      devCards: [],
     };
-    const devCards: DevelopmentCards[] = [
-      'knight',
-      'knight',
-      'monopoly',
-      'knight',
-    ];
-    const supply = { resources, devCards };
     catan = new Catan('game123', players, board, _.random, supply);
   });
 
@@ -134,7 +132,7 @@ describe('Catan', () => {
     assert(gameState.board.hexes.length > 0, 'Board hexes should be present.');
     assert(
       gameState.board.vertices.length > 0,
-      'Board vertices should be present.',
+      'Board vertices should be present.'
     );
     assert(gameState.board.edges.length > 0, 'Board edges should be present.');
   });
@@ -170,7 +168,7 @@ describe('Catan', () => {
 
     assert(
       newResourceCount > initialResourceCount,
-      'Player should receive resources after building a settlement.',
+      'Player should receive resources after building a settlement.'
     );
     assertEquals(vertices, [{ id: 'v0,0|1,-1|1,0', color: 'red' }]);
   });
@@ -261,20 +259,11 @@ describe('buildSettlement ', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const resources = {
-      ore: 25,
-      brick: 25,
-      lumber: 25,
-      wool: 25,
-      grain: 25,
+
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
     };
-    const devCards: DevelopmentCards[] = [
-      'knight',
-      'knight',
-      'monopoly',
-      'knight',
-    ];
-    const supply = { resources, devCards };
     catan = new Catan('game123', players, board, _.random, supply);
   });
 
@@ -457,20 +446,10 @@ describe('buildRoad', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const resources = {
-      ore: 25,
-      brick: 25,
-      lumber: 25,
-      wool: 25,
-      grain: 25,
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
     };
-    const devCards: DevelopmentCards[] = [
-      'knight',
-      'knight',
-      'monopoly',
-      'knight',
-    ];
-    const supply = { resources, devCards };
     catan = new Catan('game123', players, board, _.random, supply);
   });
 
@@ -516,7 +495,7 @@ describe('buildRoad', () => {
 
     catan.currentPlayerIndex = 0;
     catan.turn.hasRolled = true;
-    catan.validateBuildRoad('r1', playerId);
+    catan.validateBuildRoad('r1', 'p1');
     const vertex = new Vertex('s1', null);
     catan.board.vertices.set('s1', vertex);
     catan.validateBuildSettlement('s1', 'p1');
@@ -568,13 +547,11 @@ describe('buildRoad', () => {
     const settlementId = 'v0,-1|0,0|1,-1';
     const roadId1 = 'e-v0,-1|0,0|1,-1_v0,0|1,-1|1,0';
 
-    catan.phase = 'main';
-    const player = catan.players[catan.currentPlayerIndex];
-    player.resources = { brick: 1, lumber: 1, grain: 1, wool: 1, ore: 0 };
     catan.buildSettlement(settlementId);
+    catan.phase = 'main';
 
     const canBuild = catan.validateBuildRoad(roadId1, 'p1');
-
+    console.log(canBuild);
     assertFalse(canBuild);
   });
 });
@@ -590,20 +567,10 @@ describe('distribute Resources', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const resources = {
-      ore: 25,
-      brick: 25,
-      lumber: 25,
-      wool: 25,
-      grain: 25,
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
     };
-    const devCards: DevelopmentCards[] = [
-      'knight',
-      'knight',
-      'monopoly',
-      'knight',
-    ];
-    const supply = { resources, devCards };
     catan = new Catan('game123', players, board, _.random, supply);
   });
 
@@ -629,6 +596,7 @@ describe('distribute Resources', () => {
 
 describe('longest army', () => {
   let catan: Catan;
+
   beforeEach(() => {
     const players = [];
     players.push(new Player('p1', 'Adil', 'red'));
@@ -637,20 +605,10 @@ describe('longest army', () => {
     players.push(new Player('p4', 'Shalu', 'white'));
     const board = new Board();
     board.createBoard();
-    const resources = {
-      ore: 25,
-      brick: 25,
-      lumber: 25,
-      wool: 25,
-      grain: 25,
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
     };
-    const devCards: DevelopmentCards[] = [
-      'knight',
-      'knight',
-      'monopoly',
-      'knight',
-    ];
-    const supply = { resources, devCards };
     catan = new Catan('game123', players, board, _.random, supply);
   });
 
@@ -895,5 +853,104 @@ describe('possible build locations', () => {
     const validRoads = catan.getAvailableBuilds('p2');
 
     assertEquals(validRoads.get('roads')?.size, 0);
+  });
+});
+
+describe('longest road', () => {
+  let catan: Catan;
+
+  beforeEach(() => {
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
+    };
+    catan = new Catan('game123', players, board, _.random, supply);
+  });
+
+  it('should calculate the longest road of 3', () => {
+    const player = catan.players[0];
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,-1|-1,0|-2,0_v-1,0|-2,0|-2,1');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,0|-1,1|-2,1_v-1,0|-2,0|-2,1');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,0|-1,1|-2,1_v-1,1|-2,1|-2,2');
+
+    const longestRoad = catan.longestRoadOf(player.id);
+    assertEquals(longestRoad, 3, 'Longest road should be 3');
+  });
+
+  it('should calculate the longest road of 4', () => {
+    const player = catan.players[0];
+    catan.currentPlayerIndex = 0;
+
+    catan.buildRoad('e-v-1,0|-1,1|0,0_v-1,1|0,0|0,1');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,1|0,0|0,1_v0,0|0,1|1,0');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,1|-1,2|0,1_v-1,1|0,0|0,1');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,1|-1,2|-2,2_v-1,1|-1,2|0,1');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,1|-1,2|-2,2_v-1,2|-2,2|-2,3');
+
+    const longestRoad = catan.longestRoadOf(player.id);
+    assertEquals(longestRoad, 4, 'Longest road should be 4');
+    assertEquals(player.longestRoadCount, 4, 'Longest road should be 4');
+  });
+
+  it('should calculate the longest road with a loop', () => {
+    const player = catan.players[0];
+
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,-2|0,-2|0,-3_v0,-2|0,-3|1,-3');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,-1|-1,-2|0,-2_v-1,-2|0,-2|0,-3');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,-1|-1,-2|0,-2_v-1,-1|0,-1|0,-2');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v-1,-1|0,-1|0,-2_v0,-1|0,-2|1,-2');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v0,-1|0,-2|1,-2_v0,-2|1,-2|1,-3');
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('e-v0,-2|0,-3|1,-3_v0,-2|1,-2|1,-3');
+
+    const longestRoad = catan.longestRoadOf(player.id);
+    assertEquals(longestRoad, 6, 'Longest road should be 6');
+    assertEquals(player.longestRoadCount, 6);
+    assertEquals(player.victoryPoints, 2);
+  });
+
+  it('should give 1 for invalid roads', () => {
+    const player = catan.players[0];
+
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('notARoad');
+
+    const longestRoad = catan.longestRoadOf(player.id);
+    assertEquals(longestRoad, 1, 'Longest road should be 1 by default');
+  });
+
+  it('should give 1 for invalid edges', () => {
+    const player = catan.players[0];
+    const edge = new Edge('invalid-edge', ['v1', 'v2']);
+    catan.board.edges.set('invalid-edge', edge);
+    const vertex = {
+      id: 'v1',
+      connectedEdges: null,
+    } as unknown as Vertex;
+    catan.board.vertices.set('v1', vertex);
+    catan.currentPlayerIndex = 0;
+    catan.buildRoad('invalid-edge');
+
+    const longestRoad = catan.longestRoadOf(player.id);
+    assertEquals(longestRoad, 1, 'Longest road should be 1 by default');
   });
 });
