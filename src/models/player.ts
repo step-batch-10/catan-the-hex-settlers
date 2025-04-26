@@ -86,6 +86,7 @@ export class Player {
   }
 
   playDevCard(cardType: keyof DevCardTypes) {
+    this.devCards.owned[cardType] -= 1;
     this.devCards.played[cardType] += 1;
   }
 
@@ -95,5 +96,9 @@ export class Player {
 
   updateLongestRoad(count: number) {
     this.longestRoadCount = count;
+  }
+
+  dropCards(resource: keyof Resources, count: number) {
+    this.resources[resource] -= count;
   }
 }

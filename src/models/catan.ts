@@ -706,4 +706,20 @@ export class Catan {
 
     return longestRoad;
   }
+
+  private deductResourceOfType(players: Player[], resource: keyof Resources) {
+    return players.reduce((total, player) => {
+      const count = player.resources[resource];
+      player.dropCards(resource, count);
+      return total + count;
+    }, 0);
+  }
+
+  playMonopoly(resource: keyof Resources) {
+    const player = this.getCurrentPlayer();
+    const others = this.players.filter((_, i) => i !== this.currentPlayerIndex);
+    const count = this.deductResourceOfType(others, resource);
+    player.addResource(resource, count);
+    player.playDevCard('monopoly');
+  }
 }

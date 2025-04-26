@@ -953,3 +953,36 @@ describe("longest road", () => {
     assertEquals(longestRoad, 1, "Longest road should be 1 by default");
   });
 });
+
+describe('play monopoly', () => {
+  let catan: Catan;
+
+  beforeEach(() => {
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
+    };
+    catan = new Catan('game123', players, board, _.random, supply);
+  });
+
+  it('should get the ore from all players', () => {
+    const player = catan.players[0];
+    player.addResource('ore', 3);
+    const player2 = catan.players[1];
+    player2.addResource('ore', 0);
+    const player3 = catan.players[2];
+    player3.addResource('ore', 1);
+    const player4 = catan.players[3];
+    player4.addResource('ore', 2);
+
+    catan.playMonopoly('ore');
+    assertEquals(player.resources.ore, 6);
+  });
+});
