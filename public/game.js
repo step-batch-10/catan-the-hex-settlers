@@ -95,21 +95,19 @@ const assignPlayerId = (player, element) => {
 }
 
 const createProfileCard = (player) => {
-  const cloneTemplate = cloneTemplateElement('#info-box-template');
-  const playerInfoCard = cloneTemplate.querySelector('.player-info');
-  const color = cloneTemplate.querySelector('#color');
-
-  color.style.backgroundColor = player.color;
+  const cloneTemplate = cloneTemplateElement('#player-row-template');
+  const playerInfoCard = cloneTemplate.querySelector('.player-row');
+  playerInfoCard.style.setProperty('--color', player.color)
   
   assignPlayerId(player, playerInfoCard);
-  appendText(cloneTemplate, '#player-name', player.name);
-  appendText(cloneTemplate, '#vp', player.victoryPoints);
-  appendText(cloneTemplate, '#dev-cards', player.devCards);
-  appendText(cloneTemplate, '#resources', player.resources);
-  appendText(cloneTemplate, '#largest-army', player.largestArmyCount);
-  appendText(cloneTemplate, '#longest-road', player.longestRoadCount);
+  appendText(playerInfoCard, '.player-name', player.name);
+  appendText(playerInfoCard, '.vp', player.victoryPoints);
+  appendText(playerInfoCard, '.dev-card', player.devCards);
+  appendText(playerInfoCard, '.resources', player.resources);
+  appendText(playerInfoCard, '.largest-army', player.largestArmyCount);
+  appendText(playerInfoCard, '.longest-road', player.longestRoadCount);
 
-  return cloneTemplate;
+  return playerInfoCard;
 };
 
 const updateDevCardsByType = (_devCards) => {
@@ -164,7 +162,7 @@ const renderPlayerPanel = (player) => {
 const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
   
-  const list = document.querySelector('#player-list');
+  const list = document.querySelector('.players-details');
   
   const profileCards = players.playersInfo.map((player) =>
     createProfileCard(player)
@@ -606,7 +604,7 @@ const renderPieces = (gameState) => {
 const highlightPlayersTurn = (currentPlayerId) => {
   const playerInfoCard = document.getElementById(currentPlayerId);
   
-  playerInfoCard.classList.add('turn-indicator');
+  playerInfoCard.classList.add('current-player');
 };
 
 const renderElements = (gameState) => {
