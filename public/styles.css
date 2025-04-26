@@ -453,7 +453,6 @@ body {
   border: 2px solid #ccc;
   border-radius: 8px;
   transform: translateY(-100%) translateX(160%);
-  transform: translateY(-100%) translateX(160%);
 }
 
 .dev-types {
