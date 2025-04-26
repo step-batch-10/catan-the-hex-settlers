@@ -8,10 +8,7 @@
 html,
 body {
   height: 100%;
-  background-color: #4092c9;
-  height: 100%;
-  background-color: #4092c9;
-  height: 100%;
+  width: 100%;
   background-color: #4092c9;
   user-select: none;
 }
@@ -75,8 +72,10 @@ body {
 
 .dice-container {
   display: flex;
-  gap: 10px;
-  margin: 2px;
+  gap: 20px;
+  margin: 30px;
+  gap: 20px;
+  margin: 30px;
 }
 
 .dice {
@@ -111,6 +110,12 @@ body {
   border-radius: 10px;
   padding: 10px;
   flex-wrap: nowrap;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
   overflow-x: auto;
 }
 
@@ -159,8 +164,10 @@ body {
 .count {
   width: 42px;
   position: relative;
-  left: 54px;
-  top: 18px;
+  left: 40px;
+  top: 20px;
+  left: 40px;
+  top: 20px;
   text-align: center;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -433,14 +440,20 @@ body {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  width: 504px;
-  height: 146px;
+  gap: 30px;
+  width: 524px;
+  height: 158px;
+  line-height: 36px;
+  gap: 30px;
+  width: 524px;
+  height: 158px;
+  line-height: 36px;
   display: none;
   position: absolute;
   border: 2px solid #ccc;
   border-radius: 8px;
-  transform: translateY(-228%) translateX(70%);
+  transform: translateY(-100%) translateX(160%);
+  transform: translateY(-100%) translateX(160%);
 }
 
 .dev-types {
@@ -459,6 +472,20 @@ body {
   opacity: 0;
   stroke-width: 0;
   stroke: #51acd378;
+}
+
+.close-btn {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.road {
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-name: expand;
 }
 
 .available-road {

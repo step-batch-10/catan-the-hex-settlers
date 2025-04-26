@@ -534,23 +534,50 @@ const addNavigation = () => {
   addListener('#close-btn', closeTradeOptions);
 };
 
-const showDevCards = () => {
-  const cloned = cloneTemplateElement('#all-dev-cards');
-  const allDevCards = cloned.querySelector('.display-all-dev-card');
-  const container = document.querySelector('#all-devs');
-  const closeBar = cloned.querySelector('.close-btn');
-  const existing = container.querySelector('.display-all-dev-card');
+const getTotalDevsCount = (cards) => {
+  const total = Object.values(cards).reduce(
+    (sum, availableCount) => availableCount + sum,
+    0,
+  );
 
-  if (existing) {
-    existing.style.display = 'flex';
+  const element = document.querySelector('#dev-count');
+  element.textContent = total;
+};
+
+const getAvailableCardsCount = (allDevCards) => {
+  const ownedDevCards = globalThis.gameState.players.me.devCards.owned;
+
+  allDevCards.forEach((eachType) => {
+    const type = eachType.id;
+    const count = ownedDevCards[type];
+
+    if (count === 0) disableElement(type);
+    eachType.textContent += count;
+  });
+};
+
+const showDevCards = () => {
+  const container = document.querySelector('#all-devs');
+  const existingDevCards = container.querySelector('.display-all-dev-card');
+
+  if (existingDevCards) {
+    existingDevCards.style.display = 'flex';
     return;
   }
 
+  const cloned = cloneTemplateElement('#all-dev-cards');
+  const allDevTypes = cloned.querySelectorAll('.count');
+  const allDevCards = cloned.querySelector('.display-all-dev-card');
+  const closeBtn = cloned.querySelector('.close-btn');
+
   container.append(allDevCards);
 
-  closeBar.addEventListener('click', () => {
-    allDevCards.style.display = 'none';
-  });
+  closeBtn.addEventListener(
+    'click',
+    () => (allDevCards.style.display = 'none'),
+  );
+
+  getAvailableCardsCount(allDevTypes);
 };
 
 const addEventListeners = (gameState) => {
@@ -598,6 +625,7 @@ const poll = () => {
 
     renderElements(gameState);
     applyPlayerActions(gameState.availableActions);
+    getTotalDevsCount(gameState.players.me.devCards.owned);
   }, 1000);
 };
 
