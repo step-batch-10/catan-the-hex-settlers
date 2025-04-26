@@ -733,6 +733,22 @@ describe('buyDevCard', () => {
     assertEquals(outcome.message, '');
   });
 
+  it('should update the dev cards supply when the player buys the dev Card', () => {
+    catan.phase = 'main';
+    const player = catan.players[catan.currentPlayerIndex];
+    player.resources = { brick: 0, lumber: 0, grain: 1, wool: 1, ore: 1 };
+    catan.turn.hasRolled = true;
+    catan.supply.devCards = ['monopoly', 'knight'];
+    catan.currentPlayerIndex = 0;
+    catan.turn.hasRolled = true;
+    const outcome = catan.buyDevCard('p1');
+
+    assert(outcome.isSucceed);
+    assertEquals(outcome.result, 'monopoly');
+    assertEquals(catan.supply.devCards, ['knight']);
+    assertEquals(outcome.message, '');
+  });
+
   it("shouldn't buy dev cards when its not my turn", () => {
     catan.phase = 'main';
     const player = catan.players[catan.currentPlayerIndex];
