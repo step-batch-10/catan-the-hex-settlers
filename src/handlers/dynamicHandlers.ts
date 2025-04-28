@@ -159,3 +159,23 @@ export const gameStatus = (ctx: Context) => {
 
   return ctx.json({ isGameReady });
 };
+
+export const isPublicResource = (path: string) => {
+  const publicPaths = new Set([
+    '/',
+    '/index.html',
+    '/joinGame',
+    '/index.css',
+    '/images/catan.avif',
+  ]);
+  return publicPaths.has(path);
+};
+
+export const authenticate = async (ctx: Context, next: Next) => {
+  const gameId = getCookie(ctx, 'game-id');
+  const playerId = getCookie(ctx, 'player-id');
+
+  return isPublicResource(ctx.req.path) || (gameId && playerId)
+    ? await next()
+    : ctx.redirect('/index.html', 303);
+};

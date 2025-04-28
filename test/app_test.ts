@@ -247,6 +247,14 @@ describe('Catan App Routes', () => {
     assertEquals(res.status, 303);
   });
 
+  it('should redirect to login page if no cookies', async () => {
+    const request = new Request('http://localhost:3000/game.html');
+
+    const res = await app.request(request);
+    assertEquals(res.headers.get('location'), '/index.html');
+    assertEquals(res.status, 303);
+  });
+
   it('should serve game state of the existing game', async () => {
     const request = new Request('http://localhost:3000/game/gameState', {
       headers: { Cookie: 'player-id=p1; game-id=1000' },

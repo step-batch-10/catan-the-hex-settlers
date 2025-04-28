@@ -4,6 +4,7 @@ import { logger } from 'hono/logger';
 import type { Context, Next } from 'hono';
 import {
   addPlayerToGame,
+  authenticate,
   buildRoad,
   buildSettlement,
   canBuildRoad,
@@ -72,6 +73,7 @@ export const createApp = (sessions: SessionStore): Hono => {
   const app = new Hono();
 
   app.use(logger());
+  app.use('*', authenticate);
   app.use(injectSessions(sessions));
   app.post('/joinGame', addPlayerToGame);
   app.get('/gameStatus', gameStatus);
