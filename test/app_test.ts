@@ -135,6 +135,18 @@ describe('Catan App Routes', () => {
     assertEquals(gameState.vertices.length, 0);
   });
 
+  it('should serve game results for /game/results', async () => {
+    const request = new Request('http:localhost/game/results', {
+      headers: { Cookie: 'player-id=p1' },
+    });
+
+    const res = await app.request(request);
+    const results = await res.json();
+
+    assertEquals(results[0].name, 'Shalu');
+    assertEquals(results.length, 4);
+  });
+
   it('should give redirect to results if player has won', async () => {
     const request = new Request('http:localhost/game/gameData', {
       headers: { Cookie: 'player-id=p1' },

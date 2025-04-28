@@ -139,3 +139,10 @@ export const updateRobberPosition = async (ctx: Context): Promise<Response> => {
 export const redirectToResults = (ctx: Context): Response => {
   return ctx.redirect('/results', 303);
 };
+
+export const serveResults = (ctx: Context): Response => {
+  const game = ctx.get('game');
+  const results = game.getResults();
+
+  return ctx.json([...results]);
+};

@@ -17,6 +17,7 @@ import {
   serveGameData,
   serveGamePage,
   serveGameState,
+  serveResults,
   updateRobberPosition,
   validateRobberPlacement,
 } from './handlers/dynamicHandlers.ts';
@@ -38,6 +39,7 @@ const gameRoutes = (game: Game): Hono => {
 
   gameApp.use(inject(game));
   gameApp.get('/gameState', serveGameState);
+  gameApp.get('/results', serveResults);
   gameApp.get('/gameData', serveGameData, redirectToResults);
   gameApp.post('dice/roll', rollDice);
   gameApp.post('/build/vertex', buildSettlement);

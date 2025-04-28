@@ -266,6 +266,12 @@ describe('Catan', () => {
     const hasWon = catan.players[0].hasWon();
     assert(hasWon);
   });
+
+  it('should results of all the players', () => {
+    const results = catan.getResults();
+    assertEquals(results.length, 4);
+    assertEquals(results[0].name, 'Shalu');
+  });
 });
 
 describe('buildSettlement ', () => {

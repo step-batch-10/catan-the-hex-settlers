@@ -407,6 +407,17 @@ export class Catan {
     return { ...data, resources, devCards };
   }
 
+  getResults() {
+    const results = this.players.map((player) => {
+      const playerData = this.abstractPlayerData(player);
+      const victoryPoints = player.calculatePlayerPoints();
+
+      return { ...playerData, victoryPoints };
+    });
+
+    return _.reverse(_.sortBy(results, 'victoryPoints'));
+  }
+
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], _others] = _.partition(
       this.players,

@@ -4,8 +4,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Results</title>
+    <script src="/results.js"></script>
+    <link rel="stylesheet" href="results.css" />
   </head>
   <body>
     <h1>Results</h1>
+    <div id="player-table">
+            <div class="player-row">
+              <div class="cell header"></div>
+              <div class="cell header">victory points</div>
+              <div class="cell header">development cards</div>
+              <div class="cell header largest-army">largest army</div>
+            <div class="cell header longest-road">longest road</div>
+             <!--  <div class="cell header">
+                <img src="/images/icons/longestRoad.png" alt="" />
+              </div>
+              <div class="cell header">
+                <img
+                  src="/images/icons/icon_largest_army.svg"
+                  alt=""
+                  class="icons"
+                />
+              </div> -->
+            </div>
+            <div class="players-details">
+            </div>
+          </div>
+          <h1 id="winner-name"></h1>
+    </div>
+
+    <template id="player-row-template">
+      <div class="player-row">
+        <div class="cell">
+          <div class="avatar" id="color"></div>
+          <p class="player-name">Player 1</p>
+        </div>
+        <div class="cell vp">5</div>
+        <div class="cell dev-card">2</div>
+        <div class="cell longest-road">No</div>
+        <div class="cell largest-army">Yes</div>
+      </div>
+    </template>
   </body>
 </html>

@@ -61,7 +61,7 @@ export class Player {
     this.longestRoadCount = 0;
   }
 
-  private calculatePlayerPoints(): number {
+  calculatePlayerPoints(): number {
     return (
       this.victoryPoints +
       (this.hasLargestArmy ? 2 : 0) +
