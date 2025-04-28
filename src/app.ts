@@ -5,6 +5,7 @@ import type { Context, Next } from 'hono';
 import {
   addPlayerToGame,
   authenticate,
+  bankTradeHandler,
   buildRoad,
   buildSettlement,
   canBuildRoad,
@@ -13,14 +14,13 @@ import {
   gameStatus,
   handleBuyDevCards,
   handleChangeTurn,
-  maritimeHandler,
+  redirectToLogin,
   redirectToResults,
   rollDice,
   serveAllPositions,
   serveGameData,
   serveGameState,
   serveResults,
-  redirectToLogin,
   updateRobberPosition,
   validateRobberPlacement,
 } from './handlers/dynamicHandlers.ts';
@@ -57,7 +57,7 @@ const gameRoutes = (): Hono => {
   gameApp.post('dice/roll', rollDice);
   gameApp.post('/build/vertex', buildSettlement);
   gameApp.post('/changeTurn', handleChangeTurn);
-  gameApp.post('/trade/maritime', maritimeHandler);
+  gameApp.post('/trade/bank', bankTradeHandler);
   gameApp.patch('/buy/dev-card', handleBuyDevCards);
   gameApp.post('/build/edge', buildRoad);
   gameApp.get('/dice/can-roll', canRoll);

@@ -3,7 +3,6 @@ import { Context, Next } from 'hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import _ from 'lodash';
 import { TradeResources } from '../types.ts';
-import { updateResources } from '../handlerHelpers.ts';
 
 export const serveGameState = (ctx: Context): Response => {
   const game = ctx.get('game');
@@ -76,13 +75,21 @@ export const canBuildSettlement = async (ctx: Context): Promise<Response> => {
   return ctx.json({ canBuild });
 };
 
-export const maritimeHandler = async (ctx: Context): Promise<Response> => {
+export const bankTradeHandler = async (ctx: Context): Promise<Response> => {
   const tradeResources: TradeResources = await ctx.req.json();
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
   const player = _.find(game.players, { id: playerId });
 
-  updateResources(player, tradeResources);
+  Object.entries(tradeResources.incomingResources)
+    .forEach(([resource, count]) => {
+      player.addResource(resource, count);
+    });
+
+  Object.entries(tradeResources.outgoingResources)
+    .forEach(([resource, count]) => {
+      player.dropCards(resource, count);
+    });
 
   return ctx.json({ status: 'ok' });
 };

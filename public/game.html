@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-    <script src="/game.js"></script>
+    <script type="module" src="/game.js"></script>
+    <script type="module" src="/trade.js"></script>
     <title>Catan-game-board</title>
   </head>
   <body>
@@ -1371,57 +1372,129 @@
             </div>
 
             <div class="resource-cards">
-              <div>
-                <div class="count" id="brick"></div>
-                <img
-                  class="cards"
+              <div class="resource disable" type="brick" id="brick">
+                <div class="count-changer">
+                  <div onclick="decrementCount(event)">-</div>
+                  <div onclick="incrementCount(event)">+</div>
+                </div>
+                <div class="card-back">
+                  <p>Brick</p>
+                  <div class="card-options"></div>
+                </div>
+                <div class="card-front">
+                  <img
+                  class="card-image"
                   src="/images/resource-cards/brick.png"
                   alt="brick"
-                />
+                  />
+                  <div id="brick" class="count">
+                    <span class="selected-count">1</span>
+                    <span class="differentier">/</span>
+                    <span class="total-count">3</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div id="lumber" class="count"></div>
-                <img
-                  class="cards"
+              <div class="resource disable" type="lumber" id="lumber">
+                <div class="count-changer">
+                  <div onclick="decrementCount(event)">-</div>
+                  <div onclick="incrementCount(event)">+</div>
+                </div>
+                <div class="card-back">
+                  <p>Lumber</p>
+                  <div class="card-options"></div>
+                </div>
+                <div class="card-front">
+                  <img
+                  class="card-image"
                   src="/images/resource-cards/lumber.png"
                   alt="lumber"
-                />
+                  />
+                  <div id="lumber" class="count">
+                    <span class="selected-count">1</span>
+                    <span class="differentier">/</span>
+                    <span class="total-count">3</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div id="wool" class="count"></div>
-                <img
-                  class="cards"
+              <div class="resource disable" type="wool">
+                <div class="count-changer">
+                  <div onclick="decrementCount(event)">-</div>
+                  <div onclick="incrementCount(event)">+</div>
+                </div>
+                <div class="card-back">
+                  <p>Wool</p>
+                  <div class="card-options"></div>
+                </div>
+                <div class="card-front">
+                  <img
+                  class="card-image"
                   src="/images/resource-cards/wool.png"
                   alt="wool"
-                />
+                  />
+                  <div id="wool" class="count">
+                    <span class="selected-count">1</span>
+                    <span class="differentier">/</span>
+                    <span class="total-count">4</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div id="ore" class="count"></div>
-                <img
-                  class="cards"
+              <div class="resource disable" type="ore">
+                <div class="count-changer">
+                  <div onclick="decrementCount(event)">-</div>
+                  <div onclick="incrementCount(event)">+</div>
+                </div>
+                <div class="card-back">
+                  <p>Ore</p>
+                  <div class="card-options"></div>
+                </div>
+                <div class="card-front">
+                  <img
+                  class="card-image"
                   src="/images/resource-cards/ore.png"
                   alt="ore"
-                />
+                  />
+                  <div id="ore" class="count">
+                    <span class="selected-count">1</span>
+                    <span class="differentier">/</span>
+                    <span class="total-count">3</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div id="grain" class="count"></div>
-                <img
-                  class="cards"
+              <div class="resource disable" type="grain">
+                <div class="count-changer">
+                  <div onclick="decrementCount(event)">-</div>
+                  <div onclick="incrementCount(event)">+</div>
+                </div>
+                <div class="card-back">
+                  <p>Grain</p>
+                  <div class="card-options"></div>
+                </div>
+                <div class="card-front">
+                  <img
+                  class="card-image"
                   src="/images/resource-cards/grain.png"
                   alt="grain"
-                />
+                  />
+                  <div id="grain" class="count">
+                    <span class="selected-count">1</span>
+                    <span class="differentier">/</span>
+                    <span class="total-count">6</span>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="unique-cards">
               <div class="dev-cards">
-                <div class="count" id="dev-count">0</div>
-                <img
-                  class="cards"
-                  id="unplayed-dev"
-                  src="images/dev-cards/unplayed-dev.png"
-                  alt="unplayed-dev"
-                />
+                <div class="dev">
+              <img
+              class="card-image"
+              id="unplayed-dev"
+              src="images/dev-cards/unplayed-dev.png"
+              alt="unplayed-dev"
+              />
+              <div class="count" id="dev-count">0</div>
+            </div>
               </div>
 
               <div id="largest-army-icon">

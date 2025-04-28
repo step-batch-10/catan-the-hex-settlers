@@ -1,3 +1,5 @@
+import { updateResourceCount, tradeControlls, removeClassFromElements, addClassToElements } from './trade.js';
+
 const getTokenImageFile = (tokenNumber) =>
   `images/tokens/token-${tokenNumber}.png`;
 
@@ -128,13 +130,13 @@ const createProfileCard = (player) => {
 
 const updateDevCardsByType = (_devCards) => {};
 
-const displayResourceCount = ({ wool, lumber, brick, ore, grain }) => {
-  appendText(document, '#ore', ore);
-  appendText(document, '#lumber', lumber);
-  appendText(document, '#wool', wool);
-  appendText(document, '#brick', brick);
-  appendText(document, '#grain', grain);
-};
+// const displayResourceCount = ({ wool, lumber, brick, ore, grain }) => {
+//   appendText(document, '#ore', ore);
+//   appendText(document, '#lumber', lumber);
+//   appendText(document, '#wool', wool);
+//   appendText(document, '#brick', brick);
+//   appendText(document, '#grain', grain);
+// };
 
 const displayDevCardsCount = (devCards) => {
   const totalCards = Object.values(devCards.owned).reduce(
@@ -167,8 +169,8 @@ const renderSpecialCards = (hasLongestRoad, hasLargestArmy) => {
 };
 
 const renderPlayerPanel = (player) => {
+  updateResourceCount(player.resources);
   appendText(document, '#player-name', player.name);
-  displayResourceCount(player.resources);
   displayDevCardsCount(player.devCards);
   updateSpecialCardsStats(player.largestArmyCount, player.longestRoadCount);
   renderSpecialCards(player.hasLongestRoad, player.hasLargestArmy);
@@ -291,7 +293,8 @@ const moveRobber = async (event) => {
 
   await fetch('/game/moveRobber', { method: 'POST', body: fd });
   addBuildEvent();
-  disableElements.forEach((id) => removeClassFromElement(id, 'disable'));
+  disableElements.forEach((selector) =>
+    removeClassFromElements(selector, 'disable'));
 };
 
 const renderBoardHexes = async () => {
@@ -409,25 +412,20 @@ const addClassToElement = (className, elementId, parent) => {
   element.classList.add(className);
 };
 
-const removeClassFromElement = (elementId, className) => {
-  const element = document.querySelector(elementId);
-  element.classList.remove(className);
-};
-
 const applyPlayerActions = ({ canTrade, canRoll }) => {
-  const playerActionIcons = ['#pass-btn', '#buy-dev-card'];
+  const playerActionIcons = ['#pass-btn', '#buy-dev-card', ".resource"];
   const dice = ['#dice1', '#dice2'];
 
   dice.forEach((id) => addClassToElement('disable', id));
-  playerActionIcons.forEach((id) => addClassToElement('disable', id));
+  playerActionIcons.forEach((id) => addClassToElements(id, "disable"));
 
   if (canRoll) {
-    dice.forEach((id) => removeClassFromElement(id, 'disable'));
+    dice.forEach((id) => removeClassFromElements(id, 'disable'));
     return;
   }
 
   if (canTrade) {
-    playerActionIcons.forEach((id) => removeClassFromElement(id, 'disable'));
+    playerActionIcons.forEach((id) => removeClassFromElements(id, 'disable'));
     return;
   }
 };
@@ -452,10 +450,6 @@ const buyDevCard = async () => {
   }
 
   renderMsg(outcome.result);
-};
-
-const addPlayerActionsListeners = () => {
-  addListener('#buy-dev-card', buyDevCard);
 };
 
 const addListener = (elementId, listener) => {
@@ -517,7 +511,8 @@ const addEventListeners = (gameState) => {
   addRollDiceEvent();
   addBuildEvent(gameState.players.me);
   addNavigation();
-  addPlayerActionsListeners();
+  tradeControlls();
+  addListener('#buy-dev-card', buyDevCard);
   addListener('#unplayed-dev', showDevCards);
 };
 

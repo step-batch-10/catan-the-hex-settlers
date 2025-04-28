@@ -105,24 +105,11 @@ describe('Catan App Routes', () => {
     player.resources.lumber = 3;
 
     const tradeResource = {
-      outgoingResources: {
-        lumber: 2,
-        brick: 0,
-        wool: 0,
-        grain: 0,
-        ore: 0,
-      },
-
-      incomingResources: {
-        lumber: 0,
-        brick: 0,
-        wool: 0,
-        grain: 1,
-        ore: 0,
-      },
+      incomingResources: {grain:1},
+      outgoingResources: {lumber: 2}
     };
 
-    await app.request('http://localhost/game/trade/maritime', {
+    await app.request('http://localhost/game/trade/bank', {
       method: 'POST',
       headers: {
         Cookie: 'player-id=p1; game-id=1000',
