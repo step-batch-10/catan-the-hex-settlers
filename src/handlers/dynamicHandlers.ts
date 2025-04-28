@@ -1,4 +1,4 @@
-import { Context } from 'hono';
+import { Context, Next } from 'hono';
 
 import { getCookie, setCookie } from 'hono/cookie';
 import _ from 'lodash';
@@ -33,11 +33,15 @@ export const canRoll = (ctx: Context): Response => {
   return ctx.json({ canRoll });
 };
 
-export const serveGameData = (ctx: Context): Response => {
+export const serveGameData = async (
+  ctx: Context,
+  next: Next,
+): Promise<Response | void> => {
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
-
   const gameData = game.getGameData(playerId);
+
+  if (gameData.hasWon) return await next();
 
   return ctx.json(gameData);
 };
@@ -130,4 +134,8 @@ export const updateRobberPosition = async (ctx: Context): Promise<Response> => {
   game.blockResource(id);
 
   return ctx.text('ok');
+};
+
+export const redirectToResults = (ctx: Context): Response => {
+  return ctx.redirect('/results', 303);
 };

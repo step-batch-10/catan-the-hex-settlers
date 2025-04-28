@@ -61,8 +61,17 @@ export class Player {
     this.longestRoadCount = 0;
   }
 
+  private calculatePlayerPoints(): number {
+    return (
+      this.victoryPoints +
+      (this.hasLargestArmy ? 2 : 0) +
+      (this.hasLongestRoad ? 2 : 0) +
+      this.devCards.owned['victory-point']
+    );
+  }
+
   hasWon(): boolean {
-    return this.victoryPoints >= 10;
+    return this.calculatePlayerPoints() >= 10;
   }
 
   addResource(cardType: keyof Resources | string, count: number): void {

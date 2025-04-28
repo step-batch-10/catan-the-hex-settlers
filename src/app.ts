@@ -11,6 +11,7 @@ import {
   handleBuyDevCards,
   handleChangeTurn,
   maritimeHandler,
+  redirectToResults,
   rollDice,
   serveAllPositions,
   serveGameData,
@@ -37,7 +38,7 @@ const gameRoutes = (game: Game): Hono => {
 
   gameApp.use(inject(game));
   gameApp.get('/gameState', serveGameState);
-  gameApp.get('/gameData', serveGameData);
+  gameApp.get('/gameData', serveGameData, redirectToResults);
   gameApp.post('dice/roll', rollDice);
   gameApp.post('/build/vertex', buildSettlement);
   gameApp.post('/changeTurn', handleChangeTurn);

@@ -165,6 +165,8 @@ export const defaultSlot = (): Slot => ({
   ],
 });
 
+type Result = { name: string; hasWon: boolean };
+
 export type {
   BuildType,
   Components,
@@ -183,6 +185,7 @@ export type {
   RandomCard,
   ResourceProduction,
   Resources,
+  Result,
   RollDice,
   Slot,
   SpecialCardOwners,
