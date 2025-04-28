@@ -139,6 +139,8 @@ const updateDevCardsByType = (_devCards) => {};
 // };
 
 const displayDevCardsCount = (devCards) => {
+  console.log('devCards:-', devCards);
+
   const totalCards = Object.values(devCards.owned).reduce(
     (sum, count) => sum + Number(count),
     0,
@@ -326,7 +328,7 @@ const rollDiceHandler = async () => {
 
   renderDice(response.rolled);
   if (response.isRobber) {
-    renderMsg("Move the Robber");
+    renderMsg('Move the Robber');
     handleRobberCase();
   }
 };
@@ -552,10 +554,13 @@ const poll = () => {
 
     const gameState = await response.json();
     globalThis.gameState = gameState;
+    // const allDevTypes = cloneTemplateElement('#all-dev-cards');
 
     renderBoardHexes();
     renderElements(gameState);
     applyPlayerActions(gameState.availableActions);
+    // getAvailableCardsCount(allDevTypes);
+    addListener('#unplayed-dev', showDevCards);
     getTotalDevsCount(gameState.players.me.devCards.owned);
   }, 1000);
 };
