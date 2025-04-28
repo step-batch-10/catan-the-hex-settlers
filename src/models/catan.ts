@@ -90,8 +90,8 @@ export class Catan {
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
     if (!this.isInitialSetup() && !this.turn.hasRolled) return;
     this.turn = { hasRolled: false };
-    this.currentPlayerIndex =
-      (this.currentPlayerIndex + 1) % this.players.length;
+    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
+      this.players.length;
   }
 
   private canProduce(hexId: string, rolledNumber: number): boolean {
@@ -109,7 +109,7 @@ export class Catan {
   ) {
     const { hexes } = this.board;
     const producedTerrains = terrains?.filter((hexId) =>
-      this.canProduce(hexId, rolledNumber),
+      this.canProduce(hexId, rolledNumber)
     );
 
     return producedTerrains?.map((terrain) => hexes.get(terrain)?.resource);
@@ -131,7 +131,7 @@ export class Catan {
     resources?.forEach((resource) =>
       resourcesProduced.push(
         this.addProducedResource(player.id, resource, 'settlement'),
-      ),
+      )
     );
   }
 
@@ -167,7 +167,7 @@ export class Catan {
 
   distributeResources(resourcesToBeDistributed: DistributeResourceData[]) {
     resourcesToBeDistributed.forEach((resourceData) =>
-      this.updateResource(resourceData),
+      this.updateResource(resourceData)
     );
   }
 
@@ -426,18 +426,18 @@ export class Catan {
 
     const me = player.getPlayerData();
     const playersInfo = this.players.map((other: Player) =>
-      this.abstractPlayerData(other),
+      this.abstractPlayerData(other)
     );
 
     return { me, playersInfo };
   }
 
   getAvailableActions(playerId: string) {
-    const isPlayerTurnInMainPhase =
-      this.isCurrentPlayer(playerId) && !this.isInitialSetup();
+    const isPlayerTurnInMainPhase = this.isCurrentPlayer(playerId) &&
+      !this.isInitialSetup();
     const canRoll = isPlayerTurnInMainPhase && !this.hasAlreadyRolled();
-    const canTrade =
-      isPlayerTurnInMainPhase && this.hasAlreadyRolled() && this.hasMovedRobber;
+    const canTrade = isPlayerTurnInMainPhase && this.hasAlreadyRolled() &&
+      this.hasMovedRobber;
 
     return { canTrade, canRoll };
   }
@@ -611,8 +611,9 @@ export class Catan {
     phase: Phase,
     playerId: string,
   ): StringSet {
-    const builds =
-      type === 'settlement' ? this.board.vertices : this.board.edges;
+    const builds = type === 'settlement'
+      ? this.board.vertices
+      : this.board.edges;
 
     const conditionMap = {
       settlement: {
@@ -706,8 +707,8 @@ export class Catan {
     let longestRoad = 0;
 
     player.roads.forEach((edgeId) => {
-      const edge: Edge =
-        this.board.edges.get(edgeId) || new Edge('e1', ['', '']);
+      const edge: Edge = this.board.edges.get(edgeId) ||
+        new Edge('e1', ['', '']);
       if (!visitedEdges.has(edgeId)) {
         const [v1, v2] = edge.vertices;
         visitedEdges.add(edgeId);

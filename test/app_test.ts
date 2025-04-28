@@ -171,8 +171,8 @@ describe('Catan App Routes', () => {
     const res = await app.request(request);
     const allPositions = await res.json();
 
-    assertEquals(allPositions.settlements.length, 0);
-    assertEquals(allPositions.roads.length, 3);
+    assertEquals(allPositions.settlements.length, 50);
+    assertEquals(allPositions.roads.length, 0);
   });
 
   it('should buy development card', async () => {
@@ -284,5 +284,29 @@ describe('Catan App Routes', () => {
     const res = await app.request(request);
     const { isGameReady } = await res.json();
     assertFalse(isGameReady);
+  });
+
+  it('should give redirect to results if player has won', async () => {
+    const request = new Request('http:localhost/game/gameData', {
+      headers: { Cookie: 'player-id=p1; game-id=1000' },
+    });
+
+    catan.players[0].victoryPoints = 20;
+    const res = await app.request(request);
+
+    assertEquals(res.headers.get('location'), '/results');
+    assertEquals(res.status, 303);
+  });
+
+  it('should serve game results for /game/results', async () => {
+    const request = new Request('http:localhost/game/results', {
+      headers: { Cookie: 'player-id=p1; game-id=1000' },
+    });
+
+    const res = await app.request(request);
+    const results = await res.json();
+
+    assertEquals(results[0].name, 'Shalu');
+    assertEquals(results.length, 4);
   });
 });

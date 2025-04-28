@@ -30,7 +30,7 @@ export const canRoll = (ctx: Context): Response => {
 
 export const serveGameData = async (
   ctx: Context,
-  next: Next
+  next: Next,
 ): Promise<Response | void> => {
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
@@ -113,7 +113,7 @@ export const serveAllPositions = (ctx: Context): Response => {
 };
 
 export const validateRobberPlacement = async (
-  ctx: Context
+  ctx: Context,
 ): Promise<Response> => {
   const game = ctx.get('game');
   const { id } = await ctx.req.parseBody();
