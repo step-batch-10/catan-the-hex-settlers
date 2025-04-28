@@ -48,7 +48,7 @@ const renderPlayersData = (players) => {
 const highlightWinner = (winner) => {
   const winnersPanel = document.querySelector(`#${winner.id}`);
   winnersPanel.style.backgroundColor = 'gold';
-  document.querySelector('#winner-name').textContent = winner.name + '  Won';
+  document.querySelector('#winner-name').textContent = winner.name + '  Won 🏆';
 };
 
 const renderResults = async () => {

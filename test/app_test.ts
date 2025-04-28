@@ -294,7 +294,7 @@ describe('Catan App Routes', () => {
     catan.players[0].victoryPoints = 20;
     const res = await app.request(request);
 
-    assertEquals(res.headers.get('location'), '/results');
+    assertEquals(res.headers.get('location'), '/results.html');
     assertEquals(res.status, 303);
   });
 

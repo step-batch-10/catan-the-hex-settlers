@@ -132,7 +132,7 @@ export const updateRobberPosition = async (ctx: Context): Promise<Response> => {
 };
 
 export const redirectToResults = (ctx: Context): Response => {
-  return ctx.redirect('/results', 303);
+  return ctx.redirect('/results.html', 303);
 };
 
 export const serveResults = (ctx: Context): Response => {
