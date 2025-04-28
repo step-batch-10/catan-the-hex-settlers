@@ -134,6 +134,37 @@ export const defaultResources: Resources = {
   brick: 0,
 };
 
+type Slot = {
+  players: { id: string; name: string; color: string }[];
+  gameId: string;
+};
+
+export const defaultSlot = (): Slot => ({
+  gameId: '',
+  players: [
+    {
+      id: 'p1',
+      name: '',
+      color: 'red',
+    },
+    {
+      id: 'p2',
+      name: '',
+      color: 'blue',
+    },
+    {
+      id: 'p3',
+      name: '',
+      color: 'orange',
+    },
+    {
+      id: 'p4',
+      name: '',
+      color: 'white',
+    },
+  ],
+});
+
 export type {
   BuildType,
   Components,
@@ -153,6 +184,7 @@ export type {
   ResourceProduction,
   Resources,
   RollDice,
+  Slot,
   SpecialCardOwners,
   StringSet,
   Supply,

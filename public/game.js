@@ -105,14 +105,14 @@ const appendText = (template, elementId, text) => {
 };
 
 const assignPlayerId = (player, element) => {
-  element.setAttribute("id", player.id);
+  element.setAttribute('id', player.id);
 };
 
 const createProfileCard = (player) => {
   const cloneTemplate = cloneTemplateElement('#player-row-template');
   const playerInfoCard = cloneTemplate.querySelector('.player-row');
-  playerInfoCard.style.setProperty('--color', player.color)
-  
+  playerInfoCard.style.setProperty('--color', player.color);
+
   assignPlayerId(player, playerInfoCard);
   appendText(playerInfoCard, '.player-name', player.name);
   appendText(playerInfoCard, '.vp', player.victoryPoints);
@@ -144,7 +144,7 @@ const displayDevCardsCount = (devCards) => {
     0
   );
 
-  appendText(document, "#dev-count", totalCards);
+  appendText(document, '#dev-count', totalCards);
   updateDevCardsByType(devCards);
 };
 
@@ -178,9 +178,9 @@ const renderPlayerPanel = (player) => {
 
 const renderPlayersData = (players) => {
   renderPlayerPanel(players.me);
-  
+
   const list = document.querySelector('.players-details');
-  
+
   const profileCards = players.playersInfo.map((player) =>
     createProfileCard(player)
   );
@@ -260,7 +260,7 @@ const showPossibleSettlementsOrRoads = async () => {
 
   if (res.settlements) {
     res.settlements.forEach((id) =>
-      highlightPosition(id, "available-settlement")
+      highlightPosition(id, 'available-settlement')
     );
   }
 
@@ -309,8 +309,8 @@ const createMaritimeTradeCenter = () => {
 const addListenerToCard = () => {
   const cards = document.querySelectorAll(".card");
   cards.forEach((card) =>
-    card.addEventListener("click", (e) =>
-      e.target.classList.toggle("card-selected")
+    card.addEventListener('click', (e) =>
+      e.target.classList.toggle('card-selected')
     )
   );
 };
@@ -429,11 +429,11 @@ const handleRobberCase = () => {
 };
 
 const rollDiceHandler = async () => {
-  const outcome = await fetch("/game/dice/can-roll").then((res) => res.json());
+  const outcome = await fetch('/game/dice/can-roll').then((res) => res.json());
 
   if (!outcome.canRoll) return;
 
-  const response = await fetch("/game/dice/roll", { method: "POST" }).then(
+  const response = await fetch('/game/dice/roll', { method: 'POST' }).then(
     (res) => res.json()
   );
 
@@ -489,8 +489,8 @@ const getBuildValidationData = async (event) => {
 
 const removeSvgAnimation = () => {
   const allSettlements =
-    document.querySelectorAll(".available-settlement") || [];
-  const allRoads = document.querySelectorAll(".available-road") || [];
+    document.querySelectorAll('.available-settlement') || [];
+  const allRoads = document.querySelectorAll('.available-road') || [];
 
   for (let i = 0; i < allSettlements.length; i++) {
     allSettlements[i].classList.remove("available-settlement");
@@ -570,7 +570,7 @@ const renderMsg = (msg) => {
 };
 
 const buyDevCard = async () => {
-  const response = await fetch("/game/buy/dev-card", { method: "PATCH" });
+  const response = await fetch('/game/buy/dev-card', { method: 'PATCH' });
   const outcome = await response.json();
 
   if (!outcome.isSucceed) {
@@ -631,8 +631,8 @@ const showDevCards = () => {
   container.append(allDevCards);
 
   closeBtn.addEventListener(
-    "click",
-    () => (allDevCards.style.display = "none")
+    'click',
+    () => (allDevCards.style.display = 'none')
   );
 
   getAvailableCardsCount(allDevTypes);
@@ -649,8 +649,8 @@ const addEventListeners = (gameState) => {
 const renderStructures = (structures) => {
   structures.forEach(({ color, id }) => {
     const structure = document.getElementById(id);
-    structure.classList.add("built");
-    structure.style.setProperty("--color", color);
+    structure.classList.add('built');
+    structure.style.setProperty('--color', color);
   });
 };
 
@@ -663,7 +663,7 @@ const renderPieces = (gameState) => {
 
 const highlightPlayersTurn = (currentPlayerId) => {
   const playerInfoCard = document.getElementById(currentPlayerId);
-  
+
   playerInfoCard.classList.add('current-player');
 };
 
