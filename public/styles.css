@@ -508,7 +508,7 @@ body {
     fill-opacity: 0.5;
   }
   50% {
-    fill-opacity: 1;
+    fill-opacity: 0.75;
   }
   100% {
     fill-opacity: 0.5;
@@ -577,7 +577,7 @@ body {
 }
 
 .header {
-  background: #0077b6;
+  background: rgb(86, 154, 214);
   color: white;
   font-weight: bold;
 }
@@ -590,8 +590,8 @@ body {
 }
 
 .icons {
-  width: 40px;
-  height: 30px;
+  width: 45px;
+  height: 40px;
 }
 
 .owned {

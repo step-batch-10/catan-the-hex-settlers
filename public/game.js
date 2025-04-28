@@ -322,7 +322,10 @@ const rollDiceHandler = async () => {
   dice.forEach((die) => restartAnimation(die, 'roll'));
 
   renderDice(response.rolled);
-  if (response.isRobber) handleRobberCase();
+  if (response.isRobber) {
+    renderMsg("Move the Robber");
+    handleRobberCase();
+  }
 };
 
 const addRollDiceEvent = () => {
@@ -437,7 +440,7 @@ const renderMsg = (msg) => {
   msgBox.textContent = msg;
   document.body.appendChild(msgBox);
 
-  setTimeout(() => msgBox.remove(), 1000);
+  setTimeout(() => msgBox.remove(), 2000);
 };
 
 const buyDevCard = async () => {
