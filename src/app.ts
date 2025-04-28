@@ -3,6 +3,7 @@ import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
 import type { Context, Next } from 'hono';
 import {
+  addPlayerToGame,
   buildRoad,
   buildSettlement,
   canBuildRoad,
@@ -15,7 +16,6 @@ import {
   rollDice,
   serveAllPositions,
   serveGameData,
-  serveGamePage,
   serveGameState,
   serveResults,
   updateRobberPosition,
@@ -23,21 +23,31 @@ import {
 } from './handlers/dynamicHandlers.ts';
 import { Player } from './models/player.ts';
 import { Board } from './models/board.ts';
+import { SessionStore } from './models/sessions.ts';
+import { getCookie } from 'hono/cookie';
 
 type Game = {
   players: Player[];
   board: Board;
 };
 
-const inject = (game: Game) => async (c: Context, next: Next) => {
-  c.set('game', game);
+const injectGame = () => async (c: Context, next: Next) => {
+  const sessions = c.get('sessions');
+  const gameId = getCookie(c, 'game-id');
+  c.set('game', sessions.games.get(gameId));
   await next();
 };
 
-const gameRoutes = (game: Game): Hono => {
+const injectSessions =
+  (sessions: SessionStore) => async (c: Context, next: Next) => {
+    c.set('sessions', sessions);
+    await next();
+  };
+
+const gameRoutes = (): Hono => {
   const gameApp = new Hono();
 
-  gameApp.use(inject(game));
+  gameApp.use(injectGame());
   gameApp.get('/gameState', serveGameState);
   gameApp.get('/results', serveResults);
   gameApp.get('/gameData', serveGameData, redirectToResults);
@@ -53,16 +63,17 @@ const gameRoutes = (game: Game): Hono => {
   gameApp.post('/can-build/vertex', canBuildSettlement);
   gameApp.post('/can-build/edge', canBuildRoad);
   gameApp.get('/possible-positions', serveAllPositions);
-  gameApp.get('/:playerId', serveGamePage);
 
   return gameApp;
 };
 
-export const createApp = (game: Game): Hono => {
+export const createApp = (sessions: SessionStore): Hono => {
   const app = new Hono();
 
   app.use(logger());
-  app.route('/game', gameRoutes(game));
+  app.use(injectSessions(sessions));
+  app.post('/joinGame', addPlayerToGame);
+  app.route('/game', gameRoutes());
   app.get('*', serveStatic({ root: './public' }));
 
   return app;

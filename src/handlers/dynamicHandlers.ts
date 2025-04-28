@@ -13,11 +13,6 @@ export const serveGameState = (ctx: Context): Response => {
   return ctx.json(gameState);
 };
 
-export const serveGamePage = (ctx: Context): Response => {
-  setCookie(ctx, 'player-id', ctx.req.param('playerId'));
-  return ctx.redirect('/game.html', 303);
-};
-
 export const rollDice = (ctx: Context): Response => {
   const game = ctx.get('game');
   const rolled = game.rollDice();
@@ -35,7 +30,7 @@ export const canRoll = (ctx: Context): Response => {
 
 export const serveGameData = async (
   ctx: Context,
-  next: Next,
+  next: Next
 ): Promise<Response | void> => {
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
@@ -118,7 +113,7 @@ export const serveAllPositions = (ctx: Context): Response => {
 };
 
 export const validateRobberPlacement = async (
-  ctx: Context,
+  ctx: Context
 ): Promise<Response> => {
   const game = ctx.get('game');
   const { id } = await ctx.req.parseBody();
@@ -145,4 +140,14 @@ export const serveResults = (ctx: Context): Response => {
   const results = game.getResults();
 
   return ctx.json([...results]);
+};
+
+export const addPlayerToGame = async (ctx: Context) => {
+  const sessions = ctx.get('sessions');
+  const { name } = await ctx.req.parseBody();
+  const { gameId, playerId } = sessions.joinGame(name);
+  setCookie(ctx, 'game-id', gameId);
+  setCookie(ctx, 'player-id', playerId);
+
+  return ctx.redirect('/waiting.html', 303);
 };
