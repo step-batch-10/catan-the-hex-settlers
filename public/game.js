@@ -3,8 +3,6 @@ const getTokenImageFile = (tokenNumber) =>
 
 const getTerrainImageFile = (terrain) => `images/terrains/${terrain}.png`;
 
-const resourceCards = (resource) => `/images/resource-cards/${resource}.png`;
-
 function* coordinates(ar) {
   for (const [index, length] of Object.entries(ar)) {
     for (let tileIndex = 0; tileIndex < length; tileIndex++) {
@@ -279,119 +277,6 @@ const displayPlayerTurn = (gameState) => {
   showPossibleSettlementsOrRoads();
 };
 
-const createMaritimeTradeCenter = () => {
-  const resources = globalThis.gameState.players.me.resources;
-  const available = Object.entries(resources).filter(
-    (resource) => resource[1] >= 4,
-  );
-
-  const tradeContainer = cloneTemplateElement('#tradeWithBank');
-  const resourceContainer = tradeContainer.querySelector('#available-resource');
-  const className =
-    available.length > 3 ? `items-${available.length}` : 'items-3';
-
-  resourceContainer.classList.add(className);
-
-  const availableElements = available.map(([resourceName]) => {
-    const image = document.createElement('img');
-    image.classList.add('card');
-    image.id = `resource-${resourceName}`;
-    image.src = resourceCards(resourceName);
-
-    return image;
-  });
-
-  resourceContainer.append(...availableElements);
-
-  return tradeContainer;
-};
-
-const addListenerToCard = () => {
-  const cards = document.querySelectorAll('.card');
-  cards.forEach((card) =>
-    card.addEventListener('click', (e) =>
-      e.target.classList.toggle('card-selected'),
-    ),
-  );
-};
-
-const tradeParser = (parsedCards, card) => {
-  const action =
-    card.parentElement.id === 'return-resource'
-      ? 'incomingResources'
-      : 'outgoingResources';
-  const cardName = card.id.split('-')[1];
-
-  parsedCards[action][cardName] = action === 'outgoingResources' ? 4 : 1;
-
-  return parsedCards;
-};
-
-const parseCards = (cards) => {
-  return cards.reduce(tradeParser, {
-    outgoingResources: {},
-    incomingResources: {},
-  });
-};
-
-const isValidTrade = (trades) => {
-  const { outgoingResources, incomingResources } = trades;
-  const outgoingResourcesCount = Object.keys(outgoingResources).length;
-  const incomingResourcesCount = Object.keys(incomingResources).length;
-
-  if (outgoingResourcesCount <= 0)
-    throw new Error('Please select a resource to trade away...');
-  if (incomingResourcesCount <= 0)
-    throw new Error('Please select a resource in return...');
-};
-
-const tradeWithBank = async (_e) => {
-  // requires refactoring
-  try {
-    const selectedCards = [...document.querySelectorAll('.card-selected')];
-    const trades = parseCards(selectedCards);
-    isValidTrade(trades);
-
-    const body = JSON.stringify(trades);
-    const response = await fetch('/game/trade/maritime', {
-      headers: {
-        'content-type': 'application/json',
-      },
-      method: 'POST',
-      body,
-    });
-
-    if (response.status === 200) {
-      document.querySelector('#floating-trade-menu').style.display = 'none';
-      const MTtrade = document.querySelector('#MTtrade-container');
-      MTtrade.remove();
-      globalThis.location = '#button-container';
-    }
-  } catch (e) {
-    const msg = showMessage('#message-container', '.invalid-msg', e.message);
-
-    setTimeout(() => {
-      msg.remove();
-    }, 2 * 1000);
-  }
-};
-
-const navigateToMaritimeTrade = () => {
-  const maritimeTraderContainer = createMaritimeTradeCenter();
-  const tradesContents = document.querySelector('#trade-contents');
-
-  tradesContents.appendChild(maritimeTraderContainer);
-  globalThis.location = '#MTtrade-container';
-  const confirmBtn = document.querySelector('#trade-confirm-btn');
-  addListenerToCard();
-  confirmBtn.addEventListener('click', tradeWithBank);
-};
-
-const openTradeCenter = () => {
-  const tradesMenu = document.querySelector('#floating-trade-menu');
-  tradesMenu.style.display = 'block';
-};
-
 const moveRobber = async (event) => {
   const fd = new FormData();
   fd.set('id', event.target.parentElement.id);
@@ -516,16 +401,6 @@ const passTurn = async () => {
   removeSvgAnimation();
 };
 
-const closeTradeOptions = () =>
-  (document.querySelector('#floating-trade-menu').style.display = 'none');
-
-const addListener = (elementId, listener) => {
-  const element = document.querySelector(elementId);
-  element.addEventListener('click', listener);
-};
-
-const goBack = () => (globalThis.location = '#button-container');
-
 const addClassToElement = (className, elementId, parent) => {
   const element = (parent || document).querySelector(elementId);
   element.classList.add(className);
@@ -537,7 +412,7 @@ const removeClassFromElement = (elementId, className) => {
 };
 
 const applyPlayerActions = ({ canTrade, canRoll }) => {
-  const playerActionIcons = ['#trade', '#pass-btn', '#buy-dev-card'];
+  const playerActionIcons = ['#pass-btn', '#buy-dev-card'];
   const dice = ['#dice1', '#dice2'];
 
   dice.forEach((id) => addClassToElement('disable', id));
@@ -578,14 +453,15 @@ const buyDevCard = async () => {
 
 const addPlayerActionsListeners = () => {
   addListener('#buy-dev-card', buyDevCard);
-  addListener('#trade', openTradeCenter);
-  addListener('#maritime-btn', navigateToMaritimeTrade);
+};
+
+const addListener = (elementId, listener) => {
+  const element = document.querySelector(elementId);
+  element.addEventListener('click', listener);
 };
 
 const addNavigation = () => {
   addListener('#pass-btn', passTurn);
-  addListener('#back-btn', goBack);
-  addListener('#close-btn', closeTradeOptions);
 };
 
 const getTotalDevsCount = (cards) => {

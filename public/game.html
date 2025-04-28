@@ -1365,26 +1365,11 @@
             <div class="dice" id="dice2"></div>
           </div>
         </div>
-          <div class="player-panel">
-            <div id="user-actions">
-              <div id="user-info">
-                <span id="player-name"></span>
-              </div>
-              <div class="player-actions">
-                <button id="trade" class="actions-btn">Trade</button>
-                <button id="buy-dev-card" class="actions-btn">
-                  Buy <br />
-                  Dev Card
-                </button>
-                <button id="pass-btn" class="actions-btn">Pass</button>
-              </div>
+        <div class="player-panel">
+            <div id="user-info">
+              <span id="player-name"></span>
             </div>
-            <div class="status">
-              <div class="color">
-                <div class="avatar"></div>
-                <div id="victory-points"></div>
-              </div>
-            </div>
+
             <div class="resource-cards">
               <div>
                 <div class="count" id="brick"></div>
@@ -1427,20 +1412,18 @@
                 />
               </div>
             </div>
-            <div class="dev-cards">
-              <div class="count" id="dev-count">0</div>
-              <img
-                class="cards"
-                id="unplayed-dev"
-                src="images/dev-cards/unplayed-dev.png"
-                alt="unplayed-dev"
-              />
-            </div>
-            <div class="played-dev-cards">
-              <div class="vp-cards-played"></div>
-            </div>
 
-            <div class="special-cards">
+            <div class="unique-cards">
+              <div class="dev-cards">
+                <div class="count" id="dev-count">0</div>
+                <img
+                  class="cards"
+                  id="unplayed-dev"
+                  src="images/dev-cards/unplayed-dev.png"
+                  alt="unplayed-dev"
+                />
+              </div>
+
               <div id="largest-army-icon">
                 <img
                   src="images/special-cards/largest-army.png"
@@ -1457,6 +1440,21 @@
                 />
                 <span id="longest-road-count"></span>
               </div>
+              
+            </div>
+
+            <div class="played-dev-cards">
+              <div class="vp-cards-played"></div>
+            </div>
+
+            
+            <div id="user-actions">
+              
+              <button id="buy-dev-card" class="actions-btn">
+                Buy Dev Card
+              </button>
+              <button id="pass-btn" class="actions-btn">Pass</button>
+              
             </div>
 
             <div id="floating-trade-menu">
@@ -1475,77 +1473,69 @@
           <div id="all-devs"></div>
       </div>
 
-      <div id="side-bar">
-        <div id="side-bar-top">
-          <!-- <div id="player-list"> -->
-            <div id="player-table">
-              <!-- Header Row -->
-              <div class="player-row">
-                <div class="cell header"></div>
-                <div class="cell header">👑</div>
-                <div class="cell header">🌾</div>
-                <div class="cell header">⛏️</div>
-                <div class="cell header"><img src="/images/icons/longestRoad.png" alt=""></div>
-                <div class="cell header"><img src="/images/icons/icon_largest_army.svg" alt="" class="icons"></div>
-              </div>
+      <div id="player-table">
+        <!-- Header Row -->
+        <div class="player-row">
+          <div class="cell header"></div>
+          <div class="cell header">👑</div>
+          <div class="cell header">🌾</div>
+          <div class="cell header">⛏️</div>
+          <div class="cell header"><img src="/images/icons/longestRoad.png" alt=""></div>
+          <div class="cell header"><img src="/images/icons/icon_largest_army.svg" alt="" class="icons"></div>
+        </div>
 
-              <!-- Player Rows -->
-              <div class="players-details">
-              <div class="player-row">
-                <div class="cell">
-                  <div class="avatar"></div>
-                  <p class="player-name">Player 1</p>
-                </div>
-                <div class="cell">5</div>
-                <div class="cell">10</div>
-                <div class="cell">2</div>
-                <div class="cell">3</div>
-                <div class="cell">1</div>
-              </div>
-
-              <div class="player-row">
-                <div class="cell">
-                  <div class="avatar"></div>
-                  <p class="player-name">Player 1</p>
-                </div>
-                <div class="cell">6</div>
-                <div class="cell">8</div>
-                <div class="cell">1</div>
-                <div class="cell">3</div>
-                <div class="cell">3</div>
-              </div>
-
-              <div class="player-row">
-                <div class="cell">
-                  <div class="avatar"></div>
-                  <p class="player-name">Player 1</p>
-                </div>
-                <div class="cell">4</div>
-                <div class="cell">12</div>
-                <div class="cell">3</div>
-                <div class="cell">1</div>
-                <div class="cell">4</div>
-              </div>
-
-              <div class="player-row">
-                <div class="cell">
-                  <div class="avatar"></div>
-                  <p class="player-name">Player 1</p>
-                </div>
-                <div class="cell">7</div>
-                <div class="cell">9</div>
-                <div class="cell">0</div>
-                <div class="cell">2</div>
-                <div class="cell">4</div>
-              </div>
-              </div>
-            </div>
+        <!-- Player Rows -->
+        <div class="players-details">
+        <div class="player-row">
+          <div class="cell">
+            <div class="avatar"></div>
+            <p class="player-name">Player 1</p>
           </div>
-        <!-- </div> -->
-        <div id="side-bar-bottom">
-          <div class="logs"></div>
+          <div class="cell">5</div>
+          <div class="cell">10</div>
+          <div class="cell">2</div>
+          <div class="cell">3</div>
+          <div class="cell">1</div>
+        </div>
+
+        <div class="player-row">
+          <div class="cell">
+            <div class="avatar"></div>
+            <p class="player-name">Player 1</p>
+          </div>
+          <div class="cell">6</div>
+          <div class="cell">8</div>
+          <div class="cell">1</div>
+          <div class="cell">3</div>
+          <div class="cell">3</div>
+        </div>
+
+        <div class="player-row">
+          <div class="cell">
+            <div class="avatar"></div>
+            <p class="player-name">Player 1</p>
+          </div>
+          <div class="cell">4</div>
+          <div class="cell">12</div>
+          <div class="cell">3</div>
+          <div class="cell">1</div>
+          <div class="cell">4</div>
+        </div>
+
+        <div class="player-row">
+          <div class="cell">
+            <div class="avatar"></div>
+            <p class="player-name">Player 1</p>
+          </div>
+          <div class="cell">7</div>
+          <div class="cell">9</div>
+          <div class="cell">0</div>
+          <div class="cell">2</div>
+          <div class="cell">4</div>
+        </div>
         </div>
       </div>
+
     </div>
 
     <template id="player-row-template">

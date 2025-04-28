@@ -102,22 +102,19 @@ body {
 }
 
 .player-panel {
-  width: 50%;
-  height: 17%;
+  width: 506px;
+  height: 380px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: nowrap;
-  background-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.436);
+  box-shadow: 4px 4px 8px grey;
   border-radius: 10px;
   padding: 10px;
   position: fixed;
-  bottom: 10px;
-  right: 10px;
+  bottom: 50px;
+  right: 50px;
   overflow-x: auto;
-}
-
-.player-panel > * {
-  margin-right: 15px;
 }
 
 .player-actions {
@@ -129,34 +126,29 @@ body {
 
 #user-actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .actions-btn {
   background-color: green;
+  height: 40px;
   border-radius: 5px;
   color: white;
+  font-size: 16px;
   margin: 4px;
   width: 100%;
 }
 
-#trade,
-#trade,
-#pass-btn {
-  font-size: 22px;
-  height: 2rem;
-}
-
-#buy-dev-card {
-  font-size: 16px;
+.unique-cards{
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .resource-cards {
-  width: 500px;
+  width: 100%;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   flex-wrap: nowrap;
-  gap: 20px;
 }
 
 .count {
@@ -373,13 +365,15 @@ body {
 }
 
 .special-cards-icon {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
 }
 
 .special-cards {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  flex: 2;
 }
 
 #largest-army-icon,
@@ -390,11 +384,6 @@ body {
   color: black;
   align-items: center;
   justify-content: center;
-}
-
-.dev-cards {
-  width: 100px;
-  margin-left: 15px;
 }
 
 #user-info {
@@ -553,8 +542,8 @@ body {
   padding: 10px;
   border-radius: 10px;
   position: fixed;
-  right: 10px;
-  top: 100px;
+  right: 50px;
+  top: 50px;
 }
 
 .player-row {
@@ -587,10 +576,6 @@ body {
   text-align: center;
 }
 
-/* .cell span {
-  display: none;
-} */
-
 .header {
   background: #0077b6;
   color: white;
@@ -614,7 +599,6 @@ body {
 }
 
 #unplayed-dev,
-#trade,
 #buy-dev-card,
 #pass-btn {
   cursor: pointer;

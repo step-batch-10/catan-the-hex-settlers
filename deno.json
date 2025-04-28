@@ -9,7 +9,7 @@
   },
   "test": {
     "include": ["**/*.ts", "**/*.js"],
-    "exclude": ["server.js", "public/**"]
+    "exclude": ["server.js", "public/**", "spikes/*"]
   },
   "tasks": {
     "start": "deno run -A --watch server.js 3000",
