@@ -151,3 +151,11 @@ export const addPlayerToGame = async (ctx: Context) => {
 
   return ctx.redirect('/waiting.html', 303);
 };
+
+export const gameStatus = (ctx: Context) => {
+  const sessions = ctx.get('sessions');
+  const gameId = getCookie(ctx, 'game-id');
+  const isGameReady = sessions.getGameStatus(gameId);
+
+  return ctx.json({ isGameReady });
+};

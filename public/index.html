@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Catan</title>
   </head>
-  <body>
-    <img src="./images/catan.avif" style="height: 100%; width: 100%" />
+  <body background="./images/catan.avif" style="height: 100%; width: 100%" />
+  <form action="/joinGame" method="post">
+    <div>
+      <label for="name">Enter your name</label>
+      <input type="text" name="name" required/>
+      <button type="submit">Join game</button>
+    </div>
+  </form>
   </body>
 </html>

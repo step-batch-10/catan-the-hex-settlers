@@ -9,6 +9,7 @@ import {
   canBuildRoad,
   canBuildSettlement,
   canRoll,
+  gameStatus,
   handleBuyDevCards,
   handleChangeTurn,
   maritimeHandler,
@@ -73,6 +74,7 @@ export const createApp = (sessions: SessionStore): Hono => {
   app.use(logger());
   app.use(injectSessions(sessions));
   app.post('/joinGame', addPlayerToGame);
+  app.get('/gameStatus', gameStatus);
   app.route('/game', gameRoutes());
   app.get('*', serveStatic({ root: './public' }));
 

@@ -257,4 +257,24 @@ describe('Catan App Routes', () => {
 
     assertEquals(gameState.gameId, '1000');
   });
+
+  it('should return the game status as true', async () => {
+    const request = new Request('http://localhost:3000/gameStatus', {
+      headers: { Cookie: 'player-id=p1; game-id=1000' },
+    });
+
+    const res = await app.request(request);
+    const { isGameReady } = await res.json();
+    assert(isGameReady);
+  });
+
+  it('should return the game status as false', async () => {
+    const request = new Request('http://localhost:3000/gameStatus', {
+      headers: { Cookie: 'player-id=p1; game-id=1001' },
+    });
+
+    const res = await app.request(request);
+    const { isGameReady } = await res.json();
+    assertFalse(isGameReady);
+  });
 });
