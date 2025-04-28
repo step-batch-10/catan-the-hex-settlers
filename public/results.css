@@ -31,11 +31,6 @@ h1,
 .player-row {
   --color: #3164a6;
   display: flex;
-  /* background-color: color-mix(
-    in srgb,
-    rgb(243, 248, 250) 80%,
-    rgb(248, 247, 247)
-  ); */
   background-color: white;
   border-radius: 5px;
   border: 3px solid color-mix(in srgb, var(--color) 50%, rgb(70, 47, 47));
@@ -77,4 +72,34 @@ h1,
 
 #winner {
   background-color: gold;
+}
+
+#exit {
+  background: linear-gradient(145deg, #4f83c7, #3164a6); /* deep to mid ocean */
+  border: 2px solid #274a89; /* darkest blue for a strong border */
+  border-radius: 14px;
+  color: #eef9ff; /* light sea foam text */
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  padding: 0.7em 1.5em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 4px 4px 8px #25446d, -2px -2px 6px #5c90d6;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+#exit:hover {
+  background: linear-gradient(
+    145deg,
+    #3164a6,
+    #4f83c7
+  ); /* subtle glow reversal */
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 12px #1d3661, -4px -4px 8px #76aee6;
+}
+
+#exit:active {
+  transform: translateY(2px);
+  box-shadow: inset 3px 3px 6px #274a89;
 }

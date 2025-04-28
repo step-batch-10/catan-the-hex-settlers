@@ -309,4 +309,16 @@ describe('Catan App Routes', () => {
     assertEquals(results[0].name, 'Shalu');
     assertEquals(results.length, 4);
   });
+
+  it('should redirect to login page for /game/exit', async () => {
+    const request = new Request('http:localhost:/game/exit', {
+      headers: { Cookie: 'player-id=p1; game-id=1000' },
+      method: 'POST',
+    });
+    const res = await app.request(request);
+
+    assertEquals(res.status, 303);
+    assertFalse(res.headers.get('player-id'));
+    assertEquals(res.headers.get('location'), '/');
+  });
 });

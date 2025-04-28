@@ -20,6 +20,7 @@ import {
   serveGameData,
   serveGameState,
   serveResults,
+  redirectToLogin,
   updateRobberPosition,
   validateRobberPlacement,
 } from './handlers/dynamicHandlers.ts';
@@ -65,6 +66,7 @@ const gameRoutes = (): Hono => {
   gameApp.post('/can-build/vertex', canBuildSettlement);
   gameApp.post('/can-build/edge', canBuildRoad);
   gameApp.get('/possible-positions', serveAllPositions);
+  gameApp.post('exit', redirectToLogin);
 
   return gameApp;
 };

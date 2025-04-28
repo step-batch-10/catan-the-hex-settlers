@@ -1,6 +1,6 @@
 import { Context, Next } from 'hono';
 
-import { getCookie, setCookie } from 'hono/cookie';
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import _ from 'lodash';
 import { TradeResources } from '../types.ts';
 import { updateResources } from '../handlerHelpers.ts';
@@ -178,4 +178,11 @@ export const authenticate = async (ctx: Context, next: Next) => {
   return isPublicResource(ctx.req.path) || (gameId && playerId)
     ? await next()
     : ctx.redirect('/index.html', 303);
+};
+
+export const redirectToLogin = (ctx: Context): Response => {
+  deleteCookie(ctx, 'player-id');
+  deleteCookie(ctx, 'game-id');
+
+  return ctx.redirect('/', 303);
 };

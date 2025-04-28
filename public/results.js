@@ -59,7 +59,17 @@ const renderResults = async () => {
   highlightWinner(results[0]);
 };
 
+const handleExit = async () => {
+  const res = await fetch('/game/exit', { method: 'POST' });
+  console.log(res);
+  if (!res.redirected) return;
+
+  globalThis.location.assign(res.url);
+};
+
 const main = () => {
+  const exit = document.querySelector('#exit');
+  exit.addEventListener('click', handleExit);
   renderResults();
 };
 
