@@ -132,7 +132,7 @@ describe('Catan', () => {
     assert(gameState.board.hexes.length > 0, 'Board hexes should be present.');
     assert(
       gameState.board.vertices.length > 0,
-      'Board vertices should be present.'
+      'Board vertices should be present.',
     );
     assert(gameState.board.edges.length > 0, 'Board edges should be present.');
   });
@@ -168,7 +168,7 @@ describe('Catan', () => {
 
     assert(
       newResourceCount > initialResourceCount,
-      'Player should receive resources after building a settlement.'
+      'Player should receive resources after building a settlement.',
     );
     assertEquals(vertices, [{ id: 'v0,0|1,-1|1,0', color: 'red' }]);
   });
@@ -577,7 +577,6 @@ describe('buildRoad', () => {
     catan.phase = 'main';
 
     const canBuild = catan.validateBuildRoad(roadId1, 'p1');
-    console.log(canBuild);
     assertFalse(canBuild);
   });
 });
@@ -891,7 +890,7 @@ describe('possible build locations', () => {
     catan.currentPlayerIndex = 0;
     const canBuild = catan.validateBuildRoad(
       'e-v0,1|0,2|1,1_v0,1|1,0|1,1',
-      'p1'
+      'p1',
     );
 
     assert(canBuild);
@@ -1081,9 +1080,63 @@ describe('play road building', () => {
     const settlements = catan.getAvailableLocations(
       'settlement',
       'roadBuilding',
-      'p1'
+      'p1',
     );
 
     assertEquals(settlements.size, 0);
+  });
+
+  it('should return empty possible settlements when the phase is road building', () => {
+    catan.playRoadBuilding();
+
+    const road = catan.getAvailableLocations('road', 'roadBuilding', 'p1');
+    assertEquals(road.size, 0);
+  });
+
+  it('should return empty cities when the phase is main', () => {
+    const cities = catan.getAvailableLocations('city', 'main', 'p1');
+
+    assertEquals(cities.size, 0);
+  });
+
+  it('should return cities when the phase is main with no resources', () => {
+    catan.rollDice();
+    const cities = catan.getAvailableLocations('city', 'main', 'p1');
+
+    assertEquals(cities.size, 0);
+  });
+
+  it('should return settlements when the phase is main', () => {
+    catan.rollDice();
+    catan.players[0].addResource('brick', 5);
+    catan.players[0].addResource('wool', 5);
+    catan.players[0].addResource('grain', 5);
+    catan.players[0].addResource('ore', 5);
+    catan.players[0].addResource('lumber', 5);
+    catan.buildSettlement('v0,1|0,2|1,1');
+    const cities = catan.getAvailableLocations('city', 'main', 'p1');
+
+    assertEquals(cities.size, 1);
+  });
+
+  it('should be true if player can actually build city', () => {
+    catan.buildSettlement('v0,1|0,2|1,1');
+    catan.players[0].addResource('brick', 5);
+    catan.players[0].addResource('wool', 5);
+    catan.players[0].addResource('grain', 5);
+    catan.players[0].addResource('ore', 5);
+    catan.players[0].addResource('lumber', 5);
+
+    const canBuild = catan.canBuildCity('v0,1|0,2|1,1');
+
+    assert(canBuild);
+  });
+
+  it('should be true if player  cannot actually build city', () => {
+    catan.buildSettlement('v0,1|0,2|1,1');
+
+    const canBuild = catan.canBuildCity('v0,1|0,2|1,1');
+
+    assertFalse(canBuild);
   });
 });

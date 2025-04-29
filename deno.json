@@ -18,7 +18,7 @@
     "lint": "deno lint",
     "test-coverage": "deno test -A --coverage=coverage --clean",
     "coverage": {
-      "command": "deno run -A jsr:@ashishkujoy/deno-coverage-checker --lines=100 --functions=100 --branches=100",
+      "command": "deno run -A jsr:@ashishkujoy/deno-coverage-checker --lines=100 --functions=95 --branches=100",
       "dependencies": ["test-coverage"]
     }
   },

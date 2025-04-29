@@ -14,8 +14,8 @@ import {
   gameStatus,
   handleBuyDevCards,
   handleChangeTurn,
-  redirectToLogin,
   playRoadBuilding,
+  redirectToLogin,
   redirectToResults,
   rollDice,
   serveAllPositions,
@@ -25,15 +25,8 @@ import {
   updateRobberPosition,
   validateRobberPlacement,
 } from './handlers/dynamicHandlers.ts';
-import { Player } from './models/player.ts';
-import { Board } from './models/board.ts';
 import { SessionStore } from './models/sessions.ts';
 import { getCookie } from 'hono/cookie';
-
-type Game = {
-  players: Player[];
-  board: Board;
-};
 
 const injectGame = () => async (c: Context, next: Next) => {
   const sessions = c.get('sessions');

@@ -1,4 +1,9 @@
-import { updateResourceCount, tradeControlls, removeClassFromElements, addClassToElements } from './trade.js';
+import {
+  updateResourceCount,
+  tradeControlls,
+  removeClassFromElements,
+  addClassToElements,
+} from './trade.js';
 
 const getTokenImageFile = (tokenNumber) =>
   `images/tokens/token-${tokenNumber}.png`;
@@ -128,26 +133,13 @@ const createProfileCard = (player) => {
   return playerInfoCard;
 };
 
-const updateDevCardsByType = (_devCards) => {};
-
-// const displayResourceCount = ({ wool, lumber, brick, ore, grain }) => {
-//   appendText(document, '#ore', ore);
-//   appendText(document, '#lumber', lumber);
-//   appendText(document, '#wool', wool);
-//   appendText(document, '#brick', brick);
-//   appendText(document, '#grain', grain);
-// };
-
 const displayDevCardsCount = (devCards) => {
-  console.log('devCards:-', devCards);
-
   const totalCards = Object.values(devCards.owned).reduce(
     (sum, count) => sum + Number(count),
-    0
+    0,
   );
 
   appendText(document, '#dev-count', totalCards);
-  updateDevCardsByType(devCards);
 };
 
 const displaySpecialCardStat = (id, count) => {
@@ -184,7 +176,7 @@ const renderPlayersData = (players) => {
   const list = document.querySelector('.players-details');
 
   const profileCards = players.playersInfo.map((player) =>
-    createProfileCard(player)
+    createProfileCard(player),
   );
 
   list.replaceChildren(...profileCards);
@@ -261,8 +253,8 @@ const showPossibleSettlementsOrRoads = async () => {
   const res = await fetch('/game/possible-positions').then((i) => i.json());
 
   if (res.settlements) {
-    res.settlements.forEach((id) =>
-      highlightPosition(id, 'available-settlement')
+    [...res.cities, ...res.settlements].forEach((id) =>
+      highlightPosition(id, 'available-settlement'),
     );
   }
 
@@ -296,7 +288,8 @@ const moveRobber = async (event) => {
   await fetch('/game/moveRobber', { method: 'POST', body: fd });
   addBuildEvent();
   disableElements.forEach((selector) =>
-    removeClassFromElements(selector, 'disable'));
+    removeClassFromElements(selector, 'disable'),
+  );
 };
 
 const renderBoardHexes = async () => {
@@ -320,7 +313,7 @@ const rollDiceHandler = async () => {
   if (!outcome.canRoll) return;
 
   const response = await fetch('/game/dice/roll', { method: 'POST' }).then(
-    (res) => res.json()
+    (res) => res.json(),
   );
 
   const dice = document.querySelectorAll('.dice');
@@ -415,11 +408,11 @@ const addClassToElement = (className, elementId, parent) => {
 };
 
 const applyPlayerActions = ({ canTrade, canRoll }) => {
-  const playerActionIcons = ['#pass-btn', '#buy-dev-card', ".resource"];
+  const playerActionIcons = ['#pass-btn', '#buy-dev-card', '.resource'];
   const dice = ['#dice1', '#dice2'];
 
   dice.forEach((id) => addClassToElement('disable', id));
-  playerActionIcons.forEach((id) => addClassToElements(id, "disable"));
+  playerActionIcons.forEach((id) => addClassToElements(id, 'disable'));
 
   if (canRoll) {
     dice.forEach((id) => removeClassFromElements(id, 'disable'));
@@ -466,7 +459,7 @@ const addNavigation = () => {
 const getTotalDevsCount = (cards) => {
   const total = Object.values(cards).reduce(
     (sum, availableCount) => availableCount + sum,
-    0
+    0,
   );
 
   const element = document.querySelector('#dev-count');
@@ -503,7 +496,7 @@ const showDevCards = () => {
 
   closeBtn.addEventListener(
     'click',
-    () => (allDevCards.style.display = 'none')
+    () => (allDevCards.style.display = 'none'),
   );
 
   getAvailableCardsCount(allDevTypes);

@@ -122,7 +122,7 @@ interface SpecialCardOwners {
   largestArmy: number | null;
   longestRoad: number | null;
 }
-type BuildType = 'settlement' | 'road';
+type BuildType = 'settlement' | 'road' | 'city';
 type Phase = 'initial' | 'main' | 'roadBuilding';
 type StringSet = Set<string>;
 

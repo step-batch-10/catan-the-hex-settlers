@@ -29,7 +29,7 @@ export const canRoll = (ctx: Context): Response => {
 
 export const serveGameData = async (
   ctx: Context,
-  next: Next
+  next: Next,
 ): Promise<Response | void> => {
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
@@ -84,13 +84,13 @@ export const bankTradeHandler = async (ctx: Context): Promise<Response> => {
   Object.entries(tradeResources.incomingResources).forEach(
     ([resource, count]) => {
       player.addResource(resource, count);
-    }
+    },
   );
 
   Object.entries(tradeResources.outgoingResources).forEach(
     ([resource, count]) => {
       player.dropCards(resource, count);
-    }
+    },
   );
 
   return ctx.json({ status: 'ok' });
@@ -116,13 +116,18 @@ export const serveAllPositions = (ctx: Context): Response => {
   const playerId = getCookie(ctx, 'player-id');
   const pos = game.getAvailableBuilds(playerId);
   const settlements = pos.get('settlements');
+  const cities = pos.get('cities');
   const roads = pos.get('roads');
 
-  return ctx.json({ settlements: [...settlements], roads: [...roads] });
+  return ctx.json({
+    settlements: [...settlements],
+    roads: [...roads],
+    cities: [...cities],
+  });
 };
 
 export const validateRobberPlacement = async (
-  ctx: Context
+  ctx: Context,
 ): Promise<Response> => {
   const game = ctx.get('game');
   const { id } = await ctx.req.parseBody();
