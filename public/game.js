@@ -288,7 +288,7 @@ const moveRobber = async (event) => {
   await fetch('/game/moveRobber', { method: 'POST', body: fd });
   addBuildEvent();
   disableElements.forEach((selector) =>
-    removeClassFromElements(selector, 'disable'),
+    removeClassFromElements(selector, 'disable')
   );
 };
 
@@ -447,9 +447,9 @@ const buyDevCard = async () => {
   renderMsg(outcome.result);
 };
 
-const addListener = (elementId, listener) => {
+const addListener = (elementId, listener, type = 'click') => {
   const element = document.querySelector(elementId);
-  element.addEventListener('click', listener);
+  element.addEventListener(type, listener);
 };
 
 const addNavigation = () => {
@@ -467,18 +467,31 @@ const getTotalDevsCount = (cards) => {
 };
 
 const getAvailableCardsCount = (allDevCards) => {
-  const ownedDevCards = globalThis.gameState.players.me.devCards.owned;
+  const { gameState } = globalThis;
+  const me = gameState.players.me;
+  const ownedDevCards = me.devCards.owned;
+  const currentPlayer = gameState.currentPlayer;
+  const isCurrentTurn = me.name === currentPlayer;
+  const hasRolled = gameState.availableActions.canTrade;
 
   allDevCards.forEach((eachType) => {
     const type = eachType.id;
     const count = ownedDevCards[type];
 
-    if (count === 0) disableElement(type);
+    count < 1 || !isCurrentTurn || !hasRolled
+      ? disableElement(type)
+      : removeClassFromElements(`#${type}`, 'disable');
     eachType.textContent += count;
   });
 };
 
-const showDevCards = () => {
+const playDevCard = async (event) => {
+  const devCard = event.target.id;
+
+  await fetch(`/game/play/${devCard}`, { method: 'POST' });
+};
+
+const updateDevCards = () => {
   const container = document.querySelector('#all-devs');
   const existingDevCards = container.querySelector('.display-all-dev-card');
 
@@ -488,11 +501,13 @@ const showDevCards = () => {
   }
 
   const cloned = cloneTemplateElement('#all-dev-cards');
-  const allDevTypes = cloned.querySelectorAll('.count');
+  const allDevTypes =
+    cloned.querySelectorAll('.count') || document.querySelectorAll('.count');
   const allDevCards = cloned.querySelector('.display-all-dev-card');
   const closeBtn = cloned.querySelector('.close-btn');
-
   container.append(allDevCards);
+
+  allDevCards.addEventListener('dblclick', playDevCard);
 
   closeBtn.addEventListener(
     'click',
@@ -508,7 +523,7 @@ const addEventListeners = (gameState) => {
   addNavigation();
   tradeControlls();
   addListener('#buy-dev-card', buyDevCard);
-  addListener('#unplayed-dev', showDevCards);
+  addListener('#unplayed-dev', updateDevCards);
 };
 
 const renderStructures = (structures) => {
@@ -547,14 +562,16 @@ const poll = () => {
 
     const gameState = await response.json();
     globalThis.gameState = gameState;
-    // const allDevTypes = cloneTemplateElement('#all-dev-cards');
+
+    const cloned = cloneTemplateElement('#all-dev-cards');
+    const allDevTypes = cloned.querySelectorAll('.count');
 
     renderBoardHexes();
     renderElements(gameState);
     applyPlayerActions(gameState.availableActions);
-    // getAvailableCardsCount(allDevTypes);
-    addListener('#unplayed-dev', showDevCards);
+    addListener('#unplayed-dev', updateDevCards);
     getTotalDevsCount(gameState.players.me.devCards.owned);
+    getAvailableCardsCount(allDevTypes);
   }, 1000);
 };
 

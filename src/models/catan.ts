@@ -56,7 +56,7 @@ export class Catan {
     players: Player[],
     board: Board,
     diceFn: (start?: number, end?: number) => number,
-    supply: Supply,
+    supply: Supply
   ) {
     this.gameId = gameId;
     this.players = players;
@@ -114,7 +114,7 @@ export class Catan {
 
   private getProducedResources(
     terrains: string[] | undefined,
-    rolledNumber: number,
+    rolledNumber: number
   ) {
     const { hexes } = this.board;
     const producedTerrains = terrains?.filter((hexId) =>
@@ -127,7 +127,7 @@ export class Catan {
   private addProducedResource(
     playerId: string,
     resource: keyof Resources | undefined,
-    buildingType: string,
+    buildingType: string
   ) {
     return { playerId, resource, buildingType };
   }
@@ -135,12 +135,12 @@ export class Catan {
   private addProducedResources(
     resources: ResourceProduction,
     resourcesProduced: object[],
-    player: Player,
+    player: Player
   ) {
     resources?.forEach((resource) =>
       resourcesProduced.push(
-        this.addProducedResource(player.id, resource, 'settlement'),
-      ),
+        this.addProducedResource(player.id, resource, 'settlement')
+      )
     );
   }
 
@@ -260,7 +260,7 @@ export class Catan {
     const adjacentVertexIds = edge?.vertices || [];
 
     return [...adjacentVertexIds].some(
-      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId,
+      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId
     );
   }
 
@@ -354,6 +354,7 @@ export class Catan {
     const longestRoadLength = this.longestRoadOf(currentPlayer.id);
     currentPlayer.updateLongestRoad(longestRoadLength);
     if (longestRoadLength > this.longestRoadCount) {
+      this.longestRoadCount = longestRoadLength;
       this.handleSpecialCard('longestRoad');
     }
   }
@@ -394,11 +395,11 @@ export class Catan {
   distributeInitialResources(
     vertexId: string,
     player: Player,
-    count: number,
+    count: number
   ): void {
     const hexes = this.getVertex(vertexId)?.adjacentHexes;
     const resources = hexes?.map(
-      (hexId) => this.board.hexes.get(hexId)?.resource,
+      (hexId) => this.board.hexes.get(hexId)?.resource
     );
 
     resources?.forEach((resource) => {
@@ -445,7 +446,7 @@ export class Catan {
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], _others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId,
+      (p: Player) => p.id === playerId
     );
 
     const me = player.getPlayerData();
@@ -509,7 +510,7 @@ export class Catan {
 
   private extractOccupiedComponents(
     componentsMap: Map<string, Vertex | Edge>,
-    occupiedComponents: Components[],
+    occupiedComponents: Components[]
   ) {
     componentsMap.forEach((component: Vertex | Edge, key: string) => {
       if (component.owner) {
@@ -564,7 +565,7 @@ export class Catan {
     const currentPlayerId = this.getCurrentPlayer().id;
 
     return [...adjacentEdges].some(
-      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId,
+      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId
     );
   }
 
@@ -654,7 +655,7 @@ export class Catan {
   getAvailableLocations(
     type: BuildType,
     phase: Phase,
-    playerId: string,
+    playerId: string
   ): StringSet {
     if (this.isCity(type)) {
       return new Set([...this.getCurrentPlayer().settlements]);
@@ -730,7 +731,7 @@ export class Catan {
     playerId: string,
     vertexId: string,
     length: number,
-    visitedEdges: Set<string>,
+    visitedEdges: Set<string>
   ): number {
     const vertex = this.getVertex(vertexId);
     if (!vertex) return length;
@@ -751,7 +752,7 @@ export class Catan {
 
       maxLength = Math.max(
         maxLength,
-        this.dfs(playerId, nextVertexId, length + 1, visitedEdges),
+        this.dfs(playerId, nextVertexId, length + 1, visitedEdges)
       );
 
       visitedEdges.delete(edgeId);
@@ -774,7 +775,7 @@ export class Catan {
         longestRoad = Math.max(
           longestRoad,
           this.dfs(playerId, v1, 1, visitedEdges),
-          this.dfs(playerId, v2, 1, visitedEdges),
+          this.dfs(playerId, v2, 1, visitedEdges)
         );
         visitedEdges.delete(edgeId);
       }

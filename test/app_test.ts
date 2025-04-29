@@ -310,7 +310,7 @@ describe('Catan App Routes', () => {
   });
 
   it('should play road building card', async () => {
-    const res = await app.request('/game/play/roadBuilding', {
+    const res = await app.request('/game/play/road-building', {
       method: 'POST',
       headers: { Cookie: 'player-id=p1; game-id=1000' },
     });
