@@ -105,8 +105,8 @@ describe('Catan App Routes', () => {
     player.resources.lumber = 3;
 
     const tradeResource = {
-      incomingResources: {grain:1},
-      outgoingResources: {lumber: 2}
+      incomingResources: { grain: 1 },
+      outgoingResources: { lumber: 2 },
     };
 
     await app.request('http://localhost/game/trade/bank', {
@@ -307,5 +307,14 @@ describe('Catan App Routes', () => {
     assertEquals(res.status, 303);
     assertFalse(res.headers.get('player-id'));
     assertEquals(res.headers.get('location'), '/');
+  });
+
+  it('should play road building card', async () => {
+    const res = await app.request('/game/play/roadBuilding', {
+      method: 'POST',
+      headers: { Cookie: 'player-id=p1; game-id=1000' },
+    });
+
+    assert(await res.json());
   });
 });

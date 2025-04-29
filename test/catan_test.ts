@@ -132,7 +132,7 @@ describe('Catan', () => {
     assert(gameState.board.hexes.length > 0, 'Board hexes should be present.');
     assert(
       gameState.board.vertices.length > 0,
-      'Board vertices should be present.',
+      'Board vertices should be present.'
     );
     assert(gameState.board.edges.length > 0, 'Board edges should be present.');
   });
@@ -168,7 +168,7 @@ describe('Catan', () => {
 
     assert(
       newResourceCount > initialResourceCount,
-      'Player should receive resources after building a settlement.',
+      'Player should receive resources after building a settlement.'
     );
     assertEquals(vertices, [{ id: 'v0,0|1,-1|1,0', color: 'red' }]);
   });
@@ -872,6 +872,31 @@ describe('possible build locations', () => {
     assertEquals(validRoads.get('roads')?.size, 3);
   });
 
+  it('should get all the valid positions for placing roads in roadBuilding phase', () => {
+    catan.buildSettlement('v0,1|0,2|1,1');
+    catan.phase = 'main';
+    catan.turn.hasRolled = true;
+    catan.roadBuilding.shouldBuild = true;
+    const validRoads = catan.getAvailableBuilds('p1');
+
+    assertEquals(validRoads.get('roads')?.size, 3);
+  });
+
+  it('should be able to place roads in roadBuilding phase', () => {
+    catan.buildSettlement('v0,1|0,2|1,1');
+    catan.phase = 'main';
+    catan.turn.hasRolled = true;
+
+    catan.roadBuilding.shouldBuild = true;
+    catan.currentPlayerIndex = 0;
+    const canBuild = catan.validateBuildRoad(
+      'e-v0,1|0,2|1,1_v0,1|1,0|1,1',
+      'p1'
+    );
+
+    assert(canBuild);
+  });
+
   it('should not get anything if it is not current player', () => {
     catan.buildSettlement('v0,1|0,2|1,1');
     catan.phase = 'main';
@@ -1010,5 +1035,55 @@ describe('play monopoly', () => {
 
     catan.playMonopoly('ore');
     assertEquals(player.resources.ore, 6);
+  });
+});
+
+describe('play road building', () => {
+  let catan: Catan;
+
+  beforeEach(() => {
+    const players = [];
+    players.push(new Player('p1', 'Adil', 'red'));
+    players.push(new Player('p2', 'Aman', 'blue'));
+    players.push(new Player('p3', 'Vineet', 'orange'));
+    players.push(new Player('p4', 'Shalu', 'white'));
+    const board = new Board();
+    board.createBoard();
+    const supply: { resources: Resources; devCards: [] } = {
+      resources: defaultResources,
+      devCards: [],
+    };
+    catan = new Catan('game123', players, board, _.random, supply);
+  });
+
+  it('should not be able to any action until 2 roads are placed', () => {
+    catan.playRoadBuilding();
+    const player = catan.players[0];
+    catan.turn.hasRolled = true;
+    catan.phase = 'main';
+    const gameData = catan.getGameData(player.id);
+    assertFalse(gameData.availableActions.canTrade);
+    assert(catan.roadBuilding.shouldBuild);
+    assertEquals(catan.roadBuilding.count, 2);
+    catan.buildRoad('e1');
+    assertEquals(catan.roadBuilding.count, 1);
+    assert(catan.roadBuilding.shouldBuild);
+    catan.buildRoad('e2');
+    assertEquals(catan.roadBuilding.count, 2);
+    assertFalse(catan.roadBuilding.shouldBuild);
+    const gameData2 = catan.getGameData(player.id);
+    assert(gameData2.availableActions.canTrade);
+  });
+
+  it('should return empty possible settlements when the phase is road building', () => {
+    catan.playRoadBuilding();
+
+    const settlements = catan.getAvailableLocations(
+      'settlement',
+      'roadBuilding',
+      'p1'
+    );
+
+    assertEquals(settlements.size, 0);
   });
 });

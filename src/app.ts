@@ -15,6 +15,7 @@ import {
   handleBuyDevCards,
   handleChangeTurn,
   redirectToLogin,
+  playRoadBuilding,
   redirectToResults,
   rollDice,
   serveAllPositions,
@@ -60,6 +61,7 @@ const gameRoutes = (): Hono => {
   gameApp.post('/trade/bank', bankTradeHandler);
   gameApp.patch('/buy/dev-card', handleBuyDevCards);
   gameApp.post('/build/edge', buildRoad);
+  gameApp.post('/play/roadBuilding', playRoadBuilding);
   gameApp.get('/dice/can-roll', canRoll);
   gameApp.post('/can-place-robber', validateRobberPlacement);
   gameApp.post('/moveRobber', updateRobberPosition);

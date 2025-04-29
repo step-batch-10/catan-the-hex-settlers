@@ -143,7 +143,7 @@ const displayDevCardsCount = (devCards) => {
 
   const totalCards = Object.values(devCards.owned).reduce(
     (sum, count) => sum + Number(count),
-    0,
+    0
   );
 
   appendText(document, '#dev-count', totalCards);
@@ -184,7 +184,7 @@ const renderPlayersData = (players) => {
   const list = document.querySelector('.players-details');
 
   const profileCards = players.playersInfo.map((player) =>
-    createProfileCard(player),
+    createProfileCard(player)
   );
 
   list.replaceChildren(...profileCards);
@@ -262,7 +262,7 @@ const showPossibleSettlementsOrRoads = async () => {
 
   if (res.settlements) {
     res.settlements.forEach((id) =>
-      highlightPosition(id, 'available-settlement'),
+      highlightPosition(id, 'available-settlement')
     );
   }
 
@@ -320,7 +320,7 @@ const rollDiceHandler = async () => {
   if (!outcome.canRoll) return;
 
   const response = await fetch('/game/dice/roll', { method: 'POST' }).then(
-    (res) => res.json(),
+    (res) => res.json()
   );
 
   const dice = document.querySelectorAll('.dice');
@@ -466,7 +466,7 @@ const addNavigation = () => {
 const getTotalDevsCount = (cards) => {
   const total = Object.values(cards).reduce(
     (sum, availableCount) => availableCount + sum,
-    0,
+    0
   );
 
   const element = document.querySelector('#dev-count');
@@ -503,7 +503,7 @@ const showDevCards = () => {
 
   closeBtn.addEventListener(
     'click',
-    () => (allDevCards.style.display = 'none'),
+    () => (allDevCards.style.display = 'none')
   );
 
   getAvailableCardsCount(allDevTypes);

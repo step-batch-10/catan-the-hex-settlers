@@ -9,6 +9,7 @@ import type {
   DevCardTypes,
   DevelopmentCards,
   DistributeResourceData,
+  GameData,
   GamePhase,
   GameState,
   Phase,
@@ -32,6 +33,10 @@ export class Catan {
   board: Board;
   turns: number;
   diceFn: RollDice;
+  roadBuilding: {
+    shouldBuild: boolean;
+    count: number;
+  };
 
   private static playerAssets = {
     road: { brick: 1, lumber: 1 },
@@ -44,7 +49,7 @@ export class Catan {
   longestRoadCount: number;
   specialCardOwners: SpecialCardOwners;
   supply: Supply;
-  hasMovedRobber: boolean;
+  noPreAction: boolean;
 
   constructor(
     gameId: string,
@@ -58,7 +63,7 @@ export class Catan {
     this.currentPlayerIndex = 0;
     this.phase = 'setup';
     this.winner = null;
-    this.hasMovedRobber = true;
+    this.noPreAction = true;
     this.diceRoll = [1, 1];
     this.diceFn = diceFn;
     this.board = board;
@@ -68,6 +73,10 @@ export class Catan {
     this.largestArmyCount = 2;
     this.longestRoadCount = 4;
     this.specialCardOwners = { largestArmy: null, longestRoad: null };
+    this.roadBuilding = {
+      shouldBuild: false,
+      count: 2,
+    };
   }
 
   changePhaseToMain(): void {
@@ -182,7 +191,7 @@ export class Catan {
     const dice2Value = this.diceFn(1, 6);
     this.diceRoll = [dice1Value, dice2Value];
     const isRobber = dice1Value + dice2Value === 7;
-    this.hasMovedRobber = !isRobber;
+    this.noPreAction = !isRobber;
     this.turns++;
     this.turn.hasRolled = true;
     this.distributeResourcesForDiceRoll();
@@ -319,19 +328,34 @@ export class Catan {
     return playerResources;
   }
 
+  updateRoadBuilding(): boolean {
+    this.roadBuilding.count--;
+    if (this.roadBuilding.count === 0) {
+      this.noPreAction = true;
+      this.roadBuilding.shouldBuild = false;
+      this.roadBuilding.count = 2;
+    }
+    return true;
+  }
+
   buildRoad(edgeId: string): boolean {
     const currentPlayer = this.getCurrentPlayer();
     this.getEdge(edgeId)?.occupy(currentPlayer.id, currentPlayer.color);
     currentPlayer.addRoad(edgeId);
+    this.handleRoad(currentPlayer);
+    this.turns++;
+    if (this.roadBuilding.shouldBuild) return this.updateRoadBuilding();
+    this.isInitialSetup() ? this.changeTurn() : this.deductResources('road');
+
+    return true;
+  }
+
+  private handleRoad(currentPlayer: Player) {
     const longestRoadLength = this.longestRoadOf(currentPlayer.id);
     currentPlayer.updateLongestRoad(longestRoadLength);
     if (longestRoadLength > this.longestRoadCount) {
       this.handleSpecialCard('longestRoad');
     }
-    this.turns++;
-    this.isInitialSetup() ? this.changeTurn() : this.deductResources('road');
-
-    return true;
   }
 
   validateBuyDevCard(playerId: string) {
@@ -432,12 +456,15 @@ export class Catan {
     return { me, playersInfo };
   }
 
-  getAvailableActions(playerId: string) {
+  getAvailableActions(playerId: string): {
+    canTrade: boolean;
+    canRoll: boolean;
+  } {
     const isPlayerTurnInMainPhase = this.isCurrentPlayer(playerId) &&
       !this.isInitialSetup();
     const canRoll = isPlayerTurnInMainPhase && !this.hasAlreadyRolled();
     const canTrade = isPlayerTurnInMainPhase && this.hasAlreadyRolled() &&
-      this.hasMovedRobber;
+      this.noPreAction;
 
     return { canTrade, canRoll };
   }
@@ -455,7 +482,7 @@ export class Catan {
 
   blockResource(hexId: string) {
     const hex = this.board.updateRobber(hexId);
-    this.hasMovedRobber = true;
+    this.noPreAction = true;
 
     return { hex };
   }
@@ -507,7 +534,7 @@ export class Catan {
     return this.getCurrentPlayer().hasWon();
   }
 
-  getGameData(playerId: string): object {
+  getGameData(playerId: string): GameData {
     const vertices = this.getOccupiedVertices();
     const edges = this.getOccupiedEdges();
     const diceRoll = this.diceRoll;
@@ -525,9 +552,9 @@ export class Catan {
       diceRoll,
       players,
       currentPlayer,
-      availableActions,
       gamePhase,
       currentPlayerId,
+      availableActions,
     };
   }
 
@@ -558,6 +585,7 @@ export class Catan {
 
   validateBuildRoad(edgeId: string, playerId: string): boolean {
     if (!this.isCurrentPlayer(playerId)) return false;
+    if (this.roadBuilding.shouldBuild) return this.canBuildRoad(edgeId);
     if (this.isInitialSetup()) return this.canBuildInitialRoad(edgeId);
 
     return (
@@ -606,6 +634,10 @@ export class Catan {
       : this.isInitialRoadTurn();
   }
 
+  allPossibleRoads(edgeId: string): boolean {
+    return this.canBuildRoad(edgeId);
+  }
+
   getAvailableLocations(
     type: BuildType,
     phase: Phase,
@@ -619,8 +651,10 @@ export class Catan {
       settlement: {
         initial: this.canBuildInitialSettlement.bind(this),
         main: this.canBuildSettlement.bind(this),
+        roadBuilding: () => false,
       },
       road: {
+        roadBuilding: this.allPossibleRoads.bind(this),
         initial: this.canBuildInitialRoad.bind(this),
         main: this.validateBuildRoad.bind(this),
       },
@@ -647,7 +681,12 @@ export class Catan {
   }
 
   getAvailableBuilds(id: string): Map<string, StringSet> {
-    if (!this.isCurrentPlayer(id) || !this.hasMovedRobber) {
+    if (this.isCurrentPlayer(id) && this.roadBuilding.shouldBuild) {
+      const initRoads = this.getAvailableLocations('road', 'roadBuilding', id);
+      return this.createMapOfPieces(initRoads, new Set());
+    }
+
+    if (!this.isCurrentPlayer(id) || !this.noPreAction) {
       return this.createMapOfPieces(new Set(), new Set());
     }
 
@@ -738,5 +777,12 @@ export class Catan {
     const count = this.deductResourceOfType(others, resource);
     player.addResource(resource, count);
     player.playDevCard('monopoly');
+  }
+
+  playRoadBuilding() {
+    const player = this.getCurrentPlayer();
+    this.roadBuilding.shouldBuild = true;
+    this.noPreAction = false;
+    player.playDevCard('road-building');
   }
 }

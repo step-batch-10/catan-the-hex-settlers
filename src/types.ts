@@ -70,6 +70,18 @@ interface PlayerData {
   victoryPoints: number;
 }
 
+interface GameData {
+  hasWon: boolean;
+  vertices: object[];
+  edges: object[];
+  diceRoll: number[];
+  players: PlayersList;
+  currentPlayer: string;
+  availableActions: { canTrade: boolean; canRoll: boolean };
+  gamePhase: GamePhase;
+  currentPlayerId: string;
+}
+
 interface GameState {
   gameId: string;
   diceRoll: number[];
@@ -111,7 +123,7 @@ interface SpecialCardOwners {
   longestRoad: number | null;
 }
 type BuildType = 'settlement' | 'road';
-type Phase = 'initial' | 'main';
+type Phase = 'initial' | 'main' | 'roadBuilding';
 type StringSet = Set<string>;
 
 export type DevelopmentCards =
@@ -160,7 +172,7 @@ export const defaultSlot = (): Slot => ({
     {
       id: 'p4',
       name: '',
-      color: 'white',
+      color: 'green',
     },
   ],
 });
@@ -175,6 +187,7 @@ export type {
   DistributeResourceData,
   EdgeData,
   GameBoard,
+  GameData,
   GamePhase,
   GameState,
   HexData,
