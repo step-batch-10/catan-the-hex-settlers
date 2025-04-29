@@ -136,7 +136,7 @@ const createProfileCard = (player) => {
 const displayDevCardsCount = (devCards) => {
   const totalCards = Object.values(devCards.owned).reduce(
     (sum, count) => sum + Number(count),
-    0
+    0,
   );
 
   appendText(document, '#dev-count', totalCards);
@@ -181,7 +181,7 @@ const renderPlayersData = (players) => {
   const list = document.querySelector('.players-details');
 
   const profileCards = players.playersInfo.map((player) =>
-    createProfileCard(player)
+    createProfileCard(player),
   );
 
   list.replaceChildren(...profileCards);
@@ -251,15 +251,24 @@ const highlightPosition = (id, className) => {
 
   if (!ele) return;
 
+  ele.style.opacity = 0.7;
+  ele.classList.add(className);
+};
+
+const highlightSettlement = (id, className) => {
+  const ele = document.getElementById(id);
+  if (!ele) return;
+  const settlement = ele.querySelector('path');
+  if (settlement) return settlement.classList.add(className);
+
   ele.classList.add(className);
 };
 
 const showPossibleSettlementsOrRoads = async () => {
   const res = await fetch('/game/possible-positions').then((i) => i.json());
-  console.log(res);
   if (res.settlements) {
     [...res.cities, ...res.settlements].forEach((id) =>
-      highlightPosition(id, 'available-settlement')
+      highlightSettlement(id, 'available-settlement'),
     );
   }
 
@@ -282,11 +291,11 @@ const moveRobber = async (event) => {
   const fd = new FormData();
   fd.set('id', event.target.parentElement.id);
   const disableElements = ['#pass-btn', '#buy-dev-card'];
-
   const { isValid } = await fetch('/game/can-place-robber', {
     method: 'POST',
     body: fd,
   }).then((res) => res.json());
+  console.log(isValid);
 
   if (!isValid) return renderMsg("you can't place there");
 
@@ -303,12 +312,27 @@ const renderBoardHexes = async () => {
   renderBoard(gameState.board.hexes);
 };
 
+const addListenerToElements = (elements, listener) => {
+  elements.forEach((element) => {
+    element.addEventListener('click', listener);
+  });
+};
+
+const removeListenerToElements = (elements, listener) => {
+  elements.forEach((element) => {
+    element.removeEventListener('click', listener);
+  });
+};
+
 const handleRobberCase = () => {
   const svg = document.getElementById('svg20'); //only terrains
+  const settlements = svg.querySelectorAll('.settlement');
+  const roads = svg.querySelectorAll('.edge');
   const disableElements = ['pass-btn', 'buy-dev-card'];
 
   disableElements.forEach((id) => disableElement(id));
-  svg.removeEventListener('click', build);
+  removeListenerToElements(settlements, build);
+  removeListenerToElements(roads, build);
   svg.addEventListener('click', moveRobber);
 };
 
@@ -318,7 +342,7 @@ const rollDiceHandler = async () => {
   if (!outcome.canRoll) return;
 
   const response = await fetch('/game/dice/roll', { method: 'POST' }).then(
-    (res) => res.json()
+    (res) => res.json(),
   );
 
   const dice = document.querySelectorAll('.dice');
@@ -358,9 +382,15 @@ const isValidBuilt = async (pieceType, fd) => {
 const isPieceTypeValid = (pieceType) =>
   new Set(['vertex', 'edge']).has(pieceType);
 
+const getParentId = (element) => {
+  const isSettlement = element.getAttribute('type') === 'vertex' || 'edge';
+
+  return isSettlement ? element.id : element.parentElement.id;
+};
+
 const getBuildValidationData = async (event) => {
   const element = event.target;
-  const targetElementId = element.id;
+  const targetElementId = getParentId(element);
   const pieceType = element.getAttribute('type');
 
   if (!isPieceTypeValid(pieceType)) return null;
@@ -369,7 +399,7 @@ const getBuildValidationData = async (event) => {
   formData.set('id', targetElementId);
 
   const canBuild = await isValidBuilt(pieceType, formData);
-
+  console.log(targetElementId);
   if (!canBuild) return element.classList.add('block');
   return { element, targetElementId, pieceType };
 };
@@ -384,23 +414,28 @@ const removeSvgAnimation = () => {
   }
 
   for (let i = 0; i < allRoads.length; i++) {
+    allRoads[i].style.opacity = 0;
     allRoads[i].classList.remove('available-road');
   }
 };
 
 const build = async (event) => {
   const validationData = await getBuildValidationData(event);
+  console.log(validationData);
   if (!validationData) return;
 
   const { targetElementId, pieceType } = validationData;
-  console.log('building', pieceType, targetElementId);
   removeSvgAnimation();
   return buildAt(targetElementId, pieceType);
 };
 
 const addBuildEvent = () => {
   const svg = document.getElementById('svg20');
-  svg.addEventListener('click', build);
+  const roads = svg.querySelectorAll('.edge');
+  const settlements = svg.querySelectorAll('.settlement');
+  svg.removeEventListener('click', moveRobber);
+  addListenerToElements(settlements, build);
+  addListenerToElements(roads, build);
 };
 
 const passTurn = async () => {
@@ -465,7 +500,7 @@ const addNavigation = () => {
 const getTotalDevsCount = (cards) => {
   const total = Object.values(cards).reduce(
     (sum, availableCount) => availableCount + sum,
-    0
+    0,
   );
 
   const element = document.querySelector('#dev-count');
@@ -524,13 +559,12 @@ const updateDevCards = () => {
 
   closeBtn.addEventListener(
     'click',
-    () => (devCardPanel.style.display = 'none')
+    () => (devCardPanel.style.display = 'none'),
   );
 
   addListenerToDevCards(allDevs);
 
   allDevs.forEach((devCard) => {
-    console.log(devCard);
     devCard.addEventListener('dblclick', playDevCard);
   });
 
@@ -556,23 +590,47 @@ const renderStructures = (structures) => {
   structures.forEach(({ color, id }) => {
     const structure = document.getElementById(id);
     structure.classList.add('built');
+    structure.style.opacity = 1;
     structure.style.setProperty('--color', color);
+  });
+};
+
+const renderCity = (city, color, id) => {
+  const elements = city.querySelectorAll('path');
+  const settlement = document.getElementById(id);
+  const settlementElement = settlement.querySelector('path');
+  settlementElement.style.opacity = 0;
+
+  elements.forEach((element) => {
+    element.classList.add('built');
+    element.style.opacity = 1;
+    element.style.fill = color;
+  });
+};
+
+const renderSettlements = (settlements) => {
+  settlements.forEach(({ color, id }) => {
+    const settlement = document.getElementById(id);
+    const element = settlement.querySelector('path');
+    element.classList.add('built');
+    element.classList.add('settlement');
+    element.style.opacity = 1;
+    element.style.setProperty('--color', color);
   });
 };
 
 const renderCities = (cities) => {
   cities.forEach(({ color, id }) => {
-    const city = document.getElementById(id);
-    city.classList.add('built');
-    city.classList.add('city');
-    city.style.setProperty('--color', color);
+    const settlement = document.getElementById(id);
+    const city = settlement.querySelector('g');
+    renderCity(city, color, id);
   });
 };
 
 const renderPieces = (gameState) => {
   const { vertices, edges, cities } = gameState;
 
-  renderStructures(vertices);
+  renderSettlements(vertices);
   renderStructures(edges);
   renderCities(cities);
 };

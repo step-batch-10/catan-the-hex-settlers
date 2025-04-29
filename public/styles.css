@@ -142,7 +142,7 @@ body {
   width: 100%;
 }
 
-#unique-cards{
+#unique-cards {
   display: flex;
   justify-content: space-evenly;
 }
@@ -635,6 +635,7 @@ body {
 }
 
 .available-road {
+  fill: #51acd3;
   opacity: 1;
   cursor: pointer;
   animation-duration: 1s;
