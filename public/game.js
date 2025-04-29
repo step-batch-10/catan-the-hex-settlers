@@ -284,7 +284,7 @@ const displayPlayerTurn = (gameState) => {
 const moveRobber = async (event) => {
   const fd = new FormData();
   fd.set('id', event.target.parentElement.id);
-  const disableElements = ['#trade', '#pass-btn', '#buy-dev-card'];
+  const disableElements = ['#pass-btn', '#buy-dev-card'];
 
   const { isValid } = await fetch('/game/can-place-robber', {
     method: 'POST',
@@ -307,7 +307,7 @@ const renderBoardHexes = async () => {
 
 const handleRobberCase = () => {
   const svg = document.getElementById('svg20'); //only terrains
-  const disableElements = ['trade', 'pass-btn', 'buy-dev-card'];
+  const disableElements = ['pass-btn', 'buy-dev-card'];
 
   disableElements.forEach((id) => disableElement(id));
   svg.removeEventListener('click', build);
