@@ -186,7 +186,7 @@ type ExpectedResponder = typeof Bank | typeof Player;
 
 type Trader = Player | Bank;
 
-interface Notification {
+interface NotificationMessage {
   header: string;
   body: string;
   actions: string[];
@@ -194,8 +194,8 @@ interface Notification {
 
 interface TradeStatus {
   isClosed: boolean;
-  responder: ExpectedResponder;
-  proposer: Trader;
+  responder: Trader;
+  proposer: Player;
   tradeResource: TradeResources;
 }
 
@@ -212,7 +212,7 @@ export type {
   GamePhase,
   GameState,
   HexData,
-  Notification,
+  NotificationMessage,
   Phase,
   PlayerAssets,
   PlayerData,

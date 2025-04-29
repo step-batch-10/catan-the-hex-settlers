@@ -2,6 +2,7 @@ import { Resources } from '../types.ts';
 
 export class Bank {
   private assets: Resources;
+  name: string = 'Bank';
 
   constructor(assets: Resources) {
     this.assets = assets;
