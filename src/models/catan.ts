@@ -56,7 +56,7 @@ export class Catan {
     players: Player[],
     board: Board,
     diceFn: (start?: number, end?: number) => number,
-    supply: Supply
+    supply: Supply,
   ) {
     this.gameId = gameId;
     this.players = players;
@@ -99,8 +99,8 @@ export class Catan {
     if (this.arePlacingSecondSettlement()) return this.reverseOrder();
     if (!this.isInitialSetup() && !this.turn.hasRolled) return;
     this.turn = { hasRolled: false };
-    this.currentPlayerIndex =
-      (this.currentPlayerIndex + 1) % this.players.length;
+    this.currentPlayerIndex = (this.currentPlayerIndex + 1) %
+      this.players.length;
   }
 
   private canProduce(hexId: string, rolledNumber: number): boolean {
@@ -114,11 +114,11 @@ export class Catan {
 
   private getProducedResources(
     terrains: string[] | undefined,
-    rolledNumber: number
+    rolledNumber: number,
   ) {
     const { hexes } = this.board;
     const producedTerrains = terrains?.filter((hexId) =>
-      this.canProduce(hexId, rolledNumber),
+      this.canProduce(hexId, rolledNumber)
     );
 
     return producedTerrains?.map((terrain) => hexes.get(terrain)?.resource);
@@ -127,7 +127,7 @@ export class Catan {
   private addProducedResource(
     playerId: string,
     resource: keyof Resources | undefined,
-    buildingType: string
+    buildingType: string,
   ) {
     return { playerId, resource, buildingType };
   }
@@ -135,11 +135,11 @@ export class Catan {
   private addProducedResources(
     resources: ResourceProduction,
     resourcesProduced: object[],
-    player: Player
+    player: Player,
   ) {
     resources?.forEach((resource) =>
       resourcesProduced.push(
-        this.addProducedResource(player.id, resource, 'settlement')
+        this.addProducedResource(player.id, resource, 'settlement'),
       )
     );
   }
@@ -176,7 +176,7 @@ export class Catan {
 
   distributeResources(resourcesToBeDistributed: DistributeResourceData[]) {
     resourcesToBeDistributed.forEach((resourceData) =>
-      this.updateResource(resourceData),
+      this.updateResource(resourceData)
     );
   }
 
@@ -260,7 +260,7 @@ export class Catan {
     const adjacentVertexIds = edge?.vertices || [];
 
     return [...adjacentVertexIds].some(
-      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId
+      (vtxId: string) => this.getVertex(vtxId)?.owner === currentPlayerId,
     );
   }
 
@@ -395,11 +395,11 @@ export class Catan {
   distributeInitialResources(
     vertexId: string,
     player: Player,
-    count: number
+    count: number,
   ): void {
     const hexes = this.getVertex(vertexId)?.adjacentHexes;
     const resources = hexes?.map(
-      (hexId) => this.board.hexes.get(hexId)?.resource
+      (hexId) => this.board.hexes.get(hexId)?.resource,
     );
 
     resources?.forEach((resource) => {
@@ -446,12 +446,12 @@ export class Catan {
   getPlayersInfo(playerId: string): PlayersList {
     const [[player], _others] = _.partition(
       this.players,
-      (p: Player) => p.id === playerId
+      (p: Player) => p.id === playerId,
     );
 
     const me = player.getPlayerData();
     const playersInfo = this.players.map((other: Player) =>
-      this.abstractPlayerData(other),
+      this.abstractPlayerData(other)
     );
 
     return { me, playersInfo };
@@ -461,11 +461,11 @@ export class Catan {
     canTrade: boolean;
     canRoll: boolean;
   } {
-    const isPlayerTurnInMainPhase =
-      this.isCurrentPlayer(playerId) && !this.isInitialSetup();
+    const isPlayerTurnInMainPhase = this.isCurrentPlayer(playerId) &&
+      !this.isInitialSetup();
     const canRoll = isPlayerTurnInMainPhase && !this.hasAlreadyRolled();
-    const canTrade =
-      isPlayerTurnInMainPhase && this.hasAlreadyRolled() && this.noPreAction;
+    const canTrade = isPlayerTurnInMainPhase && this.hasAlreadyRolled() &&
+      this.noPreAction;
 
     return { canTrade, canRoll };
   }
@@ -510,7 +510,7 @@ export class Catan {
 
   private extractOccupiedComponents(
     componentsMap: Map<string, Vertex | Edge>,
-    occupiedComponents: Components[]
+    occupiedComponents: Components[],
   ) {
     componentsMap.forEach((component: Vertex | Edge, key: string) => {
       if (component.owner) {
@@ -565,7 +565,7 @@ export class Catan {
     const currentPlayerId = this.getCurrentPlayer().id;
 
     return [...adjacentEdges].some(
-      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId
+      (edge: string) => this.getEdge(edge)?.owner === currentPlayerId,
     );
   }
 
@@ -655,14 +655,15 @@ export class Catan {
   getAvailableLocations(
     type: BuildType,
     phase: Phase,
-    playerId: string
+    playerId: string,
   ): StringSet {
     if (this.isCity(type)) {
       return new Set([...this.getCurrentPlayer().settlements]);
     }
 
-    const builds =
-      type === 'settlement' ? this.board.vertices : this.board.edges;
+    const builds = type === 'settlement'
+      ? this.board.vertices
+      : this.board.edges;
 
     const conditionMap = {
       settlement: {
@@ -731,7 +732,7 @@ export class Catan {
     playerId: string,
     vertexId: string,
     length: number,
-    visitedEdges: Set<string>
+    visitedEdges: Set<string>,
   ): number {
     const vertex = this.getVertex(vertexId);
     if (!vertex) return length;
@@ -752,7 +753,7 @@ export class Catan {
 
       maxLength = Math.max(
         maxLength,
-        this.dfs(playerId, nextVertexId, length + 1, visitedEdges)
+        this.dfs(playerId, nextVertexId, length + 1, visitedEdges),
       );
 
       visitedEdges.delete(edgeId);
@@ -767,15 +768,15 @@ export class Catan {
     let longestRoad = 0;
 
     player.roads.forEach((edgeId) => {
-      const edge: Edge =
-        this.board.edges.get(edgeId) || new Edge('e1', ['', '']);
+      const edge: Edge = this.board.edges.get(edgeId) ||
+        new Edge('e1', ['', '']);
       if (!visitedEdges.has(edgeId)) {
         const [v1, v2] = edge.vertices;
         visitedEdges.add(edgeId);
         longestRoad = Math.max(
           longestRoad,
           this.dfs(playerId, v1, 1, visitedEdges),
-          this.dfs(playerId, v2, 1, visitedEdges)
+          this.dfs(playerId, v2, 1, visitedEdges),
         );
         visitedEdges.delete(edgeId);
       }

@@ -3,7 +3,7 @@ import { Bank } from '../src/models/bank.ts';
 import { assertEquals } from 'assert/equals';
 import { Resources } from '../src/types.ts';
 
-describe('addResources', () => {
+describe('Bank', () => {
   let bank: Bank;
   beforeEach(() => {
     const initialResources: Resources = {
