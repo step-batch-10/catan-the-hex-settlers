@@ -79,11 +79,9 @@ export class Player {
   }
 
   addResources(resources: Resources) {
-    Object.entries(resources).forEach(
-      ([resource, count]) => {
-        this.addResource(resource, count);
-      },
-    );
+    Object.entries(resources).forEach(([resource, count]) => {
+      this.addResource(resource, count);
+    });
   }
 
   getPlayerData(): PlayerData {

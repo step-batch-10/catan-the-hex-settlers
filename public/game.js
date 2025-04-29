@@ -158,8 +158,13 @@ const disableElement = (id) => {
 };
 
 const renderSpecialCards = (hasLongestRoad, hasLargestArmy) => {
-  if (!hasLargestArmy) disableElement('largest-army-icon');
-  if (!hasLongestRoad) disableElement('longest-road-icon');
+  !hasLargestArmy
+    ? disableElement('largest-army-icon')
+    : removeClassFromElements(`#largest-army-icon`, 'disable');
+
+  !hasLongestRoad
+    ? disableElement('longest-road-icon')
+    : removeClassFromElements(`#longest-road-icon`, 'disable');
 };
 
 const renderPlayerPanel = (player) => {
@@ -288,7 +293,7 @@ const moveRobber = async (event) => {
   await fetch('/game/moveRobber', { method: 'POST', body: fd });
   addBuildEvent();
   disableElements.forEach((selector) =>
-    removeClassFromElements(selector, 'disable')
+    removeClassFromElements(selector, 'disable'),
   );
 };
 
