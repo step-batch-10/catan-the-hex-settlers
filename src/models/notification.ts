@@ -7,11 +7,25 @@ import {
 import _ from 'lodash';
 import { Player } from './player.ts';
 
-export class Notification {
-  notifications: NotificationMessage[];
+type ExpFn = (notification: NotificationMessage, seconds: number) => void;
 
-  constructor() {
+export const setExpiry = (
+  notification: NotificationMessage,
+  seconds: number,
+) => {
+  const timerId = setTimeout(() => {
+    notification.expired = true;
+    clearTimeout(timerId);
+  }, seconds * 1000);
+};
+
+export class Notification {
+  private notifications: NotificationMessage[];
+  private setExpiry: ExpFn;
+
+  constructor(expiryFn: ExpFn) {
     this.notifications = [];
+    this.setExpiry = expiryFn;
   }
 
   private stringifyResourceAndCount(resources: Resources) {
@@ -26,48 +40,64 @@ export class Notification {
     responder: Trader,
     outResourceString: string,
     inResourceString: string,
-  ) {
+  ): NotificationMessage {
     const header = `${proposer.name} traded with ${responder.name}`;
     const body = `Exchanged ${outResourceString} for ${inResourceString}`;
+    const notification = { header, body, actions: null, expired: false };
+    this.setExpiry(notification, 1);
 
-    return { header, body, actions: null };
+    return notification;
   }
 
-  createOpenTM(
+  private createOpenTM(
     proposer: Player,
     outResourceString: string,
     inResourceString: string,
-  ) {
+  ): NotificationMessage {
     const header = `${proposer.name} opened a Trade`;
     const body = `Offering ${outResourceString} for ${inResourceString}`;
     const actions = ['Accept', 'Reject'];
 
-    return { header, body, actions };
+    const notification = { header, body, actions, expired: false };
+
+    return notification;
   }
 
   tradeNotification(tradeStatus: TradeStatus) {
-    const isClosed = tradeStatus.isClosed;
-    const proposer = tradeStatus.proposer;
-    const responder = tradeStatus.responder;
-    const outgoingResources = tradeStatus.tradeResource.outgoingResources;
-    const incomingResources = tradeStatus.tradeResource.incomingResources;
+    const { isClosed, proposer, tradeResources } = tradeStatus;
+    const { outgoingResources, incomingResources } = tradeResources;
 
     const outResourceString = this.stringifyResourceAndCount(outgoingResources);
     const inResourceString = this.stringifyResourceAndCount(incomingResources);
 
     if (isClosed) {
-      return this.createClosedTM(
+      const responder = tradeStatus.responder as Trader;
+      const notification = this.createClosedTM(
         proposer,
         responder,
         outResourceString,
         inResourceString,
       );
+
+      this.notifications.push(notification);
+
+      return;
     }
 
-    return this.createOpenTM(
+    const notification = this.createOpenTM(
       proposer,
       outResourceString,
       inResourceString,
     );
+
+    this.notifications.push(notification);
+
+    return;
+  }
+
+  getNewNotifications() {
+    const notifications = this.notifications;
+    this.notifications = [];
+    return _.filter(notifications, { expired: false });
   }
 }

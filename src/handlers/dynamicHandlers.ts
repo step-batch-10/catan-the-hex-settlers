@@ -1,8 +1,8 @@
 import { Context, Next } from 'hono';
-
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import _ from 'lodash';
-import { TradeResources } from '../types.ts';
+import { TradeResources, TradeStatus } from '../types.ts';
+import { Catan } from '../models/catan.ts';
 
 export const serveGameState = (ctx: Context): Response => {
   const game = ctx.get('game');
@@ -81,9 +81,7 @@ export const handleBankTrade = async (ctx: Context): Promise<Response> => {
   const playerId = getCookie(ctx, 'player-id');
   const player = _.find(game.players, { id: playerId });
 
-  player.addResources(tradeResources.incomingResources);
-
-  player.dropCards(tradeResources.outgoingResources);
+  game.trades.openNewTrade('bank', player, tradeResources);
 
   return ctx.json({ status: 'ok' });
 };
@@ -205,6 +203,22 @@ export const playMonopoly = async (ctx: Context): Promise<Response> => {
   const { resource } = await ctx.req.parseBody();
   console.log(resource, 'resorce for monopoly');
   game.playMonopoly(resource);
+
+  return ctx.json(true);
+};
+
+export const handlePlayerTrade = async (ctx: Context): Promise<Response> => {
+  const tradeResources: TradeResources = await ctx.req.json();
+  const game: Catan = ctx.get('game');
+  const playerId = getCookie(ctx, 'player-id');
+  const player = _.find(game.players, { id: playerId });
+  const trade = game.trades.openNewTrade(
+    'player',
+    player,
+    tradeResources,
+  ) as TradeStatus;
+
+  game.notifications.tradeNotification(trade);
 
   return ctx.json(true);
 };

@@ -3,6 +3,8 @@ import { Catan } from './catan.ts';
 import { Player } from './player.ts';
 import { defaultSlot, DevelopmentCards, Slot } from '../types.ts';
 import { Board } from './board.ts';
+import { TradeManager } from './trade.ts';
+import { Notification, setExpiry } from './notification.ts';
 
 export class SessionStore {
   games: Map<string, Catan>;
@@ -60,7 +62,20 @@ export class SessionStore {
       'knight',
     ];
     const supply = { resources, devCards };
-    this.games.set(gameId, new Catan(gameId, players, board, _.random, supply));
+    const trades = new TradeManager();
+    const notifications = new Notification(setExpiry);
+    this.games.set(
+      gameId,
+      new Catan(
+        gameId,
+        players,
+        board,
+        _.random,
+        supply,
+        trades,
+        notifications,
+      ),
+    );
     this.refreshSlot();
   }
 

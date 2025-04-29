@@ -1,16 +1,22 @@
-import { ExpectedResponder, Trader, TradeResources } from '../types.ts';
+import {
+  ExpectedResponder,
+  Trader,
+  TradeResources,
+  TradeStatus,
+} from '../types.ts';
+import { Bank } from './bank.ts';
 import { Player } from './player.ts';
 
 export class Trade {
   expectedResponder: ExpectedResponder;
-  proposer: Trader;
+  proposer: Player;
   responder: Trader | null;
   tradeResources: TradeResources;
   isClosed: boolean;
 
   constructor(
     expectedResponder: ExpectedResponder,
-    proposer: Trader,
+    proposer: Player,
     tradeResources: TradeResources,
   ) {
     this.expectedResponder = expectedResponder;
@@ -20,7 +26,7 @@ export class Trade {
     this.responder = null;
   }
 
-  getStatus() {
+  getStatus(): TradeStatus {
     return {
       isClosed: this.isClosed,
       proposer: this.proposer,
@@ -47,10 +53,18 @@ export class Trade {
 export class TradeManager {
   trades: Trade[];
   runningTrade: Trade | null;
+  bank: Bank;
 
   constructor() {
     this.trades = [];
     this.runningTrade = null;
+    this.bank = new Bank({
+      wool: 4,
+      lumber: 4,
+      brick: 4,
+      grain: 4,
+      ore: 4,
+    });
   }
 
   openNewTrade(
@@ -61,6 +75,12 @@ export class TradeManager {
     const currentTrade = new Trade(expectedResponder, proposer, tradeResources);
     this.runningTrade = currentTrade;
     this.trades.push(currentTrade);
+
+    if (expectedResponder === 'bank') {
+      return this.closeTrade(this.bank);
+    }
+
+    return this.getCurrentTradeStatus();
   }
 
   closeTrade(responder: Trader) {

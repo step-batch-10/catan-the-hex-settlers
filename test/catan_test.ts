@@ -7,12 +7,15 @@ import type {
   EdgeData,
   Resources,
   DevelopmentCards,
+  NotificationMessage,
 } from '../src/types.ts';
 import { Catan } from '../src/models/catan.ts';
 import { Player } from '../src/models/player.ts';
 import { Board } from '../src/models/board.ts';
 import { defaultResources } from '../src/types.ts';
 import { Edge } from '../src/models/edge.ts';
+import { TradeManager } from '../src/models/trade.ts';
+import { Notification } from '../src/models/notification.ts';
 
 describe('Catan', () => {
   let catan: Catan;
@@ -30,7 +33,14 @@ describe('Catan', () => {
       resources: defaultResources,
       devCards: [],
     };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry)
+    catan = new Catan('game123', players, board, _.random, supply, trades, notifications);
   });
 
   it('should initialize the game correctly', () => {
@@ -290,7 +300,14 @@ describe('buildSettlement ', () => {
       resources: defaultResources,
       devCards: [],
     };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry)
+    catan = new Catan('game123', players, board, _.random, supply, trades, notifications);
   });
 
   it('should build the settlement for setup mode', () => {
@@ -550,7 +567,14 @@ describe('buildRoad', () => {
       resources: defaultResources,
       devCards: [],
     };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry)
+    catan = new Catan('game123', players, board, _.random, supply, trades, notifications);
   });
 
   it('should not be able to build road near other than the latest settlement', () => {
@@ -670,7 +694,14 @@ describe('distribute Resources', () => {
       resources: defaultResources,
       devCards: [],
     };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry)
+    catan = new Catan('game123', players, board, _.random, supply, trades, notifications);
   });
 
   it('should distribute resources for player1', () => {
@@ -708,7 +739,14 @@ describe('longest army', () => {
       resources: defaultResources,
       devCards: [],
     };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry)
+    catan = new Catan('game123', players, board, _.random, supply, trades, notifications);
   });
 
   it('should get the largest army card if three knights are played', () => {
@@ -772,7 +810,14 @@ describe('buyDevCard', () => {
       'knight',
     ];
     const supply = { resources, devCards };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry)
+    catan = new Catan('game123', players, board, _.random, supply, trades, notifications);
   });
 
   it('should buy dev cards when its my turn and I have enough resources', () => {
@@ -877,7 +922,14 @@ describe('possible build locations', () => {
       'knight',
     ];
     const supply = { resources, devCards };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry)
+    catan = new Catan('game123', players, board, _.random, supply, trades, notifications);
   });
 
   it('should get all the valid settlements', () => {
@@ -995,7 +1047,14 @@ describe('longest road', () => {
       resources: defaultResources,
       devCards: [],
     };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry)
+    catan = new Catan('game123', players, board, _.random, supply, trades,notifications);
   });
 
   it('should calculate the longest road of 3', () => {
@@ -1094,7 +1153,14 @@ describe('play monopoly', () => {
       resources: defaultResources,
       devCards: [],
     };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry)
+    catan = new Catan('game123', players, board, _.random, supply, trades, notifications);
   });
 
   it('should get the ore from all players', () => {
@@ -1127,7 +1193,14 @@ describe('play road building', () => {
       resources: defaultResources,
       devCards: [],
     };
-    catan = new Catan('game123', players, board, _.random, supply);
+    const trades = new TradeManager();
+    const setExpiry = function (notification: NotificationMessage, _seconds: number) {
+      setTimeout(() => {
+        notification.expired = true;
+      }, 1 * 1000)
+    }
+    const notifications = new Notification(setExpiry);
+    catan = new Catan('game123', players, board, _.random, supply, trades, notifications);
   });
 
   it('should not be able to any action until 2 roads are placed', () => {

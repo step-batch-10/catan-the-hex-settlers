@@ -1,3 +1,4 @@
+import { Notifications } from './notification.js';
 import {
   showOptions,
   tradeTypes,
@@ -7,6 +8,19 @@ import {
   addClassToElements,
   replaceListeners,
 } from './trade.js';
+
+const notificationActions = {
+  Accept: () => {
+    fetch('game/trade/player/accept', { method: 'POST' });
+  },
+
+  'test button': () => alert("hello"),
+  Reject: () => {
+    document.querySelector('.notification-container').remove();
+  }
+}
+
+const notifications = new Notifications('#notification', notificationActions);
 
 const getTokenImageFile = (tokenNumber) =>
   `images/tokens/token-${tokenNumber}.png`;
@@ -239,15 +253,15 @@ const cloneTemplateElement = (id) => {
   return cloneTemplate;
 };
 
-const showMessage = (templateId, elementId, msg) => {
-  const container =
-    document.querySelector(elementId) ||
-    cloneTemplateElement(templateId).querySelector(elementId);
-  container.textContent = msg;
-  document.body.appendChild(container);
+// const showMessage = (templateId, elementId, msg) => {
+//   const container =
+//     document.querySelector(elementId) ||
+//     cloneTemplateElement(templateId).querySelector(elementId);
+//   container.textContent = msg;
+//   document.body.appendChild(container);
 
-  return container;
-};
+//   return container;
+// };
 
 const highlightPosition = (id, className) => {
   const ele = document.getElementById(id);
@@ -280,15 +294,15 @@ const showPossibleSettlementsOrRoads = async () => {
   }
 };
 
-const displayPlayerTurn = (gameState) => {
-  const isCurrentPlayer = gameState.currentPlayer !== gameState.players.me.name;
-  const msg = isCurrentPlayer
-    ? `current player - ${gameState.currentPlayer}`
-    : `your turn`;
+// const displayPlayerTurn = (gameState) => {
+//   const isCurrentPlayer = gameState.currentPlayer !== gameState.players.me.name;
+//   const msg = isCurrentPlayer
+//     ? `current player - ${gameState.currentPlayer}`
+//     : `your turn`;
 
-  showMessage('#current-player', '.player-turn', msg);
-  showPossibleSettlementsOrRoads();
-};
+//   showMessage('#current-player', '.player-turn', msg);
+//   showPossibleSettlementsOrRoads();
+// };
 
 const moveRobber = async (event) => {
   const fd = new FormData();
@@ -691,6 +705,7 @@ const renderElements = (gameState) => {
   renderPlayersData(gameState.players);
   renderDice(gameState.diceRoll);
   displayPlayerTurn(gameState);
+  showPossibleSettlementsOrRoads();
   highlightPlayersTurn(gameState.currentPlayerId);
 };
 
@@ -704,7 +719,8 @@ const poll = () => {
 
     // const cloned = cloneTemplateElement('#all-dev-cards');
     // const allDevTypes = cloned.querySelectorAll('.count');
-
+    notifications.removeAllNotifications();
+    notifications.showAll(gameState.notifications);
     renderBoardHexes();
     renderElements(gameState);
     applyPlayerActions(gameState.availableActions);

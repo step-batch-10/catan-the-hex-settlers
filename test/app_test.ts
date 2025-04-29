@@ -99,7 +99,7 @@ describe('Catan App Routes', () => {
     assertEquals(gameState.vertices.length, 0);
   });
 
-  it('should Update the players resources', async () => {
+  it('should open and close trade with bank', async () => {
     const player = _.find(catan.players, { id: 'p1' });
 
     player.resources.lumber = 3;
@@ -126,7 +126,7 @@ describe('Catan App Routes', () => {
     });
   });
 
-  it('should change the curent player', async () => {
+  it('should change the current player', async () => {
     const request = new Request('http:localhost/game/changeTurn', {
       headers: { Cookie: 'player-id=p1; game-id=1000' },
       method: 'POST',
@@ -332,5 +332,31 @@ describe('Catan App Routes', () => {
     assertEquals(catan.players[0].resources.wool, 4)
     assertEquals(catan.players[1].resources.wool, 0)
     assertEquals(catan.players[2].resources.wool, 0)
+  });
+
+  it('should open trade with player', async () => {
+    const player = _.find(catan.players, { id: 'p1' });
+
+    player.resources.lumber = 3;
+
+    const tradeResource = {
+      incomingResources: { grain: 1 },
+      outgoingResources: { lumber: 2 },
+    };
+
+    await app.request('http://localhost/game/trade/player', {
+      method: 'POST',
+      headers: {
+        Cookie: 'player-id=p1; game-id=1000',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(tradeResource),
+    });
+
+    const trades = catan.trades.trades;
+    assertEquals(trades.length, 1);
+    assertEquals(trades[0].expectedResponder, "player");
+    assertEquals(trades[0].proposer, player);
+    assertFalse(trades[0].isClosed);
   });
 });

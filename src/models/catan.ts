@@ -22,6 +22,8 @@ import type {
   StringSet,
   Supply,
 } from '../types.ts';
+import { TradeManager } from './trade.ts';
+import { Notification } from './notification.ts';
 
 export class Catan {
   gameId: string;
@@ -50,6 +52,8 @@ export class Catan {
   specialCardOwners: SpecialCardOwners;
   supply: Supply;
   noPreAction: boolean;
+  trades: TradeManager;
+  notifications: Notification;
 
   constructor(
     gameId: string,
@@ -57,6 +61,8 @@ export class Catan {
     board: Board,
     diceFn: (start?: number, end?: number) => number,
     supply: Supply,
+    trades: TradeManager,
+    notifications: Notification,
   ) {
     this.gameId = gameId;
     this.players = players;
@@ -77,6 +83,8 @@ export class Catan {
       shouldBuild: false,
       count: 2,
     };
+    this.trades = trades;
+    this.notifications = notifications;
   }
 
   changePhaseToMain(): void {
@@ -586,6 +594,7 @@ export class Catan {
     const gamePhase = this.phase;
     const currentPlayerId = this.getCurrentPlayer().id;
     const hasWon = this.hasWon();
+    
 
     return {
       hasWon,

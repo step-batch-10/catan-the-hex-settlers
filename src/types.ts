@@ -182,21 +182,22 @@ export const defaultSlot = (): Slot => ({
 
 type Result = { name: string; hasWon: boolean };
 
-type ExpectedResponder = typeof Bank | typeof Player;
+type ExpectedResponder = 'bank' | 'player';
 
 type Trader = Player | Bank;
 
 interface NotificationMessage {
   header: string;
   body: string;
-  actions: string[];
+  actions: string[] | null;
+  expired: boolean;
 }
 
 interface TradeStatus {
   isClosed: boolean;
-  responder: Trader;
+  responder: Trader | null;
   proposer: Player;
-  tradeResource: TradeResources;
+  tradeResources: TradeResources;
 }
 
 export type {
