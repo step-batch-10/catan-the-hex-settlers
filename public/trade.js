@@ -208,6 +208,7 @@ export const updateResourceCount = (resources) => {
   // wool, brick, lumber, ore, grain
   Object.entries(resources).forEach(([resourceType, count]) => {
     const card = document.querySelector(`[type="${resourceType}"]`);
+
     card.querySelector(".total-count").textContent = count;
   })
 }

@@ -742,7 +742,7 @@ export class Catan {
   private createMapOfPieces(
     roads: StringSet,
     settlement: StringSet,
-    cities: StringSet,
+    cities: StringSet
   ): Map<string, StringSet> {
     return new Map([
       ['settlements', settlement],

@@ -136,7 +136,7 @@ const createProfileCard = (player) => {
 const displayDevCardsCount = (devCards) => {
   const totalCards = Object.values(devCards.owned).reduce(
     (sum, count) => sum + Number(count),
-    0,
+    0
   );
 
   appendText(document, '#dev-count', totalCards);
@@ -181,7 +181,7 @@ const renderPlayersData = (players) => {
   const list = document.querySelector('.players-details');
 
   const profileCards = players.playersInfo.map((player) =>
-    createProfileCard(player),
+    createProfileCard(player)
   );
 
   list.replaceChildren(...profileCards);
@@ -259,7 +259,7 @@ const showPossibleSettlementsOrRoads = async () => {
   console.log(res);
   if (res.settlements) {
     [...res.cities, ...res.settlements].forEach((id) =>
-      highlightPosition(id, 'available-settlement'),
+      highlightPosition(id, 'available-settlement')
     );
   }
 
@@ -318,7 +318,7 @@ const rollDiceHandler = async () => {
   if (!outcome.canRoll) return;
 
   const response = await fetch('/game/dice/roll', { method: 'POST' }).then(
-    (res) => res.json(),
+    (res) => res.json()
   );
 
   const dice = document.querySelectorAll('.dice');
@@ -465,7 +465,7 @@ const addNavigation = () => {
 const getTotalDevsCount = (cards) => {
   const total = Object.values(cards).reduce(
     (sum, availableCount) => availableCount + sum,
-    0,
+    0
   );
 
   const element = document.querySelector('#dev-count');
@@ -481,46 +481,66 @@ const getAvailableCardsCount = (allDevCards) => {
   const hasRolled = gameState.availableActions.canTrade;
 
   allDevCards.forEach((eachType) => {
-    const type = eachType.id;
+    const type = eachType.parentElement.id;
     const count = ownedDevCards[type];
 
+    eachType.textContent = count;
     count < 1 || !isCurrentTurn || !hasRolled
       ? disableElement(type)
       : removeClassFromElements(`#${type}`, 'disable');
-    eachType.textContent += count;
   });
 };
 
 const playDevCard = async (event) => {
-  const devCard = event.target.id;
+  const devCard = event.target.parentElement.id;
 
-  await fetch(`/game/play/${devCard}`, { method: 'POST' });
+  const res = await fetch(`/game/play/${devCard}`, { method: 'POST' });
+
+  if (res.ok) {
+    updateDevCards();
+    event.target.parentElement.parentElement.style.display = 'none';
+  }
 };
 
 const updateDevCards = () => {
   const container = document.querySelector('#all-devs');
-  const existingDevCards = container.querySelector('.display-all-dev-card');
+  const existingDevCards = container.querySelector('#display-all-dev-card');
 
   if (existingDevCards) {
     existingDevCards.style.display = 'flex';
+    const allDevCounts = existingDevCards.querySelectorAll('.count');
+    const allExistingDevs = existingDevCards.querySelectorAll('.devCardSet');
+    addListenerToDevCards(allExistingDevs);
+    getAvailableCardsCount(allDevCounts);
     return;
   }
 
   const cloned = cloneTemplateElement('#all-dev-cards');
-  const allDevTypes =
-    cloned.querySelectorAll('.count') || document.querySelectorAll('.count');
-  const allDevCards = cloned.querySelector('.display-all-dev-card');
+  const devCardPanel = cloned.querySelector('#display-all-dev-card');
   const closeBtn = cloned.querySelector('.close-btn');
-  container.append(allDevCards);
-
-  allDevCards.addEventListener('dblclick', playDevCard);
+  const allDevTypes = cloned.querySelectorAll('.count');
+  const allDevs = cloned.querySelectorAll('.devCardSet');
+  container.append(devCardPanel);
 
   closeBtn.addEventListener(
     'click',
-    () => (allDevCards.style.display = 'none'),
+    () => (devCardPanel.style.display = 'none')
   );
 
+  addListenerToDevCards(allDevs);
+
+  allDevs.forEach((devCard) => {
+    console.log(devCard);
+    devCard.addEventListener('dblclick', playDevCard);
+  });
+
   getAvailableCardsCount(allDevTypes);
+};
+
+const addListenerToDevCards = (allDevs) => {
+  allDevs.forEach((devCard) => {
+    devCard.addEventListener('dblclick', playDevCard);
+  });
 };
 
 const addEventListeners = (gameState) => {
@@ -529,7 +549,7 @@ const addEventListeners = (gameState) => {
   addNavigation();
   tradeControlls();
   addListener('#buy-dev-card', buyDevCard);
-  addListener('#unplayed-dev', updateDevCards);
+  addListener('#dev-cards', updateDevCards);
 };
 
 const renderStructures = (structures) => {
@@ -579,15 +599,15 @@ const poll = () => {
     const gameState = await response.json();
     globalThis.gameState = gameState;
 
-    const cloned = cloneTemplateElement('#all-dev-cards');
-    const allDevTypes = cloned.querySelectorAll('.count');
+    // const cloned = cloneTemplateElement('#all-dev-cards');
+    // const allDevTypes = cloned.querySelectorAll('.count');
 
     renderBoardHexes();
     renderElements(gameState);
     applyPlayerActions(gameState.availableActions);
-    addListener('#unplayed-dev', updateDevCards);
+    addListener('#dev-cards', updateDevCards);
     getTotalDevsCount(gameState.players.me.devCards.owned);
-    getAvailableCardsCount(allDevTypes);
+    // getAvailableCardsCount(allDevTypes);
   }, 1000);
 };
 
