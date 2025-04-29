@@ -1,3 +1,4 @@
+import { Bank } from './models/bank.ts';
 import { Player } from './models/player.ts';
 
 interface EdgeData {
@@ -113,6 +114,7 @@ type GamePhase = 'setup' | 'main' | 'end';
 type PlayerAssets = 'road' | 'settlement' | 'city' | 'devCard';
 type ResourceProduction = (keyof Resources | undefined)[] | undefined;
 type RandomCard = (availableCards: object[]) => string;
+
 interface TradeResources {
   incomingResources: Resources;
   outgoingResources: Resources;
@@ -179,6 +181,21 @@ export const defaultSlot = (): Slot => ({
 
 type Result = { name: string; hasWon: boolean };
 
+type TradeResponder = Bank | Player;
+
+interface Notification {
+  header: string;
+  body: string;
+  actions: string[];
+}
+
+interface TradeStatus {
+  isClosed: boolean;
+  responder: TradeResponder;
+  poposer: TradeResponder;
+  tradeResource: TradeResources;
+}
+
 export type {
   BuildType,
   Components,
@@ -191,6 +208,7 @@ export type {
   GamePhase,
   GameState,
   HexData,
+  Notification,
   Phase,
   PlayerAssets,
   PlayerData,
@@ -205,5 +223,7 @@ export type {
   StringSet,
   Supply,
   TradeResources,
+  TradeResponder,
+  TradeStatus,
   VertexData,
 };

@@ -5,13 +5,13 @@ import type { Context, Next } from 'hono';
 import {
   addPlayerToGame,
   authenticate,
-  bankTradeHandler,
   buildRoad,
   buildSettlement,
   canBuildRoad,
   canBuildSettlement,
   canRoll,
   gameStatus,
+  handleBankTrade,
   handleBuyDevCards,
   handleChangeTurn,
   playRoadBuilding,
@@ -51,7 +51,7 @@ const gameRoutes = (): Hono => {
   gameApp.post('dice/roll', rollDice);
   gameApp.post('/build/vertex', buildSettlement);
   gameApp.post('/changeTurn', handleChangeTurn);
-  gameApp.post('/trade/bank', bankTradeHandler);
+  gameApp.post('/trade/bank', handleBankTrade);
   gameApp.patch('/buy/dev-card', handleBuyDevCards);
   gameApp.post('/build/edge', buildRoad);
   gameApp.post('/play/road-building', playRoadBuilding);

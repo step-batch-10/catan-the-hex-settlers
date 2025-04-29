@@ -75,23 +75,15 @@ export const canBuildSettlement = async (ctx: Context): Promise<Response> => {
   return ctx.json({ canBuild });
 };
 
-export const bankTradeHandler = async (ctx: Context): Promise<Response> => {
+export const handleBankTrade = async (ctx: Context): Promise<Response> => {
   const tradeResources: TradeResources = await ctx.req.json();
   const game = ctx.get('game');
   const playerId = getCookie(ctx, 'player-id');
   const player = _.find(game.players, { id: playerId });
 
-  Object.entries(tradeResources.incomingResources).forEach(
-    ([resource, count]) => {
-      player.addResource(resource, count);
-    },
-  );
+  player.addResources(tradeResources.incomingResources);
 
-  Object.entries(tradeResources.outgoingResources).forEach(
-    ([resource, count]) => {
-      player.dropCards(resource, count);
-    },
-  );
+  player.dropCards(tradeResources.outgoingResources);
 
   return ctx.json({ status: 'ok' });
 };

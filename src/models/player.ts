@@ -78,6 +78,14 @@ export class Player {
     if (cardType in this.resources) this.resources[cardType] += count;
   }
 
+  addResources(resources: Resources) {
+    Object.entries(resources).forEach(
+      ([resource, count]) => {
+        this.addResource(resource, count);
+      },
+    );
+  }
+
   getPlayerData(): PlayerData {
     return { ...this };
   }
@@ -107,7 +115,13 @@ export class Player {
     this.longestRoadCount = count;
   }
 
-  dropCards(resource: keyof Resources, count: number) {
+  dropCard(resource: keyof Resources, count: number) {
     this.resources[resource] -= count;
+  }
+
+  dropCards(resources: Resources) {
+    Object.entries(resources).forEach(([resource, count]) => {
+      this.dropCard(resource, count);
+    });
   }
 }

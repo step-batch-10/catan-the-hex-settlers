@@ -787,7 +787,7 @@ export class Catan {
   private deductResourceOfType(players: Player[], resource: keyof Resources) {
     return players.reduce((total, player) => {
       const count = player.resources[resource];
-      player.dropCards(resource, count);
+      player.dropCard(resource, count);
       return total + count;
     }, 0);
   }
