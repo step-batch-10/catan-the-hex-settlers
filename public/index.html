@@ -4,21 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Page</title>
-    <link rel="stylesheet" href="/index.css" />
+    <link rel="stylesheet" href="/css/index.css" />
   </head>
   <body>
-    <div class="login-box">
-      <h1>Login</h1>
-      <form action="/joinGame" method="post">
-        <input
-          type="text"
-          placeholder="name"
-          name="name"
-          required
-          pattern="\w.*"
-        />
-        <button type="submit">PLAY</button>
-      </form>
-    </div>
+    <main>
+      <h1>CATAN</h1>
+      <div id="login-box">
+        <h2>Login</h2>
+        <form action="/joinGame" method="post">
+          <input
+            type="text"
+            placeholder="Enter your name..."
+            name="name"
+            required
+            pattern="\w.*"
+          />
+          <button type="submit">PLAY</button>
+        </form>
+      </div>
+    </main>
   </body>
 </html>

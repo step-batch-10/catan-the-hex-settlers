@@ -1,0 +1,64 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  background: url('../images/bg2.png') no-repeat center center fixed;
+  background-size: cover;
+}
+
+main {
+  position: relative;
+  top: 30%;
+}
+
+#game-time-text {
+  font-size: 6rem;
+  color: #663300;
+  margin-bottom: 20px;
+  font-family: 'Georgia', serif;
+}
+
+h1 {
+  font-size: 6rem;
+  color: #663300;
+  margin-bottom: 20px;
+  font-family: 'Georgia', serif;
+}
+
+.loading-dots .dot {
+  fill: #663300;
+  transform-origin: center;
+  display: inline-block;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.dot1 {
+  animation-delay: 0.2s;
+}
+
+.dot2 {
+  animation-delay: 0.4s;
+}
+
+.dot3 {
+  animation-delay: 0.6s;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    r: 6;
+    opacity: 1;
+  }
+  40% {
+    r: 2;
+    opacity: 0.6;
+  }
+}

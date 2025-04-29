@@ -4,11 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lobby</title>
-    <script src="/waiting.js"></script>
+    <script src="/scripts/waiting.js"></script>
+    <link rel="stylesheet" href="/css/waiting.css" />
   </head>
   <body>
     <main>
-      <p id="status">Waiting for other players to join...</p>
+      <h1>
+        Waiting for players
+        <span class="loading-dots">
+          <svg viewBox="0 0 120 30" width="80" height="20">
+            <circle class="dot dot1" cx="15" cy="15" r="6" />
+            <circle class="dot dot2" cx="60" cy="15" r="6" />
+            <circle class="dot dot3" cx="105" cy="15" r="6" />
+          </svg>
+        </span>
+      </h1>
+
+      <p id="countdown" class="countdown"></p>
     </main>
   </body>
 </html>

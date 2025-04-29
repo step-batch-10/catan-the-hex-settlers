@@ -9,6 +9,8 @@ body {
   width: 100vw;
   background-color: #9ed3f7a3;
   user-select: none;
+  background: url('../images/bg2.png') no-repeat center center fixed;
+  background-size: cover;
 }
 
 h1,

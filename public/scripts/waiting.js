@@ -2,6 +2,7 @@ const displayGameStarts = (time) => {
   const textEle = document.querySelector('#status');
 
   textEle.innerText = `Game will start in ${time} seconds...`;
+  textEle.id = 'game-time-text';
 };
 
 const redirectToGame = (id) => {
