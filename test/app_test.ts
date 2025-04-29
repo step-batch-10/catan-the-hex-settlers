@@ -314,7 +314,23 @@ describe('Catan App Routes', () => {
       method: 'POST',
       headers: { Cookie: 'player-id=p1; game-id=1000' },
     });
+    assert(await res.json());
+  });
+
+  it('should play monopoly', async () => {
+    const fd = new FormData();
+    fd.set('resource', 'wool');
+    catan.players[1].resources.wool = 2;
+    catan.players[2].resources.wool = 2;
+    const res = await app.request('/game/play/monopoly', {
+      method: 'POST',
+      headers: { Cookie: 'player-id=p1; game-id=1000' },
+      body: fd,
+    });
 
     assert(await res.json());
+    assertEquals(catan.players[0].resources.wool, 4)
+    assertEquals(catan.players[1].resources.wool, 0)
+    assertEquals(catan.players[2].resources.wool, 0)
   });
 });

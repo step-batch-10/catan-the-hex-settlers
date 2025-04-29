@@ -199,3 +199,12 @@ export const playRoadBuilding = (ctx: Context): Response => {
 
   return ctx.json(true);
 };
+
+export const playMonopoly = async (ctx: Context): Promise<Response> => {
+  const game = ctx.get('game');
+  const { resource } = await ctx.req.parseBody();
+  console.log(resource, 'resorce for monopoly');
+  game.playMonopoly(resource);
+
+  return ctx.json(true);
+};

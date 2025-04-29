@@ -40,7 +40,7 @@ export class Player {
     this.devCards = {
       owned: {
         knight: 0,
-        'road-building': 3,
+        'road-building': 0,
         'year-of-plenty': 0,
         monopoly: 0,
         'victory-point': 0,

@@ -1,4 +1,4 @@
-const tradeTypes = [{name:"Exchange", minimuTradeOffCount:4}, {name: "Trade", minimuTradeOffCount: 1}]
+export const tradeTypes = [{name:"Exchange", minimuTradeOffCount:4}, {name: "Trade", minimuTradeOffCount: 1}]
 
 const tradeDetails = {
   outgoingResources: {},
@@ -55,7 +55,7 @@ const updateTradeInResource = (modyfier, e) => {
   tradeDetails.incomingResources[resource] += (1 * modyfier)
 }
 
-const replaceListeners = (elementSelector, listener, listenerType = "click") => {
+export const replaceListeners = (elementSelector, listener, listenerType = "click") => {
   const cards = document.querySelectorAll(elementSelector);
   cards.forEach(card => {
     const elementType = card.getAttribute('type')
@@ -191,7 +191,7 @@ const createTradeButton = (card, trade) => {
   return optionText;
 }
 
-const showOptions = (trades) => (e) => {
+export const showOptions = (trades) => (e) => {
   e.stopPropagation();
   rotateBackAllCards();
 

@@ -14,6 +14,7 @@ import {
   handleBankTrade,
   handleBuyDevCards,
   handleChangeTurn,
+  playMonopoly,
   playRoadBuilding,
   redirectToLogin,
   redirectToResults,
@@ -55,6 +56,7 @@ const gameRoutes = (): Hono => {
   gameApp.patch('/buy/dev-card', handleBuyDevCards);
   gameApp.post('/build/edge', buildRoad);
   gameApp.post('/play/road-building', playRoadBuilding);
+  gameApp.post('/play/monopoly', playMonopoly);
   gameApp.get('/dice/can-roll', canRoll);
   gameApp.post('/can-place-robber', validateRobberPlacement);
   gameApp.post('/moveRobber', updateRobberPosition);

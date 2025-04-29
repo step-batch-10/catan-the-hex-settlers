@@ -1,8 +1,11 @@
 import {
+  showOptions,
+  tradeTypes,
   updateResourceCount,
   tradeControlls,
   removeClassFromElements,
   addClassToElements,
+  replaceListeners,
 } from './trade.js';
 
 const getTokenImageFile = (tokenNumber) =>
@@ -538,14 +541,44 @@ const getAvailableCardsCount = (allDevCards) => {
   });
 };
 
+const getChoosenResource = (resolve) => {
+  replaceListeners('.resource', selectMonopoly, 'click');
+
+  function selectMonopoly(event) {
+    resolve(event.target.parentElement.parentElement.getAttribute('type'));
+  }
+};
+
+const chooseResource = async (event) => {
+  renderMsg('Double click on the resource you want to play monopoly on');
+  closeDevPanel(event);
+
+  const chosenResource = await new Promise(getChoosenResource);
+
+  replaceListeners('.resource', showOptions(tradeTypes), 'click');
+  return chosenResource;
+};
+
+function closeDevPanel(event) {
+  event.target.parentElement.parentElement.style.display = 'none';
+}
+
 const playDevCard = async (event) => {
   const devCard = event.target.parentElement.id;
+  const fd = new FormData();
+  if (devCard === 'monopoly') {
+    const resource = await chooseResource(event);
+    fd.set('resource', resource);
+  }
 
-  const res = await fetch(`/game/play/${devCard}`, { method: 'POST' });
+  const res = await fetch(`/game/play/${devCard}`, {
+    method: 'POST',
+    body: fd,
+  });
 
   if (res.ok) {
     updateDevCards();
-    event.target.parentElement.parentElement.style.display = 'none';
+    closeDevPanel(event);
   }
 };
 
