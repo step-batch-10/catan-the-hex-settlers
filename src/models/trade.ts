@@ -1,4 +1,4 @@
-import { ExpectedResponder, Trader, TradeResources,  } from '../types.ts';
+import { ExpectedResponder, Trader, TradeResources } from '../types.ts';
 import { Player } from './player.ts';
 
 export class Trade {

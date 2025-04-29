@@ -183,7 +183,7 @@ type Result = { name: string; hasWon: boolean };
 
 type ExpectedResponder = typeof Bank | typeof Player;
 
-type Trader = Player | Bank
+type Trader = Player | Bank;
 
 interface Notification {
   header: string;
@@ -205,6 +205,7 @@ export type {
   DevCardTypes,
   DistributeResourceData,
   EdgeData,
+  ExpectedResponder,
   GameBoard,
   GameData,
   GamePhase,
@@ -224,9 +225,8 @@ export type {
   SpecialCardOwners,
   StringSet,
   Supply,
+  Trader,
   TradeResources,
-  ExpectedResponder,
   TradeStatus,
   VertexData,
-  Trader
 };
