@@ -256,7 +256,7 @@ const highlightPosition = (id, className) => {
 
 const showPossibleSettlementsOrRoads = async () => {
   const res = await fetch('/game/possible-positions').then((i) => i.json());
-
+  console.log(res);
   if (res.settlements) {
     [...res.cities, ...res.settlements].forEach((id) =>
       highlightPosition(id, 'available-settlement'),
@@ -393,6 +393,7 @@ const build = async (event) => {
   if (!validationData) return;
 
   const { targetElementId, pieceType } = validationData;
+  console.log('building', pieceType, targetElementId);
   removeSvgAnimation();
   return buildAt(targetElementId, pieceType);
 };
@@ -539,11 +540,21 @@ const renderStructures = (structures) => {
   });
 };
 
+const renderCities = (cities) => {
+  cities.forEach(({ color, id }) => {
+    const city = document.getElementById(id);
+    city.classList.add('built');
+    city.classList.add('city');
+    city.style.setProperty('--color', color);
+  });
+};
+
 const renderPieces = (gameState) => {
-  const { vertices, edges } = gameState;
+  const { vertices, edges, cities } = gameState;
 
   renderStructures(vertices);
   renderStructures(edges);
+  renderCities(cities);
 };
 
 const highlightPlayersTurn = (currentPlayerId) => {

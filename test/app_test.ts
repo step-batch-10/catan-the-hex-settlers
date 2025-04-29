@@ -154,11 +154,11 @@ describe('Catan App Routes', () => {
       headers: { Cookie: 'player-id=p1; game-id=1000' },
     });
     catan.buildSettlement('v0,1|0,2|1,1');
-    catan.buildSettlement('v0,1|0,2|1,1');
+    catan.phase = 'main';
     const res = await app.request(request);
     const allPositions = await res.json();
 
-    assertEquals(allPositions.settlements.length, 50);
+    assertEquals(allPositions.settlements.length, 0);
     assertEquals(allPositions.roads.length, 0);
   });
 

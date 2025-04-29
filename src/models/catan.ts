@@ -136,10 +136,11 @@ export class Catan {
     resources: ResourceProduction,
     resourcesProduced: object[],
     player: Player,
+    buildingType: 'settlement' | 'city',
   ) {
     resources?.forEach((resource) =>
       resourcesProduced.push(
-        this.addProducedResource(player.id, resource, 'settlement'),
+        this.addProducedResource(player.id, resource, buildingType),
       )
     );
   }
@@ -149,7 +150,17 @@ export class Catan {
     player.settlements.forEach((settlement) => {
       const terrains = this.board.vertices.get(settlement)?.adjacentHexes;
       const resources = this.getProducedResources(terrains, rolledNumber);
-      this.addProducedResources(resources, resourcesProduced, player);
+      this.addProducedResources(
+        resources,
+        resourcesProduced,
+        player,
+        'settlement',
+      );
+    });
+    player.cities.forEach((city) => {
+      const terrains = this.board.vertices.get(city)?.adjacentHexes;
+      const resources = this.getProducedResources(terrains, rolledNumber);
+      this.addProducedResources(resources, resourcesProduced, player, 'city');
     });
 
     return resourcesProduced;
@@ -409,6 +420,10 @@ export class Catan {
 
   buildSettlement(vertexId: string): boolean {
     const currentPlayer = this.getCurrentPlayer();
+    if (this.getVertex(vertexId)?.isOccupied()) {
+      this.deductResources('city');
+      return this.buildCity(vertexId);
+    }
 
     this.getVertex(vertexId)?.occupy(currentPlayer.id, currentPlayer.color);
     currentPlayer.settlements.push(vertexId);
@@ -535,9 +550,34 @@ export class Catan {
     return this.getCurrentPlayer().hasWon();
   }
 
+  private getOccupiedCities(vertices: string[]): object[] {
+    const settlemets: Components[] = [];
+    const vtxs: Vertex[] = vertices.map(
+      (vtx) => this.getVertex(vtx) || new Vertex(vtx, null),
+    );
+
+    vtxs.forEach((vtx) => {
+      if (vtx.owner) {
+        settlemets.push({ id: vtx.id, color: vtx.color });
+      }
+    });
+
+    return settlemets;
+  }
+
+  private allCities(): string[] {
+    const cities: string[] = [];
+    this.players.forEach((player) => {
+      player.cities.forEach((city) => cities.push(city));
+    });
+
+    return cities;
+  }
+
   getGameData(playerId: string): GameData {
     const vertices = this.getOccupiedVertices();
     const edges = this.getOccupiedEdges();
+    const cities = this.getOccupiedCities(this.allCities());
     const diceRoll = this.diceRoll;
     const players = this.getPlayersInfo(playerId);
     const currentPlayer = this.players[this.currentPlayerIndex].name;
@@ -548,6 +588,7 @@ export class Catan {
 
     return {
       hasWon,
+      cities,
       vertices,
       edges,
       diceRoll,
@@ -570,6 +611,7 @@ export class Catan {
   }
 
   private canBuildSettlement(vertexId: string): boolean {
+    if (this.isVertexOccupied(vertexId)) return this.canBuildCity(vertexId);
     return (
       this.setupValidation(vertexId) &&
       this.hasConnectedRoad(vertexId) &&
@@ -640,6 +682,14 @@ export class Catan {
       this.getCurrentPlayer().settlements.includes(vertexId) &&
       this.hasEnoughResources('city')
     );
+  }
+
+  buildCity(vertexId: string): boolean {
+    const currentPlayer = this.getCurrentPlayer();
+    currentPlayer.addCity(vertexId);
+    currentPlayer.victoryPoints += 1;
+
+    return true;
   }
 
   private isCity(type: string) {
@@ -719,6 +769,10 @@ export class Catan {
     if (this.isPlacingInitial('road')) {
       const initRoads = this.getAvailableLocations('road', 'initial', id);
       return this.createMapOfPieces(initRoads, new Set(), new Set());
+    }
+
+    if (!this.hasAlreadyRolled()) {
+      return this.createMapOfPieces(new Set(), new Set(), new Set());
     }
 
     const cities = this.getAvailableLocations('city', 'main', id);

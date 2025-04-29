@@ -73,6 +73,7 @@ interface PlayerData {
 
 interface GameData {
   hasWon: boolean;
+  cities: object[];
   vertices: object[];
   edges: object[];
   diceRoll: number[];

@@ -296,12 +296,86 @@ describe('buildSettlement ', () => {
   it('should build the settlement for setup mode', () => {
     const playerId = 'p1';
     const settlementId = 'v0,-1|0,0|1,-1';
+    catan.players[0].addResource('brick', 5);
+    catan.players[0].addResource('wool', 5);
+    catan.players[0].addResource('grain', 5);
+    catan.players[0].addResource('ore', 5);
+    catan.players[0].addResource('lumber', 5);
+
     const hasBuilt = catan.buildSettlement(settlementId);
     const settlement = catan.board.vertices.get(settlementId);
 
     assert(hasBuilt);
     assertEquals(settlement?.occupiedBy(), playerId);
     assert(settlement?.isOccupied);
+  });
+
+  it('should build the city for main mode', () => {
+    const playerId = 'p1';
+    const settlementId = 'v0,-1|0,0|1,-1';
+    catan.phase = 'main';
+    catan.players[0].addResource('brick', 5);
+    catan.players[0].addResource('wool', 5);
+    catan.players[0].addResource('grain', 5);
+    catan.players[0].addResource('ore', 5);
+    catan.players[0].addResource('lumber', 5);
+    const hasBuilt = catan.buildSettlement(settlementId);
+    const settlement = catan.board.vertices.get(settlementId);
+
+    assert(hasBuilt);
+    const hasBuiltCity = catan.buildSettlement(settlementId);
+    const game = catan.getGameData(playerId);
+    assert(hasBuiltCity);
+    assertEquals(game.players.me.resources.brick, 4);
+    assertEquals(game.cities.length, 1);
+    assertEquals(settlement?.occupiedBy(), playerId);
+    assert(settlement?.isOccupied);
+  });
+
+  it('should add the city for main mode', () => {
+    const playerId = 'p1';
+    const settlementId = 'v0,-1|0,0|1,-1';
+    catan.phase = 'main';
+    catan.players[0].addResource('brick', 5);
+    catan.players[0].addResource('wool', 5);
+    catan.players[0].addResource('grain', 5);
+    catan.players[0].addResource('ore', 5);
+    catan.players[0].addResource('lumber', 5);
+    const hasBuilt = catan.buildSettlement(settlementId);
+    const settlement = catan.board.vertices.get(settlementId);
+
+    assert(hasBuilt);
+    const hasBuiltCity = catan.buildSettlement(settlementId);
+    catan.players[0].addCity('b1');
+    const game = catan.getGameData(playerId);
+    assert(hasBuiltCity);
+    assertEquals(game.players.me.resources.brick, 4);
+    assertEquals(game.cities.length, 1);
+    assertEquals(settlement?.occupiedBy(), playerId);
+    assert(settlement?.isOccupied);
+  });
+
+  it('should get 2 resources for a city', () => {
+    const playerId = 'p1';
+    const settlementId = 'v0,-1|0,0|1,-1';
+    catan.phase = 'main';
+    catan.players[0].addResource('brick', 5);
+    catan.players[0].addResource('wool', 5);
+    catan.players[0].addResource('grain', 5);
+    catan.players[0].addResource('ore', 5);
+    catan.players[0].addResource('lumber', 5);
+    const hasBuilt = catan.buildSettlement(settlementId);
+    const settlement = catan.board.vertices.get(settlementId);
+
+    assert(hasBuilt);
+    catan.buildSettlement(settlementId);
+    assertEquals(settlement?.occupiedBy(), playerId);
+    assert(settlement?.isOccupied);
+    catan.diceRoll = [2, 3];
+    const initialResourceCount = catan.players[0].resources.wool;
+    catan.distributeResourcesForDiceRoll();
+    const newResourceCount = catan.players[0].resources.wool;
+    assert(newResourceCount > initialResourceCount);
   });
 
   it('should not build if there is already settlement exists for setup mode', () => {
@@ -905,6 +979,7 @@ describe('possible build locations', () => {
     assertEquals(validRoads.get('roads')?.size, 0);
   });
 });
+
 describe('longest road', () => {
   let catan: Catan;
 
@@ -1053,6 +1128,25 @@ describe('play road building', () => {
       devCards: [],
     };
     catan = new Catan('game123', players, board, _.random, supply);
+  });
+
+  it('should not be able to any action until 2 roads are placed', () => {
+    catan.playRoadBuilding();
+    const player = catan.players[0];
+    catan.turn.hasRolled = true;
+    catan.phase = 'main';
+    const gameData = catan.getGameData(player.id);
+    assertFalse(gameData.availableActions.canTrade);
+    assert(catan.roadBuilding.shouldBuild);
+    assertEquals(catan.roadBuilding.count, 2);
+    catan.buildRoad('e1');
+    assertEquals(catan.roadBuilding.count, 1);
+    assert(catan.roadBuilding.shouldBuild);
+    catan.buildRoad('e2');
+    assertEquals(catan.roadBuilding.count, 2);
+    assertFalse(catan.roadBuilding.shouldBuild);
+    const gameData2 = catan.getGameData(player.id);
+    assert(gameData2.availableActions.canTrade);
   });
 
   it('should not be able to any action until 2 roads are placed', () => {

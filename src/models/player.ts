@@ -109,6 +109,17 @@ export class Player {
     this.roads.push(edgeId);
   }
 
+  addCity(vertexId: string): void {
+    this.cities.push(vertexId);
+    this.settlements = this.settlements.filter(
+      (settlement) => settlement !== vertexId,
+    );
+  }
+
+  addSettlement(vertexId: string): void {
+    this.settlements.push(vertexId);
+  }
+
   updateLongestRoad(count: number) {
     this.longestRoadCount = count;
   }
