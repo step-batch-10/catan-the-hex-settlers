@@ -66,7 +66,7 @@ export class Player {
   }
 
   hasWon(): boolean {
-    return this.calculatePlayerPoints() >= 10;
+    return this.calculatePlayerPoints() >= 6;
   }
 
   addResource(cardType: keyof Resources | string, count: number): void {

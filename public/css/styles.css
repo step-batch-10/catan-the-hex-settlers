@@ -4,7 +4,7 @@
   padding: 0;
   font-family: sans-serif;
   --primary-color: rgb(237, 214, 190);
-  --secondary-color: rgba(168, 92, 5, 0.622);
+  --secondary-color: rgb(149, 89, 19);
 }
 
 html,
@@ -661,7 +661,6 @@ body {
   animation-iteration-count: infinite;
   animation-name: grow;
 }
-
 
 .available-road:hover,
 .available-settlement path:hover {
