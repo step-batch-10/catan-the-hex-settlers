@@ -692,7 +692,6 @@ const poll = () => {
 
     const gameState = await response.json();
     globalThis.gameState = gameState;
-    removeSvgAnimation();
     notifications.removeAllNotifications();
     notifications.showAll(gameState.notifications);
     renderBoardHexes();
