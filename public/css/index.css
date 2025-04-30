@@ -9,7 +9,7 @@ html {
   height: 100%;
   font-family: 'Arial', sans-serif;
   text-align: center;
-  background: url('../images/bg2.png') no-repeat center center fixed;
+  background: url('../images/two.png') no-repeat center center fixed;
   background-size: cover;
 }
 
@@ -21,10 +21,10 @@ main {
 h1 {
   position: relative;
   font-size: 8rem;
-  color: #663300;
+  color: #663300d4;
   margin-bottom: 20px;
   font-family: 'Georgia', serif;
-  top: -100px;
+  top: -150px;
   -webkit-text-stroke: 2px whitesmoke;
 }
 
@@ -45,8 +45,8 @@ h1 {
 h2 {
   position: relative;
   margin-bottom: 20px;
-  font-size: 6rem;
-  color: rgba(0, 0, 0, 0.642);
+  font-size: 4rem;
+  color: #663300d4;
   font-family: Times, serif;
 }
 

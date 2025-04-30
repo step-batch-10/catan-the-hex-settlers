@@ -477,6 +477,7 @@ const renderMsg = (msg) => {
     cloneTemplateElement('#message-container').querySelector('.invalid-msg');
 
   msgBox.textContent = msg;
+  msgBox.classList.add('toast');
   document.body.appendChild(msgBox);
 
   setTimeout(() => msgBox.remove(), 2000);
