@@ -597,13 +597,13 @@ body {
   justify-content: center;
   align-items: center;
   gap: 15px;
-  width: 524px;
+  width: 510px;
   height: 158px;
   line-height: 36px;
   display: none;
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 40px;
+  right: 50px;
   border: 2px solid #ccc;
   border-radius: 8px;
   transform: translateY(-130%);
@@ -859,7 +859,7 @@ body {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgba(22, 128, 70, 0.909);
+  background-color: var(--secondary-color);
   color: white;
   font-weight: bold;
   font-size: 24px;
