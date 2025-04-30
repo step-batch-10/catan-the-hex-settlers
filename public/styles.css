@@ -634,6 +634,18 @@ body {
   animation-name: expand;
 }
 
+.pieces g {
+  cursor: pointer;
+}
+
+.pieces g:hover .available-settlement {
+  cursor: pointer;
+  stroke: #51acd3;
+  stroke-opacity: 1;
+  stroke-width: 3;
+  transform: translateY(-3px) translateZ(5px);
+}
+
 .available-road {
   fill: #51acd3;
   opacity: 1;
@@ -644,7 +656,7 @@ body {
 }
 
 .available-road:hover,
-.available-settlement:hover {
+.available-settlement path:hover {
   stroke: #51acd3;
   stroke-opacity: 1;
   stroke-width: 3;

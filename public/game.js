@@ -383,23 +383,34 @@ const isPieceTypeValid = (pieceType) =>
   new Set(['vertex', 'edge']).has(pieceType);
 
 const getParentId = (element) => {
+  if (element.id.startsWith('path'))
+    return element.parentElement.parentElement.id;
+
   const isSettlement = element.getAttribute('type') === 'vertex' || 'edge';
 
   return isSettlement ? element.id : element.parentElement.id;
 };
 
+const getPieceType = (element) => {
+  if (element.getAttribute('type') === 'vertex') return 'vertex';
+  if (element.getAttribute('type') === 'edge') return 'edge';
+
+  const pieceType = element.id.startsWith('path') ? 'vertex' : 'edge';
+  return pieceType;
+};
+
 const getBuildValidationData = async (event) => {
   const element = event.target;
   const targetElementId = getParentId(element);
-  const pieceType = element.getAttribute('type');
+  const pieceType = getPieceType(element);
 
   if (!isPieceTypeValid(pieceType)) return null;
 
   const formData = new FormData();
   formData.set('id', targetElementId);
 
+  console.log(pieceType);
   const canBuild = await isValidBuilt(pieceType, formData);
-  console.log(targetElementId);
   if (!canBuild) return element.classList.add('block');
   return { element, targetElementId, pieceType };
 };
@@ -421,7 +432,7 @@ const removeSvgAnimation = () => {
 
 const build = async (event) => {
   const validationData = await getBuildValidationData(event);
-  console.log(validationData);
+  console.log(validationData, 'can build');
   if (!validationData) return;
 
   const { targetElementId, pieceType } = validationData;
@@ -432,7 +443,8 @@ const build = async (event) => {
 const addBuildEvent = () => {
   const svg = document.getElementById('svg20');
   const roads = svg.querySelectorAll('.edge');
-  const settlements = svg.querySelectorAll('.settlement');
+  const settlements = svg.querySelectorAll('.pieces');
+  console.log(settlements);
   svg.removeEventListener('click', moveRobber);
   addListenerToElements(settlements, build);
   addListenerToElements(roads, build);
@@ -603,7 +615,7 @@ const renderCity = (city, color, id) => {
 
   elements.forEach((element) => {
     element.classList.add('built');
-    element.style.opacity = 1;
+    element.style.opacity = 0.9;
     element.style.fill = color;
   });
 };
