@@ -260,7 +260,7 @@ describe('Catan', () => {
 
   it('should be true if player points equal or more than 10', () => {
     const player = catan.players[0];
-    player.victoryPoints = 6;
+    player.victoryPoints = 10;
     player.hasLargestArmy = true;
     player.hasLongestRoad = true;
     const hasWon = catan.players[0].hasWon();

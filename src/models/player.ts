@@ -62,12 +62,7 @@ export class Player {
   }
 
   calculatePlayerPoints(): number {
-    return (
-      this.victoryPoints +
-      (this.hasLargestArmy ? 2 : 0) +
-      (this.hasLongestRoad ? 2 : 0) +
-      this.devCards.owned['victory-point']
-    );
+    return this.victoryPoints + this.devCards.owned['victory-point'];
   }
 
   hasWon(): boolean {

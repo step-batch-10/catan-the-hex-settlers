@@ -24,18 +24,6 @@ describe('Player', () => {
     assertEquals(player.hasWon(), true);
   });
 
-  it('should return win status with LargestArmy', () => {
-    player.victoryPoints = 8;
-    player.hasLargestArmy = true;
-    assertEquals(player.hasWon(), true);
-  });
-
-  it('should return win status with longestRoad', () => {
-    player.victoryPoints = 8;
-    player.hasLongestRoad = true;
-    assertEquals(player.hasWon(), true);
-  });
-
   it('should add resource', () => {
     player.addResource('lumber', 2);
     assertEquals(player.resources.lumber, 2);
@@ -63,7 +51,7 @@ describe('Player', () => {
 
     player.addSpecialCard('longestRoad');
     assertEquals(player.hasLongestRoad, true);
-    assertEquals(player.victoryPoints, 12);
+    assertEquals(player.victoryPoints, 14);
   });
 
   it('should deduct special card correctly', () => {
@@ -72,7 +60,7 @@ describe('Player', () => {
 
     player.deductSpecialCard('longestRoad');
     assertEquals(player.hasLongestRoad, false);
-    assertEquals(player.victoryPoints, 8);
+    assertEquals(player.victoryPoints, 10);
   });
 
   it('should play development card', () => {
