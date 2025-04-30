@@ -1,227 +1,235 @@
-export const tradeTypes = [{name:"Exchange", minimuTradeOffCount:4}, {name: "Trade", minimuTradeOffCount: 1}]
+export const tradeTypes = [
+  { name: 'Exchange', minimuTradeOffCount: 4 },
+  { name: 'Trade', minimuTradeOffCount: 1 },
+];
 
 const tradeDetails = {
   outgoingResources: {},
-  incomingResources : {},
-  type : null,
-  minimumTradeOffCount : 1,
-}
+  incomingResources: {},
+  type: null,
+  minimumTradeOffCount: 1,
+};
 
 const resetTradeDetails = () => {
   tradeDetails.incomingResources = {};
   tradeDetails.outgoingResources = {};
   tradeDetails.minimumTradeOffCount = 1;
   tradeDetails.type = null;
-}
+};
 
-const listeners = {
-}
+const listeners = {};
 
-const createEelement = (elementType,className = null,id = null,) =>
-{
+const createEelement = (elementType, className = null, id = null) => {
   const element = document.createElement(elementType);
   element.className = className;
   element.id = id;
 
   return element;
-}
+};
 
 const rotateBackAllCards = () => {
-  const rotateCards = document.querySelectorAll(".rotateY")
-  rotateCards.forEach(card => card.classList.remove("rotateY"))
-}
+  const rotateCards = document.querySelectorAll('.rotateY');
+  rotateCards.forEach((card) => card.classList.remove('rotateY'));
+};
 
 const setupTradeDetails = (trade) => {
-  tradeDetails.type = trade.name
-  tradeDetails.minimumTradeOffCount = trade.minimuTradeOffCount
-}
+  tradeDetails.type = trade.name;
+  tradeDetails.minimumTradeOffCount = trade.minimuTradeOffCount;
+};
 
 const updateTradeOffResource = (modyfier, e) => {
   e.stopPropagation();
-  const resource = e.target.closest(".resource").getAttribute('type')
+  const resource = e.target.closest('.resource').getAttribute('type');
   if (!tradeDetails.outgoingResources[resource])
     tradeDetails.outgoingResources[resource] = 0;
 
   tradeDetails.outgoingResources[resource] +=
-    (tradeDetails.minimumTradeOffCount * modyfier);
-}
+    tradeDetails.minimumTradeOffCount * modyfier;
+};
 
 const updateTradeInResource = (modyfier, e) => {
   e.stopPropagation();
-  const resource = e.target.closest(".resource").getAttribute('type')
+  const resource = e.target.closest('.resource').getAttribute('type');
   if (!tradeDetails.incomingResources[resource])
     tradeDetails.incomingResources[resource] = 0;
 
-  tradeDetails.incomingResources[resource] += (1 * modyfier)
-}
+  tradeDetails.incomingResources[resource] += 1 * modyfier;
+};
 
-export const replaceListeners = (elementSelector, listener, listenerType = "click") => {
+export const replaceListeners = (
+  elementSelector,
+  listener,
+  listenerType = 'click',
+) => {
   const cards = document.querySelectorAll(elementSelector);
-  cards.forEach(card => {
-    const elementType = card.getAttribute('type')
+  cards.forEach((card) => {
+    const elementType = card.getAttribute('type');
     const currentListener = listeners[elementType]?.[listenerType];
     if (currentListener)
       card.removeEventListener(listenerType, currentListener);
 
-    card.addEventListener(listenerType, listener)
+    card.addEventListener(listenerType, listener);
     if (!listeners[elementType]) listeners[elementType] = {};
-      listeners[elementType][listenerType] = listener;
-  })
-}
+    listeners[elementType][listenerType] = listener;
+  });
+};
 
 export const decrementCount = (e) => {
   e.stopPropagation();
-  updateTradeOffResource(-1 , e)
-}
+  updateTradeOffResource(-1, e);
+};
 
 export const incrementCount = (e) => {
   e.stopPropagation();
   updateTradeOffResource(1, e);
-}
+};
 
 export const removeClassFromElements = (elementSelector, className) => {
-   const choosenResources = document.querySelectorAll(elementSelector);
-  choosenResources.forEach(choosenResource => {
+  const choosenResources = document.querySelectorAll(elementSelector);
+  choosenResources.forEach((choosenResource) => {
     choosenResource.classList.remove(className);
-  })
-}
+  });
+};
 
 const endTrading = () => {
-  removeClassFromElements(".disabled", "disabled");
+  removeClassFromElements('.disabled', 'disabled');
   resetTradeDetails();
-  replaceListeners(".resource", showOptions(tradeTypes), "click")
-}
+  replaceListeners('.resource', showOptions(tradeTypes), 'click');
+};
 
 const confirmTrade = async (e) => {
   e.stopPropagation();
-  const choosenResources = document.querySelectorAll(".choosen");
-  choosenResources.forEach(choosenResource => {
-    choosenResource.classList.remove("choosen")
-    choosenResource.classList.add("disabled")
-  })
-  
+  const choosenResources = document.querySelectorAll('.choosen');
+  choosenResources.forEach((choosenResource) => {
+    choosenResource.classList.remove('choosen');
+    choosenResource.classList.add('disabled');
+  });
+
   const requestBody = {
     incomingResources: tradeDetails.incomingResources,
-    outgoingResources: tradeDetails.outgoingResources
-  }
+    outgoingResources: tradeDetails.outgoingResources,
+  };
 
-  if (tradeDetails.type === "Exchange") {
-    await fetch("game/trade/bank", { method: "POST", body: JSON.stringify(requestBody) })
-    
+  if (tradeDetails.type === 'Exchange') {
+    await fetch('game/trade/bank', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+    });
+
     return endTrading();
   }
 
-  fetch('game/trade/player', { method: "POST", body: JSON.stringify(requestBody) });
+  fetch('game/trade/player', {
+    method: 'POST',
+    body: JSON.stringify(requestBody),
+  });
 
   return endTrading();
-}
+};
 
 const addToTradeIn = (e) => {
   e.stopPropagation();
-  console.log("addToTradeIn fuction called ")
+  console.log('addToTradeIn fuction called ');
   const card = e.currentTarget;
-  card.classList.add("choosen")
+  card.classList.add('choosen');
   updateTradeInResource(1, e);
-  if (tradeDetails.type === "Exchange")
-    confirmTrade(e);
+  if (tradeDetails.type === 'Exchange') confirmTrade(e);
 
-  replaceListeners(".choosen", confirmTrade, "click")
+  replaceListeners('.choosen', confirmTrade, 'click');
   // showCursoMessage(".choosen", "click here to confirm trade")
-}
+};
 
 export const addClassToElements = (elementSelector, className) => {
   const choosenResources = document.querySelectorAll(elementSelector);
-  choosenResources.forEach(choosenResource => {
+  choosenResources.forEach((choosenResource) => {
     choosenResource.classList.add(className);
-    
-  })
-}
+  });
+};
 
 const confirmSelection = (e) => {
   e.stopPropagation();
   rotateBackAllCards();
-  console.log("selection confirmed")
-  const card = e.target.closest(".resource");
-  card.classList.add("choosen")
-  addClassToElements(".choosen", "disabled");
-  removeClassFromElements(".choosen", "choosen");
+  console.log('selection confirmed');
+  const card = e.target.closest('.resource');
+  card.classList.add('choosen');
+  addClassToElements('.choosen', 'disabled');
+  removeClassFromElements('.choosen', 'choosen');
   // showCursoMessage(".resource", "click to slect for trade innnn");
   // showCursoMessage(".disabled", "already selected for trade off");
-  console.log("trade type", tradeDetails.type);
-  
-  replaceListeners(".resource", addToTradeIn, "click")
-}
+  console.log('trade type', tradeDetails.type);
+
+  replaceListeners('.resource', addToTradeIn, 'click');
+};
 
 const addToTradeOff = (e) => {
   e.stopPropagation();
-  console.log("addToTradeOff fuction called ")
+  console.log('addToTradeOff fuction called ');
   const card = e.currentTarget;
-  card.classList.add("choosen")
+  card.classList.add('choosen');
   updateTradeOffResource(1, e);
-  replaceListeners(".choosen", confirmSelection, "click")
+  replaceListeners('.choosen', confirmSelection, 'click');
   // showCursoMessage(".choosen", "click here to confirm the selection")
-}
+};
 
 const beginTrade = (trade) => (e) => {
-  console.log("in trade mode", trade)
+  console.log('in trade mode', trade);
   e.stopPropagation();
   rotateBackAllCards();
-  const card = e.target.closest(".resource");
+  const card = e.target.closest('.resource');
 
   setupTradeDetails(trade);
   updateTradeOffResource(1, e);
-  card.classList.add("choosen");
+  card.classList.add('choosen');
 
-  if (trade.name === "Exchange")
-    return confirmSelection(e);
+  if (trade.name === 'Exchange') return confirmSelection(e);
 
-  replaceListeners(".resource", addToTradeOff, "click");
-  replaceListeners(".choosen", confirmSelection, "click");
-}
+  replaceListeners('.resource', addToTradeOff, 'click');
+  replaceListeners('.choosen', confirmSelection, 'click');
+};
 
 const createTradeButton = (card, trade) => {
-  const totalResourceCount = card.querySelector(".total-count").textContent;
-  const optionText = createEelement("p", "option" );
+  const totalResourceCount = card.querySelector('.total-count').textContent;
+  const optionText = createEelement('p', 'option');
   optionText.textContent = trade.name;
-  optionText.addEventListener("click", beginTrade(trade));
+  optionText.addEventListener('click', beginTrade(trade));
 
   if (Number(totalResourceCount) < trade.minimuTradeOffCount)
-    optionText.classList.add("disabled");
+    optionText.classList.add('disabled');
 
   return optionText;
-}
+};
 
 export const showOptions = (trades) => (e) => {
   e.stopPropagation();
   rotateBackAllCards();
 
   const card = e.currentTarget;
-  card.classList.toggle("rotateY")
+  card.classList.toggle('rotateY');
 
   const optionButtons = trades.map(createTradeButton.bind(null, card));
 
-  const cardBack = card.querySelector(".card-options")
-  cardBack.replaceChildren(...optionButtons)
-}
+  const cardBack = card.querySelector('.card-options');
+  cardBack.replaceChildren(...optionButtons);
+};
 
 export const updateResourceCount = (resources) => {
   Object.entries(resources).forEach(([resourceType, count]) => {
     const card = document.querySelector(`[type="${resourceType}"]`);
 
-    card.querySelector(".total-count").textContent = count;
-  })
-}
+    card.querySelector('.total-count').textContent = count;
+  });
+};
 
 const cancelTrade = () => {
   resetTradeDetails();
-  removeClassFromElements(".choosen", "choosen");
-}
+  removeClassFromElements('.choosen', 'choosen');
+};
 
 export const tradeControlls = () => {
-  replaceListeners(".resource", showOptions(tradeTypes), "click")
-}
+  replaceListeners('.resource', showOptions(tradeTypes), 'click');
+};
 
 globalThis.onclick = () => {
-  rotateBackAllCards()
+  rotateBackAllCards();
   cancelTrade();
-}
+};

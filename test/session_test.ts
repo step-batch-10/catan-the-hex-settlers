@@ -84,4 +84,15 @@ describe('should create a session', () => {
     assertEquals(playerId5, 'p1');
     assertEquals(sessions.games.size, 1);
   });
+
+  it('should give the correct dice roll in sequence', () => {
+    const sessions = new SessionStore();
+    const diceFn = sessions.diceCycle();
+    const firstDie = diceFn();
+    const secondDie = diceFn();
+    const thirdDie = diceFn();
+    assertEquals(2, firstDie);
+    assertEquals(1, secondDie);
+    assertEquals(2, thirdDie);
+  });
 });

@@ -14,11 +14,11 @@ const notificationActions = {
     fetch('game/trade/player/accept', { method: 'POST' });
   },
 
-  'test button': () => alert("hello"),
+  'test button': () => alert('hello'),
   Reject: () => {
     document.querySelector('.notification-container').remove();
-  }
-}
+  },
+};
 
 const notifications = new Notifications('#notification', notificationActions);
 
@@ -691,7 +691,7 @@ const poll = () => {
 
     const gameState = await response.json();
     globalThis.gameState = gameState;
-
+    removeSvgAnimation();
     notifications.removeAllNotifications();
     notifications.showAll(gameState.notifications);
     renderBoardHexes();
@@ -705,7 +705,6 @@ const poll = () => {
 const main = async () => {
   const response = await fetch('/game/gameState');
   const gameState = await response.json();
-  
 
   globalThis.gameState = gameState;
   addEventListeners(gameState);

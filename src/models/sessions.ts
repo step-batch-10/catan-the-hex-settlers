@@ -43,6 +43,25 @@ export class SessionStore {
     this.slotSize = 0;
   }
 
+  diceCycle() {
+    let i = 0;
+    let j = 0;
+    const dice = [
+      [2, 1],
+      [2, 2],
+      [1, 1],
+      [4, 3],
+      [5, 6],
+      [5, 4],
+      [2, 3],
+    ];
+
+    return () => {
+      if (j % 2 === 1) i--;
+      return dice[i++ % 7][j++ % 2];
+    };
+  }
+
   createGame(): void {
     const gameId = this.slot.gameId;
     const players = this.createPlayerInstances(this.slot.players);
@@ -64,17 +83,11 @@ export class SessionStore {
     const supply = { resources, devCards };
     const trades = new TradeManager();
     const notifications = new Notification(setExpiry);
+    const diceFn = this.diceCycle();
+
     this.games.set(
       gameId,
-      new Catan(
-        gameId,
-        players,
-        board,
-        _.random,
-        supply,
-        trades,
-        notifications,
-      ),
+      new Catan(gameId, players, board, diceFn, supply, trades, notifications),
     );
     this.refreshSlot();
   }
