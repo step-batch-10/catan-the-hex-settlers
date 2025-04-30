@@ -170,7 +170,7 @@ export const isPublicResource = (path: string) => {
     '/index.html',
     '/joinGame',
     '/css/index.css',
-    '/images/two.png',
+    '/images/catan-bg.png',
   ]);
   return publicPaths.has(path);
 };

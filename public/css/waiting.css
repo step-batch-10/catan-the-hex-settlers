@@ -9,31 +9,31 @@ html {
   height: 100%;
   font-family: 'Arial', sans-serif;
   text-align: center;
-  background: url('../images/two.png') no-repeat center center fixed;
-  background-size: cover;
+  background: url('../images/waiting-bg.png') no-repeat center center fixed;
+  background-size: 100% 100%;
 }
 
 main {
   position: relative;
-  top: 30%;
+  top: 15%;
 }
 
 #game-time-text {
   font-size: 6rem;
-  color: #663300;
+  color: white;
   margin-bottom: 20px;
   font-family: 'Georgia', serif;
 }
 
 h1 {
-  font-size: 6rem;
-  color: #663300;
+  font-size: 4rem;
+  color: white;
   margin-bottom: 20px;
   font-family: 'Georgia', serif;
 }
 
 .loading-dots .dot {
-  fill: #663300;
+  fill: white;
   transform-origin: center;
   display: inline-block;
   animation: pulse 1s ease-in-out infinite;

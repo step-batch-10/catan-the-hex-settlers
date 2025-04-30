@@ -9,18 +9,16 @@ body {
   width: 100vw;
   background-color: #9ed3f7a3;
   user-select: none;
-  background: url('../images/bg2.png') no-repeat center center fixed;
-  background-size: cover;
+  background: url('../images/waiting-bg.png') no-repeat center center fixed;
+  background-size: 100% 100%;
 }
 
 h1,
 #winner-name {
+color: white;
   font-size: 5rem;
-text-shadow:
-    -1px -1px 0 whitesmoke,
-    1px -1px 0 whitesmoke,
-    -1px 1px 0 whitesmoke,
-    1px 1px 0 whitesmoke;
+  text-shadow: -1px -1px 0 black, 1px -1px 0 black,
+    -1px 1px 0 black, 1px 1px 0 black;
   font-family: Georgia, 'Times New Roman', Times, serif;
   text-align: center;
 }
@@ -87,8 +85,8 @@ text-shadow:
   display: flex;
   flex-direction: column;
   margin: 20px auto;
-  background: linear-gradient(145deg, #4f83c7, #3164a6);
-  border: 2px solid #274a89;
+  background: linear-gradient(145deg, #4f83c7, #5190e2d8);
+  border: 2px solid #3869c4;
   border-radius: 14px;
   color: #eef9ff;
   font-family: 'Cinzel', serif;
