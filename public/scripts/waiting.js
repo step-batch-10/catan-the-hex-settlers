@@ -1,5 +1,5 @@
 const displayGameStarts = (time) => {
-  const textEle = document.querySelector('#status');
+  const textEle = document.querySelector('h1');
 
   textEle.innerText = `Game will start in ${time} seconds...`;
   textEle.id = 'game-time-text';

@@ -550,7 +550,7 @@ const getChoosenResource = (resolve) => {
 };
 
 const chooseResource = async (event) => {
-  renderMsg('Double click on the resource you want to play monopoly on');
+  renderMsg('Click on the resource you want to play monopoly on');
   closeDevPanel(event);
 
   const chosenResource = await new Promise(getChoosenResource);
