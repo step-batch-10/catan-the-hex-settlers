@@ -27,7 +27,7 @@ export const hexes = [
     r: -2,
     terrain: 'pasture',
     resource: 'wool',
-    number: 5,
+    number: 2,
     hasRobber: false,
   },
   {
@@ -126,7 +126,7 @@ export const hexes = [
     r: 1,
     terrain: 'hills',
     resource: 'brick',
-    number: 3,
+    number: 11,
     hasRobber: false,
   },
   {
@@ -135,7 +135,7 @@ export const hexes = [
     r: 1,
     terrain: 'mountains',
     resource: 'ore',
-    number: 11,
+    number: 3,
     hasRobber: false,
   },
   {
@@ -153,7 +153,7 @@ export const hexes = [
     r: 2,
     terrain: 'fields',
     resource: 'grain',
-    number: 2,
+    number: 5,
     hasRobber: false,
   },
   {

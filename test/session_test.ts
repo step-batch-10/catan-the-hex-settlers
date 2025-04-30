@@ -91,8 +91,8 @@ describe('should create a session', () => {
     const firstDie = diceFn();
     const secondDie = diceFn();
     const thirdDie = diceFn();
-    assertEquals(2, firstDie);
-    assertEquals(1, secondDie);
-    assertEquals(2, thirdDie);
+    assertEquals(3, firstDie);
+    assertEquals(2, secondDie);
+    assertEquals(4, thirdDie);
   });
 });

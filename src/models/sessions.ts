@@ -47,13 +47,13 @@ export class SessionStore {
     let i = 0;
     let j = 0;
     const dice = [
-      [2, 1],
-      [2, 2],
-      [1, 1],
+      [3, 2],
       [4, 3],
       [5, 6],
       [5, 4],
-      [2, 3],
+      [2, 2],
+      [3, 3],
+      [4, 4],
     ];
 
     return () => {
@@ -75,10 +75,15 @@ export class SessionStore {
       grain: 25,
     };
     const devCards: DevelopmentCards[] = [
-      'knight',
-      'knight',
       'monopoly',
-      'knight',
+      'road-building',
+      'victory-point',
+      'road-building',
+      'monopoly',
+      'road-building',
+      'victory-point',
+      'monopoly',
+      'victory-point',
     ];
     const supply = { resources, devCards };
     const trades = new TradeManager();
