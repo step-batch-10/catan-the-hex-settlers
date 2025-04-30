@@ -222,3 +222,14 @@ export const handlePlayerTrade = async (ctx: Context): Promise<Response> => {
 
   return ctx.json(true);
 };
+
+export const handleAcceptPlayerTrade = (ctx: Context): Response => {
+  const game: Catan = ctx.get('game');
+  const playerId = getCookie(ctx, 'player-id');
+  const player = _.find(game.players, { id: playerId });
+
+  const closedTrade = game.trades.closeTrade(player) as TradeStatus;
+  game.notifications.expireNotification(closedTrade.tradeId);
+
+  return ctx.json(true);
+};

@@ -20,11 +20,11 @@ export const setExpiry = (
 };
 
 export class Notification {
-  private notifications: NotificationMessage[];
+  private notifications: { [id: number]: NotificationMessage };
   private setExpiry: ExpFn;
 
   constructor(expiryFn: ExpFn) {
-    this.notifications = [];
+    this.notifications = {};
     this.setExpiry = expiryFn;
   }
 
@@ -56,7 +56,7 @@ export class Notification {
   ): NotificationMessage {
     const header = `${proposer.name} opened a Trade`;
     const body = `Offering ${outResourceString} for ${inResourceString}`;
-    const actions = ['Accept', 'Reject'];
+    const actions = ['Accept'];
 
     const notification = { header, body, actions, expired: false };
 
@@ -64,40 +64,40 @@ export class Notification {
   }
 
   tradeNotification(tradeStatus: TradeStatus) {
-    const { isClosed, proposer, tradeResources } = tradeStatus;
+    const { isClosed, proposer, tradeResources, tradeId } = tradeStatus;
     const { outgoingResources, incomingResources } = tradeResources;
 
     const outResourceString = this.stringifyResourceAndCount(outgoingResources);
     const inResourceString = this.stringifyResourceAndCount(incomingResources);
 
-    if (isClosed) {
-      const responder = tradeStatus.responder as Trader;
-      const notification = this.createClosedTM(
-        proposer,
-        responder,
-        outResourceString,
-        inResourceString,
-      );
-
-      this.notifications.push(notification);
-
-      return;
-    }
-
-    const notification = this.createOpenTM(
+    let notification = this.createOpenTM(
       proposer,
       outResourceString,
       inResourceString,
     );
 
-    this.notifications.push(notification);
+    if (isClosed) {
+      const responder = tradeStatus.responder as Trader;
+      notification = this.createClosedTM(
+        proposer,
+        responder,
+        outResourceString,
+        inResourceString,
+      );
+    }
+
+    this.notifications[tradeId] = notification;
 
     return;
   }
 
   getNewNotifications() {
     const notifications = this.notifications;
-    this.notifications = [];
     return _.filter(notifications, { expired: false });
+  }
+
+  expireNotification(notificationId: number) {
+    const notification = this.notifications[notificationId];
+    notification.expired = true;
   }
 }

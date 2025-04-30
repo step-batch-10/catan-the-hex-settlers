@@ -169,10 +169,12 @@ body {
   line-height: 40px;
   background-color: rgb(168, 92, 5);
 }
-/* .cards {
-  width: 80px;
-  height: 96px;
-} */
+
+.devCardSet .count {
+  justify-content: center;
+  left: 38px;
+  top: 38px;
+}
 
 .resource-cards {
   width: 100%;
@@ -190,6 +192,10 @@ body {
   width: 80px;
   height: 96px;
   transform-style: preserve-3d;
+}
+
+.dev .count {
+  justify-content: center;
 }
 
 .choosen {
@@ -308,10 +314,10 @@ body {
   cursor: pointer;
 }
 
-.choosen .count-changer {
+/* .choosen .count-changer {
   bottom: -3px;
   transform: translateY(100%);
-}
+} */
 
 .disabled {
   opacity: 0.5;
@@ -332,11 +338,12 @@ body {
 
 .option {
   width: 100%;
+  padding: 2px;
   border: 1px solid rgb(122, 82, 18);
   border-radius: 3px;
   color: rgb(122, 82, 18);
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .option:hover {
@@ -589,7 +596,7 @@ body {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 30px;
+  gap: 15px;
   width: 524px;
   height: 158px;
   line-height: 36px;
@@ -603,8 +610,8 @@ body {
 }
 
 .dev-types {
-  width: 60px;
-  height: 85px;
+  width: 75px;
+  height: 100px;
 }
 
 .hover-shadow {
@@ -664,6 +671,7 @@ body {
 }
 
 .settlement {
+  --color: #fff;
   opacity: 0;
   fill: rgba(128, 128, 128, 0.551);
   stroke-width: 1;
@@ -672,8 +680,8 @@ body {
 
 .available-settlement {
   opacity: 1;
-  fill: #4092c9;
-  stroke: #51acd378;
+  fill: color-mix(in srgb, var(--color) 70%, rgba(255, 255, 255, 0.877));
+  stroke: color-mix(in srgb, var(--color) 50%, black);
   cursor: pointer;
   animation-duration: 1s;
   animation-iteration-count: infinite;
@@ -682,7 +690,7 @@ body {
 
 .built {
   opacity: 1;
-  --color: #fff;
+  /* --color: #fff; */
   fill-opacity: 1;
   fill: color-mix(in srgb, var(--color) 70%, rgba(255, 255, 255, 0.877));
   stroke-width: 1;
@@ -796,5 +804,53 @@ body {
 #dev-cards,
 #buy-dev-card,
 #pass-btn {
+  cursor: pointer;
+}
+
+.notification-container {
+  width: 350px;
+  height: 150px;
+  position: absolute;
+  top: 50px;
+  right: 570px;
+  background-color: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.notification-container .header {
+  width: 100%;
+  height: 30px;
+  padding: 5px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 24px;
+  text-transform: capitalize;
+}
+
+.notification-container .body {
+  width: 100%;
+  height: 80px;
+  padding: 5px;
+  font-size: 18px;
+}
+
+.notification-container .actions {
+  width: 100%;
+  height: 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.actions .notification-btn {
+  padding: 4px 6px;
+  background-color: var(--secondary-color);
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-size: small;
   cursor: pointer;
 }

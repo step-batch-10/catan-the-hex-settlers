@@ -49,7 +49,8 @@ describe('Notification', () => {
           grain: 0,
           ore: 1
         }
-      }
+      },
+      tradeId: 0
     }
     
     notification.tradeNotification(tradeStatus);
@@ -59,7 +60,7 @@ describe('Notification', () => {
     
     assertEquals(openTradeNotification?.header, expectedHeader);
     assertEquals(openTradeNotification?.body, expectedBody);
-    assertEquals(openTradeNotification?.actions, ['Accept', 'Reject'])
+    assertEquals(openTradeNotification?.actions, ['Accept'])
   })
 
   it('should create a closed trade notification', () => {
@@ -85,7 +86,8 @@ describe('Notification', () => {
           grain: 0,
           ore: 1
         }
-      }
+      },
+      tradeId: 0
     }
     notification.tradeNotification(tradeStatus);
     const openTradeNotification = notification.getNewNotifications()[0]
@@ -123,7 +125,8 @@ describe('Notification', () => {
           grain: 0,
           ore: 1
         }
-      }
+      },
+      tradeId: 0
     }
     notification.tradeNotification(tradeStatus);
     const newNotification =  notification.getNewNotifications()[0]
@@ -133,7 +136,7 @@ describe('Notification', () => {
 
     assertEquals(newNotification?.header, expectedHeader)
     assertEquals(newNotification?.body, expectedBody)
-    assertEquals(newNotification?.actions, ['Accept', 'Reject'])
+    assertEquals(newNotification?.actions, ['Accept'])
   })
 
   it('should not give expired notifications', async () => {
@@ -159,7 +162,8 @@ describe('Notification', () => {
           grain: 0,
           ore: 1
         }
-      }
+      },
+      tradeId: 0
     }
     
     notification.tradeNotification(tradeStatus);
@@ -181,5 +185,38 @@ describe('Notification', () => {
     await wait(1.1);
     
     assertEquals(notificationMessage.expired, true)
+  })
+
+  it('should give all the unexpired notifications', () => {
+    const player = new Player('p1', 'Aman', 'red');
+    const responder = new Player('p2', 'Shabbas', 'Green');
+
+    const tradeStatus: TradeStatus = {
+      isClosed: false,
+      responder: responder,
+      proposer: player,
+      tradeResources: {
+        incomingResources: {
+          lumber: 0,
+          brick: 0,
+          wool: 0,
+          grain: 2,
+          ore: 0
+        },
+        outgoingResources: {
+          lumber: 0,
+          brick: 0,
+          wool: 0,
+          grain: 0,
+          ore: 1
+        }
+      },
+      tradeId: 1000
+    }
+    notification.tradeNotification(tradeStatus);
+    notification.expireNotification(tradeStatus.tradeId);
+    const newNotification =  notification.getNewNotifications()[0]
+
+    assertEquals(newNotification, undefined)
   })
 })

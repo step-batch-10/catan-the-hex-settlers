@@ -108,9 +108,12 @@ const confirmTrade = async (e) => {
   if (tradeDetails.type === "Exchange") {
     await fetch("game/trade/bank", { method: "POST", body: JSON.stringify(requestBody) })
     
-    endTrading();
+    return endTrading();
   }
-    
+
+  fetch('game/trade/player', { method: "POST", body: JSON.stringify(requestBody) });
+
+  return endTrading();
 }
 
 const addToTradeIn = (e) => {
@@ -172,21 +175,18 @@ const beginTrade = (trade) => (e) => {
   if (trade.name === "Exchange")
     return confirmSelection(e);
 
-  replaceListeners(".resource", addToTradeOff, "click")
-  replaceListeners(".choosen", confirmSelection, "click")
-  // showCursoMessage(".choosen", "click here to confirm selections", )
-  // card.classList.add("elavate");
+  replaceListeners(".resource", addToTradeOff, "click");
+  replaceListeners(".choosen", confirmSelection, "click");
 }
 
 const createTradeButton = (card, trade) => {
   const totalResourceCount = card.querySelector(".total-count").textContent;
   const optionText = createEelement("p", "option" );
   optionText.textContent = trade.name;
-  // if (trade.name !== "trade with bank")
-    optionText.addEventListener("click", beginTrade(trade))
+  optionText.addEventListener("click", beginTrade(trade));
 
   if (Number(totalResourceCount) < trade.minimuTradeOffCount)
-    optionText.classList.add("disabled")
+    optionText.classList.add("disabled");
 
   return optionText;
 }
@@ -205,7 +205,6 @@ export const showOptions = (trades) => (e) => {
 }
 
 export const updateResourceCount = (resources) => {
-  // wool, brick, lumber, ore, grain
   Object.entries(resources).forEach(([resourceType, count]) => {
     const card = document.querySelector(`[type="${resourceType}"]`);
 
@@ -213,11 +212,16 @@ export const updateResourceCount = (resources) => {
   })
 }
 
+const cancelTrade = () => {
+  resetTradeDetails();
+  removeClassFromElements(".choosen", "choosen");
+}
+
 export const tradeControlls = () => {
   replaceListeners(".resource", showOptions(tradeTypes), "click")
 }
 
-// globalThis.onload = () => addListenerToCard(rotateY)
 globalThis.onclick = () => {
   rotateBackAllCards()
+  cancelTrade();
 }

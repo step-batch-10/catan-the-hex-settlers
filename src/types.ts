@@ -82,6 +82,7 @@ interface GameData {
   availableActions: { canTrade: boolean; canRoll: boolean };
   gamePhase: GamePhase;
   currentPlayerId: string;
+  notifications: NotificationMessage;
 }
 
 interface GameState {
@@ -198,6 +199,7 @@ interface TradeStatus {
   responder: Trader | null;
   proposer: Player;
   tradeResources: TradeResources;
+  tradeId: number;
 }
 
 export type {

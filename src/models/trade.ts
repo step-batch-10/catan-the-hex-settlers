@@ -13,17 +13,20 @@ export class Trade {
   responder: Trader | null;
   tradeResources: TradeResources;
   isClosed: boolean;
+  tradeId: number;
 
   constructor(
     expectedResponder: ExpectedResponder,
     proposer: Player,
     tradeResources: TradeResources,
+    tradeId: number,
   ) {
     this.expectedResponder = expectedResponder;
     this.proposer = proposer;
     this.tradeResources = tradeResources;
     this.isClosed = false;
     this.responder = null;
+    this.tradeId = tradeId;
   }
 
   getStatus(): TradeStatus {
@@ -32,6 +35,7 @@ export class Trade {
       proposer: this.proposer,
       responder: this.responder,
       tradeResources: this.tradeResources,
+      tradeId: this.tradeId,
     };
   }
 
@@ -54,6 +58,7 @@ export class TradeManager {
   trades: Trade[];
   runningTrade: Trade | null;
   bank: Bank;
+  currentTradeId: number;
 
   constructor() {
     this.trades = [];
@@ -65,6 +70,7 @@ export class TradeManager {
       grain: 4,
       ore: 4,
     });
+    this.currentTradeId = 1000;
   }
 
   openNewTrade(
@@ -72,7 +78,12 @@ export class TradeManager {
     proposer: Player,
     tradeResources: TradeResources,
   ) {
-    const currentTrade = new Trade(expectedResponder, proposer, tradeResources);
+    const currentTrade = new Trade(
+      expectedResponder,
+      proposer,
+      tradeResources,
+      this.currentTradeId++,
+    );
     this.runningTrade = currentTrade;
     this.trades.push(currentTrade);
 

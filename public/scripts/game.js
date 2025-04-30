@@ -704,7 +704,7 @@ const renderElements = (gameState) => {
   renderPieces(gameState);
   renderPlayersData(gameState.players);
   renderDice(gameState.diceRoll);
-  displayPlayerTurn(gameState);
+  // displayPlayerTurn(gameState);
   showPossibleSettlementsOrRoads();
   highlightPlayersTurn(gameState.currentPlayerId);
 };
@@ -715,6 +715,7 @@ const poll = () => {
     if (response.redirected) return globalThis.location.assign(response.url);
 
     const gameState = await response.json();
+    // console.log(gameState);
     globalThis.gameState = gameState;
 
     // const cloned = cloneTemplateElement('#all-dev-cards');
@@ -733,6 +734,7 @@ const poll = () => {
 const main = async () => {
   const response = await fetch('/game/gameState');
   const gameState = await response.json();
+  
 
   globalThis.gameState = gameState;
   addEventListeners(gameState);

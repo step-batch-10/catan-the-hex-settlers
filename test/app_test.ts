@@ -359,4 +359,38 @@ describe('Catan App Routes', () => {
     assertEquals(trades[0].proposer, player);
     assertFalse(trades[0].isClosed);
   });
+
+  it('should close a trade with player', async () => {
+    const player = _.find(catan.players, { id: 'p1' });
+
+    player.resources.lumber = 3;
+
+    const tradeResource = {
+      incomingResources: { grain: 1 },
+      outgoingResources: { lumber: 2 },
+    };
+
+    await app.request('http://localhost/game/trade/player', {
+      method: 'POST',
+      headers: {
+        Cookie: 'player-id=p1; game-id=1000',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(tradeResource),
+    });
+
+    await app.request('http://localhost/game/trade/player/accept', {
+      method: 'POST',
+      headers: {
+        Cookie: 'player-id=p1; game-id=1000',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(tradeResource),
+    });
+
+    const notificaitons = catan.notifications.getNewNotifications();
+
+    assertEquals(notificaitons.length, 0);
+  });
 });
+

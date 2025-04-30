@@ -594,7 +594,7 @@ export class Catan {
     const gamePhase = this.phase;
     const currentPlayerId = this.getCurrentPlayer().id;
     const hasWon = this.hasWon();
-    
+    const notifications = this.notifications.getNewNotifications();
 
     return {
       hasWon,
@@ -607,6 +607,7 @@ export class Catan {
       gamePhase,
       currentPlayerId,
       availableActions,
+      notifications,
     };
   }
 
