@@ -662,6 +662,7 @@ body {
   animation-name: grow;
 }
 
+
 .available-road:hover,
 .available-settlement path:hover {
   stroke: #51acd3;
@@ -671,7 +672,6 @@ body {
 }
 
 .settlement {
-  --color: #fff;
   opacity: 0;
   fill: rgba(128, 128, 128, 0.551);
   stroke-width: 1;
@@ -680,8 +680,8 @@ body {
 
 .available-settlement {
   opacity: 1;
-  fill: color-mix(in srgb, var(--color) 70%, rgba(255, 255, 255, 0.877));
-  stroke: color-mix(in srgb, var(--color) 50%, black);
+  fill: #4092c9;
+  stroke: #51acd378;
   cursor: pointer;
   animation-duration: 1s;
   animation-iteration-count: infinite;
@@ -690,7 +690,7 @@ body {
 
 .built {
   opacity: 1;
-  /* --color: #fff; */
+  --color: #fff;
   fill-opacity: 1;
   fill: color-mix(in srgb, var(--color) 70%, rgba(255, 255, 255, 0.877));
   stroke-width: 1;

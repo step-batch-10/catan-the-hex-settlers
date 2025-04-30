@@ -253,16 +253,6 @@ const cloneTemplateElement = (id) => {
   return cloneTemplate;
 };
 
-// const showMessage = (templateId, elementId, msg) => {
-//   const container =
-//     document.querySelector(elementId) ||
-//     cloneTemplateElement(templateId).querySelector(elementId);
-//   container.textContent = msg;
-//   document.body.appendChild(container);
-
-//   return container;
-// };
-
 const highlightPosition = (id, className) => {
   const ele = document.getElementById(id);
 
@@ -294,16 +284,6 @@ const showPossibleSettlementsOrRoads = async () => {
   }
 };
 
-// const displayPlayerTurn = (gameState) => {
-//   const isCurrentPlayer = gameState.currentPlayer !== gameState.players.me.name;
-//   const msg = isCurrentPlayer
-//     ? `current player - ${gameState.currentPlayer}`
-//     : `your turn`;
-
-//   showMessage('#current-player', '.player-turn', msg);
-//   showPossibleSettlementsOrRoads();
-// };
-
 const moveRobber = async (event) => {
   const fd = new FormData();
   fd.set('id', event.target.parentElement.id);
@@ -312,7 +292,6 @@ const moveRobber = async (event) => {
     method: 'POST',
     body: fd,
   }).then((res) => res.json());
-  console.log(isValid);
 
   if (!isValid) return renderMsg("you can't place there");
 
@@ -426,7 +405,6 @@ const getBuildValidationData = async (event) => {
   const formData = new FormData();
   formData.set('id', targetElementId);
 
-  console.log(pieceType);
   const canBuild = await isValidBuilt(pieceType, formData);
   if (!canBuild) return element.classList.add('block');
   return { element, targetElementId, pieceType };
@@ -449,7 +427,6 @@ const removeSvgAnimation = () => {
 
 const build = async (event) => {
   const validationData = await getBuildValidationData(event);
-  console.log(validationData, 'can build');
   if (!validationData) return;
 
   const { targetElementId, pieceType } = validationData;
@@ -461,7 +438,6 @@ const addBuildEvent = () => {
   const svg = document.getElementById('svg20');
   const roads = svg.querySelectorAll('.edge');
   const settlements = svg.querySelectorAll('.pieces');
-  console.log(settlements);
   svg.removeEventListener('click', moveRobber);
   addListenerToElements(settlements, build);
   addListenerToElements(roads, build);
@@ -704,7 +680,6 @@ const renderElements = (gameState) => {
   renderPieces(gameState);
   renderPlayersData(gameState.players);
   renderDice(gameState.diceRoll);
-  // displayPlayerTurn(gameState);
   showPossibleSettlementsOrRoads();
   highlightPlayersTurn(gameState.currentPlayerId);
 };
@@ -715,11 +690,8 @@ const poll = () => {
     if (response.redirected) return globalThis.location.assign(response.url);
 
     const gameState = await response.json();
-    // console.log(gameState);
     globalThis.gameState = gameState;
 
-    // const cloned = cloneTemplateElement('#all-dev-cards');
-    // const allDevTypes = cloned.querySelectorAll('.count');
     notifications.removeAllNotifications();
     notifications.showAll(gameState.notifications);
     renderBoardHexes();
@@ -727,7 +699,6 @@ const poll = () => {
     applyPlayerActions(gameState.availableActions);
     addListener('#dev-cards', updateDevCards);
     getTotalDevsCount(gameState.players.me.devCards.owned);
-    // getAvailableCardsCount(allDevTypes);
   }, 1000);
 };
 

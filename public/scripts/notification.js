@@ -44,7 +44,7 @@ export class Notifications {
     actionsDiv.replaceChildren(...actionBtns);
   }
 
-  show(notification) {
+  show(notification, duration) {
     const notificationDiv = this.cloneTemplate();
     this.setTitle(notificationDiv, notification.header);
     this.setBody(notificationDiv, notification.body);
@@ -53,6 +53,11 @@ export class Notifications {
       this.setActions(notificationDiv, notification.actions)
 
     document.body.appendChild(notificationDiv);
+
+    if (duration)
+      setTimeout(() => {
+        this.removeAllNotifications();
+      }, duration * 1000);
   }
 
   showAll(notifications) {
