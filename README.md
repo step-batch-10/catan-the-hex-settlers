@@ -1,4 +1,5 @@
 [![master](https://github.com/step-batch-10/catan-the-hex-settlers/actions/workflows/deno.yml/badge.svg)](https://github.com/step-batch-10/catan-the-hex-settlers/actions/workflows/deno.yml)
+
 # 🌄 Catan – Digital Board Game
 
 ## 1. 📝 THE SETTLERS OF CATAN
@@ -19,7 +20,7 @@ Learn how to play Catan with the official game rules here:
 ## 3. 🚀 Hosted Game
 
 Play the game online:  
-🔗 [Catan Online – Play Now](https://hex-settlers-of-catan.deno.dev)
+🔗 [Catan Online – Play Now](https://catan-dev.onrender.com)
 
 ## 4. 🧭 Game Flow
 
