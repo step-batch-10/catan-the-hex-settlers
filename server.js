@@ -1,6 +1,6 @@
-import { createApp } from './src/app.ts';
-import _ from 'lodash';
-import { SessionStore } from './src/models/sessions.ts';
+import { createApp } from "./src/app.ts";
+import _ from "lodash";
+import { SessionStore } from "./src/models/sessions.ts";
 
 const main = (port) => {
   const sessions = new SessionStore();

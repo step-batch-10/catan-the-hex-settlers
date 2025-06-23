@@ -7,9 +7,9 @@
 body,
 html {
   height: 100%;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   text-align: center;
-  background: url('../images/waiting-bg.png') no-repeat center center fixed;
+  background: url("../images/waiting-bg.png") no-repeat center center fixed;
   background-size: 100% 100%;
 }
 
@@ -18,18 +18,18 @@ main {
   top: 15%;
 }
 
-#game-time-text {
+#game-status-text {
   font-size: 6rem;
   color: white;
   margin-bottom: 20px;
-  font-family: 'Georgia', serif;
+  font-family: "Georgia", serif;
 }
 
 h1 {
   font-size: 4rem;
   color: white;
   margin-bottom: 20px;
-  font-family: 'Georgia', serif;
+  font-family: "Georgia", serif;
 }
 
 .loading-dots .dot {

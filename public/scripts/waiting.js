@@ -1,31 +1,44 @@
-const displayGameStarts = (time) => {
-  const textEle = document.querySelector('h1');
+const renderGameStartText = (statusMessage) => {
+  const textEle = document.querySelector("h1");
 
-  textEle.innerText = `Game will start in ${time} seconds...`;
-  textEle.id = 'game-time-text';
+  if (textEle) {
+    textEle.innerText = statusMessage;
+  }
 };
 
-const redirectToGame = (id) => {
+const redirectToGame = () => {
   setTimeout(() => {
-    clearInterval(id);
-    globalThis.location.href = '/game.html';
+    globalThis.location.href = "/game.html";
   }, 3000);
 };
 
-const pollForStatus = () => {
+const launchGameTimer = () => {
   let time = 3;
-
-  const id = setInterval(async () => {
-    const response = await fetch('/gameStatus');
-    const { isGameReady } = await response.json();
-    if (!isGameReady) return;
-    displayGameStarts(time--);
-    redirectToGame(id);
+  const countdown = setInterval(() => {
+    renderGameStartText(`Game will start in ${time--} seconds`);
+    if (time < 0) {
+      clearInterval(countdown);
+      redirectToGame();
+    }
   }, 1000);
 };
 
+const id = setInterval(async () => {
+  const response = await fetch("/gameStatus");
+  const { isGameReady, playersCount } = await response.json();
+
+  if (!isGameReady) {
+    renderGameStartText(
+      `Waiting for ${4 - playersCount} more player(s) to join`
+    );
+    return;
+  }
+
+  launchGameTimer();
+}, 1000);
+
 const main = () => {
-  pollForStatus();
+  globalThis.addEventListener("load", main);
 };
 
 globalThis.onload = main;

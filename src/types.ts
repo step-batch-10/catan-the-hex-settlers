@@ -156,7 +156,7 @@ type Slot = {
 };
 
 export const defaultSlot = (): Slot => ({
-  gameId: '',
+  gameId: '1000',
   players: [
     {
       id: 'p1',

@@ -1,10 +1,10 @@
-import _ from 'lodash';
-import { Catan } from './catan.ts';
-import { Player } from './player.ts';
-import { defaultSlot, DevelopmentCards, Slot } from '../types.ts';
-import { Board } from './board.ts';
-import { TradeManager } from './trade.ts';
-import { Notification, setExpiry } from './notification.ts';
+import _ from "lodash";
+import { Catan } from "./catan.ts";
+import { Player } from "./player.ts";
+import { defaultSlot, DevelopmentCards, Slot } from "../types.ts";
+import { Board } from "./board.ts";
+import { TradeManager } from "./trade.ts";
+import { Notification, setExpiry } from "./notification.ts";
 
 export class SessionStore {
   games: Map<string, Catan>;
@@ -27,11 +27,14 @@ export class SessionStore {
     }
   }
 
-  getGameStatus(gameId: string): boolean {
-    return this.games.has(gameId);
+  getGameStatus(gameId: string): {
+    isGameReady: boolean;
+    playersCount: number;
+  } {
+    return { isGameReady: this.games.has(gameId), playersCount: this.slotSize };
   }
 
-  createPlayerInstances(players: Slot['players']): Player[] {
+  createPlayerInstances(players: Slot["players"]): Player[] {
     return players.map((player) => {
       const { id, name, color } = player;
       return new Player(id, name, color);
@@ -63,6 +66,7 @@ export class SessionStore {
   }
 
   createGame(): void {
+    console.log(this.slotSize, "slot size");
     const gameId = this.slot.gameId;
     const players = this.createPlayerInstances(this.slot.players);
     const board = new Board();
@@ -75,15 +79,15 @@ export class SessionStore {
       grain: 25,
     };
     const devCards: DevelopmentCards[] = [
-      'monopoly',
-      'road-building',
-      'victory-point',
-      'road-building',
-      'monopoly',
-      'road-building',
-      'victory-point',
-      'monopoly',
-      'victory-point',
+      "monopoly",
+      "road-building",
+      "victory-point",
+      "road-building",
+      "monopoly",
+      "road-building",
+      "victory-point",
+      "monopoly",
+      "victory-point",
     ];
     const supply = { resources, devCards };
     const trades = new TradeManager();
@@ -92,7 +96,7 @@ export class SessionStore {
 
     this.games.set(
       gameId,
-      new Catan(gameId, players, board, diceFn, supply, trades, notifications),
+      new Catan(gameId, players, board, diceFn, supply, trades, notifications)
     );
     this.refreshSlot();
   }
@@ -104,7 +108,6 @@ export class SessionStore {
     player.name = name;
     this.slotSize++;
     const gameId = this.slot.gameId;
-
     if (this.slotSize === 4) this.createGame();
     return { gameId, playerId: player.id };
   }

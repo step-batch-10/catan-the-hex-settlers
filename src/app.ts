@@ -49,24 +49,24 @@ const gameRoutes = (): Hono => {
 
   gameApp.use(injectGame());
   gameApp.get('/gameState', serveGameState);
-  gameApp.get('/results', serveResults);
   gameApp.get('/gameData', serveGameData, redirectToResults);
   gameApp.post('dice/roll', rollDice);
-  gameApp.post('/build/vertex', buildSettlement);
+  gameApp.get('/dice/can-roll', canRoll);
   gameApp.post('/changeTurn', handleChangeTurn);
+  gameApp.get('/possible-positions', serveAllPositions);
+  gameApp.post('/can-build/vertex', canBuildSettlement);
+  gameApp.post('/can-build/edge', canBuildRoad);
+  gameApp.post('/build/vertex', buildSettlement);
+  gameApp.post('/build/edge', buildRoad);
   gameApp.post('/trade/bank', handleBankTrade);
   gameApp.post('/trade/player', handlePlayerTrade);
   gameApp.post('/trade/player/accept', handleAcceptPlayerTrade);
   gameApp.patch('/buy/dev-card', handleBuyDevCards);
-  gameApp.post('/build/edge', buildRoad);
   gameApp.post('/play/road-building', playRoadBuilding);
   gameApp.post('/play/monopoly', playMonopoly);
-  gameApp.get('/dice/can-roll', canRoll);
   gameApp.post('/can-place-robber', validateRobberPlacement);
   gameApp.post('/moveRobber', updateRobberPosition);
-  gameApp.post('/can-build/vertex', canBuildSettlement);
-  gameApp.post('/can-build/edge', canBuildRoad);
-  gameApp.get('/possible-positions', serveAllPositions);
+  gameApp.get('/results', serveResults);
   gameApp.post('exit', redirectToLogin);
 
   return gameApp;

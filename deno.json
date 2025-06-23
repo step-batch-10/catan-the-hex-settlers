@@ -5,11 +5,20 @@
     "indentWidth": 2,
     "semiColons": true,
     "singleQuote": true,
-    "include": ["src/"]
+    "include": [
+      "src/"
+    ]
   },
   "test": {
-    "include": ["**/*.ts", "**/*.js"],
-    "exclude": ["server.js", "public/**", "spikes/*"]
+    "include": [
+      "**/*.ts",
+      "**/*.js"
+    ],
+    "exclude": [
+      "server.js",
+      "public/**",
+      "spikes/*"
+    ]
   },
   "tasks": {
     "start": "deno run -A --watch server.js 3000",
@@ -19,7 +28,9 @@
     "test-coverage": "deno test -A --coverage=coverage --clean",
     "coverage": {
       "command": "deno run -A jsr:@ashishkujoy/deno-coverage-checker --lines=100 --functions=95 --branches=100",
-      "dependencies": ["test-coverage"]
+      "dependencies": [
+        "test-coverage"
+      ]
     }
   },
   "imports": {
@@ -27,5 +38,13 @@
     "testing": "jsr:@std/testing@^1.0.11",
     "hono": "npm:hono@^4.7.6",
     "lodash": "npm:lodash@^4.17.21"
+  },
+  "deploy": {
+    "project": "41b7157b-c954-4881-8099-bde41bc12441",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [],
+    "entrypoint": "server.js"
   }
 }

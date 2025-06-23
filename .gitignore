@@ -9,3 +9,7 @@ public/test.html
 public/testGame.js
 public/testStyle.css
 commit_message.txt
+.scannerwork/
+node_modules/
+package-lock.json
+package.json
