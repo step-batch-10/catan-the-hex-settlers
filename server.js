@@ -1,5 +1,6 @@
 import { createApp } from "./src/app.ts";
-import _ from "lodash";
+import _ from "npm:lodash";
+
 import { SessionStore } from "./src/models/sessions.ts";
 
 const main = (port) => {

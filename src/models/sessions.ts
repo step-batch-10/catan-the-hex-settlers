@@ -1,4 +1,5 @@
-import _ from "lodash";
+import _ from "npm:lodash";
+
 import { Catan } from "./catan.ts";
 import { Player } from "./player.ts";
 import { defaultSlot, DevelopmentCards, Slot } from "../types.ts";
@@ -66,7 +67,6 @@ export class SessionStore {
   }
 
   createGame(): void {
-    console.log(this.slotSize, "slot size");
     const gameId = this.slot.gameId;
     const players = this.createPlayerInstances(this.slot.players);
     const board = new Board();

@@ -1,6 +1,7 @@
 import { Context, Next } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
-import _ from "lodash";
+import _ from "npm:lodash";
+
 import { TradeResources, TradeStatus } from "../types.ts";
 import { Catan } from "../models/catan.ts";
 

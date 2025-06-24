@@ -1,4 +1,5 @@
-import _ from "lodash";
+import _ from "npm:lodash";
+
 import { Board } from "./board.ts";
 import { Player } from "./player.ts";
 import { Vertex } from "./vertex.ts";
