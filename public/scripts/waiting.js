@@ -30,7 +30,10 @@ const pollForStatus = () => {
     const response = await fetch("/gameStatus");
     const { isGameReady, playersCount } = await response.json();
 
-    if (isGameReady) launchGameTimer(id);
+    if (isGameReady) {
+      launchGameTimer(id);
+      return;
+    }
 
     renderGameStartText(
       `Waiting for ${4 - playersCount} more player(s) to join`
