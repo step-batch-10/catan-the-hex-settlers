@@ -9,14 +9,20 @@
   },
   "test": {
     "include": ["**/*.ts", "**/*.js"],
-    "exclude": ["server.js", "public/**", "spikes/*"]
+    "exclude": [
+      "server.js",
+      "public/**",
+      "spikes/*",
+      "node_modules/**",
+      "coverage/**"
+    ]
   },
   "tasks": {
     "start": "deno run -A --watch server.js 3000",
-    "test": "deno test -A --node-modules-dir",
+    "test": "deno test -A",
     "test-watch": "deno test --watch -A",
     "lint": "deno lint",
-    "test-coverage": "deno test -A --coverage=coverage --clean --node-modules-dir",
+    "test-coverage": "deno test -A --coverage=coverage --clean",
     "coverage": {
       "command": "deno run -A jsr:@ashishkujoy/deno-coverage-checker --lines=100 --functions=95 --branches=100",
       "dependencies": ["test-coverage"]

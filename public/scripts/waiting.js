@@ -13,8 +13,8 @@ const redirectToGame = () => {
 };
 
 const launchGameTimer = (id) => {
-  let time = 3;
   clearInterval(id);
+  let time = 3;
 
   const countdown = setInterval(() => {
     renderGameStartText(`Game will start in ${time--} seconds`);
@@ -25,22 +25,21 @@ const launchGameTimer = (id) => {
   }, 1000);
 };
 
-const id = setInterval(async () => {
-  const response = await fetch("/gameStatus");
-  const { isGameReady, playersCount } = await response.json();
+const pollForStatus = () => {
+  const id = setInterval(async () => {
+    const response = await fetch("/gameStatus");
+    const { isGameReady, playersCount } = await response.json();
 
-  if (!isGameReady) {
+    if (isGameReady) launchGameTimer(id);
+
     renderGameStartText(
       `Waiting for ${4 - playersCount} more player(s) to join`
     );
-    return;
-  }
-
-  launchGameTimer(id);
-}, 1000);
+  }, 1000);
+};
 
 const main = () => {
-  globalThis.addEventListener("load", main);
+  pollForStatus();
 };
 
 globalThis.onload = main;
