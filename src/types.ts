@@ -1,5 +1,5 @@
-import { Bank } from "./models/bank.ts";
-import { Player } from "./models/player.ts";
+import { Bank } from './models/bank.ts';
+import { Player } from './models/player.ts';
 
 interface EdgeData {
   id: string;
@@ -41,10 +41,10 @@ interface Resources {
 
 interface DevCardTypes {
   knight: number;
-  "road-building": number;
-  "year-of-plenty": number;
+  'road-building': number;
+  'year-of-plenty': number;
   monopoly: number;
-  "victory-point": number;
+  'victory-point': number;
 }
 
 interface DevCards {
@@ -107,13 +107,13 @@ interface DistributeResourceData {
 }
 
 interface PlayersList {
-  me: ReturnType<Player["getPlayerData"]>;
+  me: ReturnType<Player['getPlayerData']>;
   playersInfo: object[];
 }
 
 type RollDice = (start?: number, end?: number) => number;
-type GamePhase = "setup" | "main" | "end";
-type PlayerAssets = "road" | "settlement" | "city" | "devCard";
+type GamePhase = 'setup' | 'main' | 'end';
+type PlayerAssets = 'road' | 'settlement' | 'city' | 'devCard';
 type ResourceProduction = (keyof Resources | undefined)[] | undefined;
 type RandomCard = (availableCards: object[]) => string;
 
@@ -126,16 +126,16 @@ interface SpecialCardOwners {
   largestArmy: number | null;
   longestRoad: number | null;
 }
-type BuildType = "settlement" | "road" | "city";
-type Phase = "initial" | "main" | "roadBuilding";
+type BuildType = 'settlement' | 'road' | 'city';
+type Phase = 'initial' | 'main' | 'roadBuilding';
 type StringSet = Set<string>;
 
 export type DevelopmentCards =
-  | "knight"
-  | "monopoly"
-  | "year-of-plenty"
-  | "road-building"
-  | "victory-point";
+  | 'knight'
+  | 'monopoly'
+  | 'year-of-plenty'
+  | 'road-building'
+  | 'victory-point';
 
 interface Supply {
   resources: Resources;
@@ -156,34 +156,34 @@ type Slot = {
 };
 
 export const defaultSlot = (): Slot => ({
-  gameId: "",
+  gameId: '',
   players: [
     {
-      id: "p1",
-      name: "",
-      color: "red",
+      id: 'p1',
+      name: '',
+      color: 'red',
     },
     {
-      id: "p2",
-      name: "",
-      color: "blue",
+      id: 'p2',
+      name: '',
+      color: 'blue',
     },
     {
-      id: "p3",
-      name: "",
-      color: "orange",
+      id: 'p3',
+      name: '',
+      color: 'orange',
     },
     {
-      id: "p4",
-      name: "",
-      color: "green",
+      id: 'p4',
+      name: '',
+      color: 'green',
     },
   ],
 });
 
 type Result = { name: string; hasWon: boolean };
 
-type ExpectedResponder = "bank" | "player";
+type ExpectedResponder = 'bank' | 'player';
 
 type Trader = Player | Bank;
 
