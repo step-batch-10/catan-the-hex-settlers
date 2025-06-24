@@ -1,11 +1,11 @@
-import _ from "npm:lodash";
+import _ from 'npm:lodash';
 
-import { Catan } from "./catan.ts";
-import { Player } from "./player.ts";
-import { defaultSlot, DevelopmentCards, Slot } from "../types.ts";
-import { Board } from "./board.ts";
-import { TradeManager } from "./trade.ts";
-import { Notification, setExpiry } from "./notification.ts";
+import { Catan } from './catan.ts';
+import { Player } from './player.ts';
+import { defaultSlot, DevelopmentCards, Slot } from '../types.ts';
+import { Board } from './board.ts';
+import { TradeManager } from './trade.ts';
+import { Notification, setExpiry } from './notification.ts';
 
 export class SessionStore {
   games: Map<string, Catan>;
@@ -35,7 +35,7 @@ export class SessionStore {
     return { isGameReady: this.games.has(gameId), playersCount: this.slotSize };
   }
 
-  createPlayerInstances(players: Slot["players"]): Player[] {
+  createPlayerInstances(players: Slot['players']): Player[] {
     return players.map((player) => {
       const { id, name, color } = player;
       return new Player(id, name, color);
@@ -79,15 +79,15 @@ export class SessionStore {
       grain: 25,
     };
     const devCards: DevelopmentCards[] = [
-      "monopoly",
-      "road-building",
-      "victory-point",
-      "road-building",
-      "monopoly",
-      "road-building",
-      "victory-point",
-      "monopoly",
-      "victory-point",
+      'monopoly',
+      'road-building',
+      'victory-point',
+      'road-building',
+      'monopoly',
+      'road-building',
+      'victory-point',
+      'monopoly',
+      'victory-point',
     ];
     const supply = { resources, devCards };
     const trades = new TradeManager();
@@ -96,7 +96,7 @@ export class SessionStore {
 
     this.games.set(
       gameId,
-      new Catan(gameId, players, board, diceFn, supply, trades, notifications)
+      new Catan(gameId, players, board, diceFn, supply, trades, notifications),
     );
     this.refreshSlot();
   }

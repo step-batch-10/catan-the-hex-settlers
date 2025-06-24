@@ -29,10 +29,10 @@ describe("should create a session", () => {
 
   it("should return a game status of true", () => {
     const sessions = new SessionStore();
-    const { gameId, playerId } = sessions.joinGame("A");
-    const { gameId: gameId2, playerId: playerId2 } = sessions.joinGame("B");
-    const { gameId: gameId3, playerId: playerId3 } = sessions.joinGame("C");
-    const { gameId: gameId4, playerId: playerId4 } = sessions.joinGame("D");
+    const { gameId } = sessions.joinGame("A");
+    const { gameId: gameId2 } = sessions.joinGame("B");
+    const { gameId: gameId3 } = sessions.joinGame("C");
+    const { gameId: gameId4 } = sessions.joinGame("D");
     assert(sessions.getGameStatus(gameId).isGameReady);
     assert(sessions.getGameStatus(gameId2).isGameReady);
     assert(sessions.getGameStatus(gameId3).isGameReady);
@@ -41,19 +41,19 @@ describe("should create a session", () => {
 
   it("should return a game status - reset players count if 4 players joined", () => {
     const sessions = new SessionStore();
-    const { gameId, playerId } = sessions.joinGame("A");
-    const { gameId: gameId2, playerId: playerId2 } = sessions.joinGame("B");
-    const { gameId: gameId3, playerId: playerId3 } = sessions.joinGame("C");
-    const { gameId: gameId4, playerId: playerId4 } = sessions.joinGame("D");
+    sessions.joinGame("A");
+    sessions.joinGame("B");
+    sessions.joinGame("C");
+    const { gameId: gameId4 } = sessions.joinGame("D");
 
     assertEquals(sessions.getGameStatus(gameId4).playersCount, 0);
   });
 
   it("should return a game status with players count", () => {
     const sessions = new SessionStore();
-    const { gameId, playerId } = sessions.joinGame("A");
-    const { gameId: gameId2, playerId: playerId2 } = sessions.joinGame("B");
-    const { gameId: gameId3, playerId: playerId3 } = sessions.joinGame("C");
+    const { gameId } = sessions.joinGame("A");
+    const { gameId: gameId2 } = sessions.joinGame("B");
+    const { gameId: gameId3 } = sessions.joinGame("C");
 
     assertEquals(sessions.getGameStatus(gameId).playersCount, 3);
     assertEquals(sessions.getGameStatus(gameId2).playersCount, 3);

@@ -12,8 +12,10 @@ const redirectToGame = () => {
   }, 3000);
 };
 
-const launchGameTimer = () => {
+const launchGameTimer = (id) => {
   let time = 3;
+  clearInterval(id);
+
   const countdown = setInterval(() => {
     renderGameStartText(`Game will start in ${time--} seconds`);
     if (time < 0) {
@@ -34,7 +36,7 @@ const id = setInterval(async () => {
     return;
   }
 
-  launchGameTimer();
+  launchGameTimer(id);
 }, 1000);
 
 const main = () => {
